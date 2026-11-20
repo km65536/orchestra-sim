@@ -590,13 +590,16 @@ const Stage3D = (() => {
     const pod = new T.Mesh(G.box(1.0, 0.22, 1.0), mat(0x2a1a10)); pod.position.set(lay.podium.x, layoutInfo.stageY + 0.11, lay.podium.z); orchGroup.add(pod);
     const rail = new T.Mesh(G.box(0.9, 0.05, 0.05), mat(GOLD)); rail.position.set(lay.podium.x, layoutInfo.stageY + 1.2, lay.podium.z + 0.5); orchGroup.add(rail);
     const cstand = new T.Mesh(instrumentGeo('stand'), VCOL()); cstand.position.set(lay.podium.x, lay.podium.y, lay.podium.z - 0.55); cstand.scale.set(1.4, 1.0, 1.2); orchGroup.add(cstand);
+    // 団員1人の3Dモデルの作成に失敗しても、その団員だけ表示を省略してほかの団員は並べる
     seats.forEach((s, i) => {
       if (!s.member) return;
-      const a = makeActor(s.member, s, hashStr(s.member.id) + i);
-      orchGroup.add(a.group); actors.push(a);
-      a.lag = Math.random() * 0.3;
+      try {
+        const a = makeActor(s.member, s, hashStr(s.member.id) + i);
+        orchGroup.add(a.group); actors.push(a);
+        a.lag = Math.random() * 0.3;
+      } catch (e) { console.warn('3D: 団員のモデルを作れませんでした', s.member && s.member.name, e); }
     });
-    if (cd) { conductor = makeConductorActor(cd, lay.podium); orchGroup.add(conductor.group); }
+    if (cd) try { conductor = makeConductorActor(cd, lay.podium); orchGroup.add(conductor.group); } catch (e) { conductor = null; console.warn('3D: 指揮者のモデルを作れませんでした', e); }
     setQuality(0.7);
     poseAll(0, 0, true);
   }
@@ -753,6 +756,8 @@ const Stage3D = (() => {
   }
   function poseAll(beat, dt, instant, phaseOverride) {
     for (const a of actors) {
+      if (a.failed) continue;
+      try {
       let target = 0, m;
       if (mode === 'show' && show && show.stage === 'tuning') { target = a.sec === 'pc' ? 0 : 1; m = { active: true, u: (Math.sin(show.t * 2 + a.swayPh * 3) * 0.5 + 0.5), dyn: 0.3, onset: 9, dur: 2 }; }
       else if (score && (mode === 'show' || mode === 'practice')) {
@@ -764,6 +769,7 @@ const Stage3D = (() => {
       const rate = instant ? 1 : Math.min(1, dt * (target > a.w ? 5 : 3));
       a.w += (target - a.w) * rate;
       poseActor(a, m, nowT);
+      } catch (err) { actorFailed(a, err); }
     }
   }
 
@@ -831,18 +837,29 @@ const Stage3D = (() => {
       ['play', sc.duration + 0.4, '演奏中'], ['end', 1.6, '演奏終了'], ['applause', 5.5, opts.applauseLabel || '観客の拍手'],
     ];
     let acc = 0; const marks = S.map(([id, d, label]) => { const m = { id, start: acc, end: acc + d, label }; acc += d; return m; });
-    show = { t0, marks, total: acc, sc, stage: 'before', t: 0, onEnd: opts.onEnd, opts, scheduled: {} };
+    show = { t0, marks, total: acc, sc, stage: 'before', t: 0, onEnd: opts.onEnd, opts, scheduled: {}, lastT: t0 - 0.15 };
     mode = 'show';
     if (audience) { audience.fill = opts.fill ?? 0.6; audience.clap = 0; audience.stand = 0; updateAudience(0, true); }
-    // 団員は袖から入場（その間は楽器を持たない）
+    // 団員は袖から入場（その間は楽器を持たない）。準備に失敗した団員は入場演出から外し、席に座らせておく
     for (const a of actors) {
-      a.walk = { from: V(-layoutInfo.stageW / 2 - 1.5, a.seat.y, a.seat.z + 0.6), delay: a.rng() * 2.2 + (a.sec === 'pc' ? 0.6 : 0) };
-      a.group.position.copy(a.walk.from); a.instr.visible = ['vc', 'cb', 'pc'].includes(a.kind); if (a.tool) a.tool.visible = false; if (a.tool2) a.tool2.visible = false;
-      a.w = 0;
+      try {
+        const d = a.rng() * 2.2 + (a.sec === 'pc' ? 0.6 : 0);
+        a.walk = { from: V(-layoutInfo.stageW / 2 - 1.5, a.seat.y, a.seat.z + 0.6), delay: Number.isFinite(d) ? d : 0 };
+        a.group.position.copy(a.walk.from); a.instr.visible = ['vc', 'cb', 'pc'].includes(a.kind); if (a.tool) a.tool.visible = false; if (a.tool2) a.tool2.visible = false;
+        a.w = 0;
+      } catch (e) { actorFailed(a, e); }
     }
     if (conductor) { conductor.group.position.set(-layoutInfo.stageW / 2 - 1.5, conductor.home.y - 0.2, conductor.home.z + 1.2); conductor.group.rotation.y = Math.PI / 2; }
     captionCb = opts.onCaption;
     start();
+    return acc;   // 演出の長さ（秒）：画面側の見張り（タイムアウト）に使う
+  }
+  // 団員1人の表示・動きで問題が起きたとき：その団員だけ演出から外し、ほかの団員と本番の進行は続ける
+  function actorFailed(a, e) {
+    if (a.failed) return;
+    a.failed = true; a.walk = null;
+    try { if (a.seat) { a.group.position.set(a.seat.x, a.seat.y, a.seat.z); a.group.rotation.y = a.seat.rot; } a.group.visible = !!a.seat; } catch (_) {}
+    console.warn('3D: 団員の演出を省略しました', a.member && a.member.name, e);
   }
   function skipShow() {
     if (!show) return;
@@ -851,13 +868,21 @@ const Stage3D = (() => {
   }
   function endShowState() {
     show = null; mode = 'idle'; score = null;
-    for (const a of actors) { a.walk = null; a.group.position.set(a.seat.x, a.seat.y, a.seat.z); a.group.rotation.y = a.seat.rot; a.instr.visible = true; if (a.tool) a.tool.visible = true; if (a.tool2) a.tool2.visible = true; a.w = 0; a.body.position.y = 0; }
+    for (const a of actors) {
+      if (a.failed) continue;
+      try { a.walk = null; a.group.position.set(a.seat.x, a.seat.y, a.seat.z); a.group.rotation.y = a.seat.rot; a.instr.visible = true; if (a.tool) a.tool.visible = true; if (a.tool2) a.tool2.visible = true; a.w = 0; a.body.position.y = 0; } catch (err) { actorFailed(a, err); }
+    }
     if (conductor) { conductor.group.position.copy(conductor.home); conductor.group.rotation.y = Math.PI; conductor.bow = 0; }
     if (audience) { audience.clap = 0; audience.stand = 0; updateAudience(0, true); }
     hemi.intensity = 1.15 * ((layoutInfo && layoutInfo.V3.lightI) || 1);
   }
   function updateShow(t) {
-    const s = show, tt = t - s.t0; s.t = tt;
+    const s = show;
+    // 時計が異常に飛んだ場合（端末の一時停止など）は、その分だけ演出の開始時刻をずらして途中から続ける
+    const jump = t - s.lastT;
+    if (jump > 1.0 || jump < 0) s.t0 += jump - Math.min(frameDt, 0.05);
+    s.lastT = t;
+    const tt = t - s.t0; s.t = tt;
     const cur = s.marks.find(m => tt >= m.start && tt < m.end) || s.marks[s.marks.length - 1];
     if (cur.id !== s.stage || !s.captioned) {
       s.stage = cur.id; s.captioned = true;
@@ -873,10 +898,12 @@ const Stage3D = (() => {
     // 客席照明：演奏中は落とす
     const dimTarget = ['bowAud', 'ready', 'play', 'end'].includes(cur.id) ? 0.45 : 1.15;
     hemi.intensity += (dimTarget * lightI - hemi.intensity) * 0.05;
-    // 入場
+    // 入場（入場の時間を過ぎても歩いている団員は、必ず席に着かせて入場を終える）
+    const enterOver = tt >= s.marks[1].end;
     for (const a of actors) {
-      if (!a.walk) continue;
-      const e = clamp((tt - s.marks[1].start - a.walk.delay) / 1.3, 0, 1);
+      if (!a.walk || a.failed) continue;
+      try {
+      const e = enterOver ? 1 : clamp((tt - s.marks[1].start - a.walk.delay) / 1.3, 0, 1);
       if (tt < s.marks[1].start) { a.group.position.copy(a.walk.from); a.group.visible = false; continue; }
       a.group.visible = true;
       if (e < 1) {
@@ -888,11 +915,12 @@ const Stage3D = (() => {
         a.instr.visible = true; if (a.tool) a.tool.visible = true; if (a.tool2) a.tool2.visible = true;
         a.walk = null;
       }
+      } catch (err) { actorFailed(a, err); }
     }
     // 指揮者
     const cd = conductor;
     let cphase = 'idle', beat = 0, dyn = 0.5;
-    if (cd) {
+    if (cd && !cd.failed) try {
       const m3 = s.marks[3], m4 = s.marks[4];
       if (tt < m3.start) cd.group.visible = false;
       else if (tt < m3.end) {
@@ -915,12 +943,12 @@ const Stage3D = (() => {
         cd.bow = u > 0.3 && u < 0.7 ? Math.sin((u - 0.3) / 0.4 * Math.PI) : 0; cphase = 'bow';
       }
       poseConductor(cd, beat, dyn, cphase, t);
-    }
+    } catch (err) { cd.failed = true; console.warn('3D: 指揮者の演出を省略しました', err); }
     // 団員の演奏
     const b = cur.id === 'play' || cur.id === 'end' ? (t - scoreStart) / s.sc.spb : -10;
     curBeat = b;
     poseAll(b, frameDt, false, cur.id === 'applause' ? 'stand' : null);
-    if (cur.id === 'applause') for (const a of actors) a.body.position.y = u > 0.15 && u < 0.8 && !a.standing ? 0.12 * Math.sin(Math.min(1, (u - 0.15) * 5) * Math.PI / 2) : 0;
+    if (cur.id === 'applause') for (const a of actors) if (!a.failed) a.body.position.y = u > 0.15 && u < 0.8 && !a.standing ? 0.12 * Math.sin(Math.min(1, (u - 0.15) * 5) * Math.PI / 2) : 0;
     // 観客
     if (audience) {
       const clap = cur.id === 'applause' ? (u < 0.85 ? 1 : (1 - u) / 0.15) : cur.id === 'maestro' ? (u > 0.1 && u < 0.85 ? 0.5 : 0) : 0;
@@ -969,6 +997,8 @@ const Stage3D = (() => {
     // 指揮者：演奏中は拍を振り、手を止めているあいだは団員に向かって話している姿勢
     if (conductor) poseConductor(conductor, bb, 0.6, p.paused ? 'idle' : 'beat', t);
     for (const a of actors) {
+      if (a.failed) continue;
+      try {
       const play = !p.paused && p.who(a);
       const L = p.act[a.sec] || [];
       const sb = L.length ? L[Math.floor(b * 4) % L.length] + (b * 4 % 1) / 4 : bb;
@@ -976,6 +1006,7 @@ const Stage3D = (() => {
       const target = play && m.active ? 1 : 0;
       a.w += (target - a.w) * Math.min(1, frameDt * 4);
       poseActor(a, m, t);
+      } catch (err) { actorFailed(a, err); }
     }
   }
   function updatePractice(t) {
@@ -984,11 +1015,14 @@ const Stage3D = (() => {
     if (conductor) poseConductor(conductor, b, 0.6, p.plan.menu === 'tutti' && b < score.beats ? 'beat' : 'idle', t);
     if (b > score.beats + 2) { stopPractice(); poseAll(0, 1, true); return; }
     for (const a of actors) {
+      if (a.failed) continue;
+      try {
       const bb = b - (p.off(a) || 0);
       const m = p.who(a) && bb > 0 ? musicState(a, bb % score.beats, score) : { active: false, u: 0, dyn: 0.3, onset: 9 };
       const target = m.active && bb > 0 && bb < score.beats ? 1 : 0;
       a.w += (target - a.w) * Math.min(1, frameDt * 4);
       poseActor(a, m, t);
+      } catch (err) { actorFailed(a, err); }
     }
   }
 
@@ -1005,7 +1039,7 @@ const Stage3D = (() => {
     if (mode === 'show' && show) updateShow(t);
     else if (mode === 'practice' && practice) updatePractice(t);
     else {
-      for (const a of actors) { a.w += (0 - a.w) * Math.min(1, frameDt * 3); poseActor(a, { active: false, u: 0, dyn: 0.3, onset: 9 }, t); }
+      for (const a of actors) { if (a.failed) continue; try { a.w += (0 - a.w) * Math.min(1, frameDt * 3); poseActor(a, { active: false, u: 0, dyn: 0.3, onset: 9 }, t); } catch (err) { actorFailed(a, err); } }
       if (conductor) poseConductor(conductor, 0, 0.4, 'idle', t);
     }
     updateCamera(performance.now() / 1000);
@@ -1034,9 +1068,11 @@ const Stage3D = (() => {
     init, sync, setVisible, setCamera, playShow, skipShow, playPractice, endPractice, setPracticeFocus, pausePractice, setAudienceFill, resize,
     isPracticing: () => mode === 'practice' && !!practice,
     venue: () => hallKey,
+    // テスト用：指定した団員の3D表示を壊して、1人の不具合で全体が止まらないことを確かめる
+    debugBreakActor: i => { const a = actors[i]; if (a) { a.seat = null; a.instr = null; } return !!a; },
     get ok() { return ok; }, get reason() { return reason; }, isShowing: () => !!show, camName: () => cam.name,
     sections: () => SECTIONS.map(s => { const as = actors.filter(a => a.sec === s.id); return { sec: s.id, n: as.length, w: as.length ? +(as.reduce((x, a) => x + a.w, 0) / as.length).toFixed(2) : 0, active: score ? Music.isActive(score, s.id, curBeat + 0.9) : false, beat: +curBeat.toFixed(2) }; }),
     conductorPose: () => conductor ? { y: +conductor.R.hand.y.toFixed(3), x: +conductor.R.hand.x.toFixed(3), visible: conductor.group.visible, rotY: +conductor.group.rotation.y.toFixed(2) } : null,
-    debug: () => ({ aud: audience ? [audience.n, +audience.fill.toFixed(2)] : null, actors: actors.length, conductor: !!conductor, hall: hallKey, mode, calls: renderer ? renderer.info.render.calls : 0, tris: renderer ? renderer.info.render.triangles : 0, pixelRatio, seats: seats.length, empty: seats.filter(s => !s.member).length, principals: actors.filter(a => a.principal).length, stage: show ? show.stage : null, actorsW: actors.slice(0, 5).map(a => +a.w.toFixed(2)) }),
+    debug: () => ({ walking: actors.filter(a => a.walk).length, failed: actors.filter(a => a.failed).length, hidden: actors.filter(a => !a.group.visible).length, aud: audience ? [audience.n, +audience.fill.toFixed(2)] : null, actors: actors.length, conductor: !!conductor, hall: hallKey, mode, calls: renderer ? renderer.info.render.calls : 0, tris: renderer ? renderer.info.render.triangles : 0, pixelRatio, seats: seats.length, empty: seats.filter(s => !s.member).length, principals: actors.filter(a => a.principal).length, stage: show ? show.stage : null, actorsW: actors.slice(0, 5).map(a => +a.w.toFixed(2)) }),
   };
 })();

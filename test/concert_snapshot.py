@@ -26,7 +26,7 @@ async def main(html,out):
     await p.click('.cbody .crow >> nth=0'); await snap('songDetail'); await p.click('[data-act=chooseSong]')
     await p.click('[data-act=cgo][data-v=hallList]'); await snap('hallList'); await p.click('.cbody .crow[data-id=small]'); await snap('hallDetail'); await p.click('[data-act=reserveHall]')
     await p.click('[data-act=cgo][data-v=condList]'); await snap('condList'); await p.click('.cbody .crow >> nth=0'); await snap('condDetail'); await p.click('[data-act=cback]'); await p.click('[data-act=cback]')
-    await snap('setupDone'); await p.click('[data-act=toPractice]'); await snap('practice')
+    await snap('setupDone'); await p.evaluate('window.__reseed && __reseed()'); await p.click('[data-act=toPractice]'); await snap('practice')
     await p.click('[data-act=cgo][data-v=tutti]'); await snap('tutti'); await p.evaluate('UI.practiceTest={scale:0.04,event:"off"}'); await p.evaluate('window.__reseed && __reseed()'); await p.click('[data-act=runPractice]'); await F.finish_practice(p); await snap('log'); await p.click('.cfoot .cbtn.big')
     await p.click('[data-act=cgo][data-v=section]'); await snap('section'); await p.click('[data-act=cback]')
     await p.click('[data-act=cgo][data-v=indivPick]'); await snap('indivPick'); await p.click('[data-act=cback]')

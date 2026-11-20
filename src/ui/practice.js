@@ -111,7 +111,8 @@ function practiceTick() {
 const activeConcertById = id => STATE.concertPrograms[id] || activeConcert();
 function setOverride(P, sec, ms) { P.override = { sec, until: P.elapsed + ms }; P.overrideDirty = true; }
 function finishPracticeSession() {
-  const P = UI.practicing; if (!P) return;
+  const P = UI.practicing; if (!P || P.finished) return;   // 終了処理は1回だけ
+  P.finished = true;
   clearInterval(PR_TIMER); PR_TIMER = null;
   if (use3D()) { Stage3D.endPractice(); Stage3D.setCamera('front'); }   // 練習が終わったら正面の視点に戻す
   UI.practicing = null;
@@ -147,7 +148,8 @@ SCREENS.practicing = {
       ? `<div class="prev mini"><div class="prev-h"><span class="tag gold">${esc(ev.title)}</span><span class="prev-w">${esc(ev.who)}</span></div><div class="prev-t">「${esc(ev.text)}」</div></div>`
       : P.result ? `<div class="prev mini done"><div class="prev-t">${esc(ev.title)}：${esc(P.result.choice.note)}</div></div>` : '';
     return { ...head,
-      body: `${bar}<div class="cmsg ell" id="prFocus">${esc(focus)}</div>${banner || `<div class="cnote ell" id="prLine">${esc(P.lines[P.line])}</div>`}` };
+      body: `${bar}<div class="cmsg ell" id="prFocus">${esc(focus)}</div>${banner || `<div class="cnote ell" id="prLine">${esc(P.lines[P.line])}</div>`}`,
+      foot: `<button class="cbtn" data-act="prSkip" ${P.finishing ? 'disabled' : ''}>スキップ ▶▶</button>` };
   },
 };
 // 既存の「練習の成果」画面（練習報告）はそのまま使い、イベントがあった回だけ結果を1行添える
@@ -166,6 +168,24 @@ SCREENS.practicing = {
 
 /* ---------- 操作 ---------- */
 Object.assign(ACTIONS, {
+  /* スキップ：演出（アニメーション）だけを省略する。練習の成果は開始時に確定済みで、
+   *   ・選択肢のあるイベントが起きる回 → イベントの選択画面で止まる（選んだあと練習を終える）
+   *   ・選択肢のないイベント → 結果を反映してから終える
+   *   ・終了後は既存の流れどおり、クイズの回ならクイズ画面、そうでなければ練習報告へ */
+  prSkip() {
+    const P = UI.practicing; if (!P || P.finished || P.skipped) return;   // 連打しても1回だけ
+    P.skipped = true;
+    if (P.evState === 'open') { render(); return; }          // すでにイベントの選択中
+    if (P.ev && !P.evState) {
+      if (P.ev.choices) {
+        P.elapsed = Math.max(P.elapsed, P.ev.at * P.dur); P.evState = 'open';
+        if (use3D()) Stage3D.pausePractice(true);
+        render(); return;
+      }
+      P.result = applyPracticeEvent(activeConcertById(P.cid), P.log, P.ev); P.evState = 'done';
+    }
+    finishPracticeSession();
+  },
   // 既存の練習開始（計算は従来どおり）＋ 練習の様子の再生
   runPractice(d) {
     if (UI.practicing) return;   // 練習中は次の練習を受け付けない（重複実行の防止）
@@ -181,6 +201,7 @@ Object.assign(ACTIONS, {
     const P = UI.practicing; if (!P || P.evState !== 'open') return;
     P.result = applyPracticeEvent(activeConcertById(P.cid), P.log, P.ev, d.v);
     P.evState = 'done'; P.evShownAt = P.elapsed;
+    if (P.skipped) { finishPracticeSession(); return; }   // スキップ中：イベントの選択が済んだらそのまま練習を終える
     if (use3D()) Stage3D.pausePractice(false);
     const e = P.result.choice.effect || {};
     if (e.focus && P.log.sections[e.focus.sec]) setOverride(P, e.focus.sec, 4000);

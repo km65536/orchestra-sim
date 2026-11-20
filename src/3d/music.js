@@ -210,7 +210,24 @@ const Music = (() => {
     wetGain.gain.value = 0.18 + acoustics / 100 * 0.32;
   }
   function resume() { const c = audio(); if (c && c.state === 'suspended') c.resume().catch(() => {}); return c; }
-  function now() { return ctx && ctx.state === 'running' ? ctx.currentTime : performance.now() / 1000; }
+  /* ゲーム内の時計（演出・アニメーション・音の共通の時刻）。
+   * 音声が動いているときは AudioContext.currentTime、動いていないときは performance.now() を使うが、
+   * 2つは基準が違う（例：ページを開いてからの秒数 と 音声を開始してからの秒数）。
+   * 以前は切り替わった瞬間に時刻が大きく飛び（本番開始の直後に音声が動き出すと数百秒も巻き戻る）、
+   * 本番の演出が「開演前」のまま進まず、団員が入場しなくなっていた。
+   * そこで切り替わるたびに差分（off）を持ち越して、時刻が途切れず常に増えていくようにする。 */
+  let clk = null;
+  const rawNow = src => src === 'ctx' ? ctx.currentTime : performance.now() / 1000;
+  function now() {
+    const src = ctx && ctx.state === 'running' ? 'ctx' : 'perf';
+    if (!clk) clk = { src, off: 0, last: rawNow(src) };
+    if (clk.src !== src) { clk.off = clk.last - rawNow(src); clk.src = src; }
+    const v = rawNow(src) + clk.off;
+    if (v < clk.last) return clk.last;   // 時刻は戻さない
+    clk.last = v; return v;
+  }
+  // now() の時刻 → AudioContext の時刻（音の予約に使う）
+  const ctxTime = t => t - (clk && clk.src === 'ctx' ? clk.off : 0);
   function setMuted(v) { muted = v; if (master) master.gain.setTargetAtTime(v ? 0 : 0.55, ctx.currentTime, 0.05); }
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
 
@@ -282,6 +299,7 @@ const Music = (() => {
    */
   function playScore(score, startAt, quality = {}) {
     if (!ctx || ctx.state !== 'running') return;
+    now();
     const rng = seededRng(hashStr(score.song + 'perf'));
     const queue = [];
     for (const [sec, ns] of Object.entries(score.parts)) for (const n of ns) queue.push({ sec, n });
@@ -292,7 +310,7 @@ const Music = (() => {
       while (i < queue.length) {
         const { sec, n } = queue[i];
         const q = quality[sec] ?? 0.8;
-        const t = startAt + n.t * score.spb + (rng() - 0.5) * 2 * (1 - q) * 0.03;
+        const t = ctxTime(startAt + n.t * score.spb + (rng() - 0.5) * 2 * (1 - q) * 0.03);
         if (t > horizon) break;
         if (t >= ctx.currentTime - 0.05) playNote(sec, n, Math.max(t, ctx.currentTime), score.spb, rng, q);
         i++;
@@ -305,6 +323,7 @@ const Music = (() => {
   // チューニング：オーボエのA → 弦・管が合わせる
   function tuning(startAt, dur = 3.2) {
     if (!ctx || ctx.state !== 'running') return;
+    now(); startAt = ctxTime(startAt);
     voice('triangle', 440, startAt, 1.6, 0.09, { cutoff: 2600, attack: 0.08 });
     voice('square', 440, startAt, 1.6, 0.015, { cutoff: 1800, attack: 0.08 });
     for (let k = 0; k < 10; k++) {
@@ -315,6 +334,7 @@ const Music = (() => {
   // 拍手：強さ（0〜1）に応じた密度のノイズ
   function applause(startAt, dur, strength) {
     if (!ctx || ctx.state !== 'running') return;
+    now(); startAt = ctxTime(startAt);
     const n = Math.floor(dur * (25 + strength * 70));
     for (let k = 0; k < n; k++) {
       const t = startAt + Math.random() * dur, fade = 1 - Math.max(0, (t - startAt) / dur - 0.7) / 0.3;

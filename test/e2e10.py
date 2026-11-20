@@ -94,7 +94,7 @@ async def main():
         await p.click('[data-act=cback]'); await p.wait_for_timeout(300)
         back = await p.evaluate('[cmdTop().s, Stage3D.camName(), Stage3D.venue()]')
         chk('H1 予約前にホールを3Dで下見できる（実際のホールと同じ3D・カメラが会場内を巡る）', detail_btn and pv[0] == 'large' and pv[1] == 'hallPreview' and len(tour) >= 3, (pv, sorted(tour)))
-        chk('H2 下見では資金・予約状態が変わらない／「予約画面に戻る」で戻ると正面の視点', f1 == f0 and h1 == h0 and back[0] == 'hallDetail' and back[1] == 'front' and back[2] == 'large', (f0, f1, back))
+        chk('H2 下見では資金・予約状態が変わらない／「予約画面に戻る」で戻ると正面の視点・練習室', f1 == f0 and h1 == h0 and back[0] == 'hallDetail' and back[1] == 'front' and back[2] == 'practice_room', (f0, f1, back))
         # 下見の画面から予約 → 本番準備・本番で同じホール
         await p.click('[data-act=cgo][data-v=hallPreview]'); fee = await p.evaluate('findHall("large").fee')
         await p.click('[data-act=reserveHall]'); r1 = await p.evaluate('[activeConcert().hallId, STATE.funds, cmdTop().s, Stage3D.camName()]')
@@ -144,7 +144,7 @@ async def main():
         chk('F1 ホール練習の料金を表示（料金・資金・実施後の資金）', f'{rfee:,}' in scr_txt and '実施するときに支払い' in scr_txt and '実施後' in scr_txt, scr_txt.replace('\n', ' ')[:90])
         chk('F2 資金不足ではホール練習できない（理由を表示・資金は変わらない）', lack[0] and '資金が足りません' in lack[1] and '資金不足' in lack[2] and lack[3] == [rfee - 1, False], lack[:2])
         chk('F3 ホールに応じた料金を実施時に1回だけ支払う（予約料とは別・二重請求なし）', paid[0] == keep - rfee and paid[1] and paid[2] == [-rfee] and again == paid[0] and rfee == 45000, (paid, again))
-        chk('V2 本番準備では予約したホールに切り替わる', v_prep == ['large', 'front'], v_prep)
+        chk('V2 本番準備（ホール練習以外）は練習室のまま', v_prep == ['practice_room', 'front'], v_prep)
         await F.perform(p)
         v_show = await p.evaluate('[Stage3D.venue(), activeConcert().result.settlement ? 1 : 0, Stage3D.camName()]')
         chk('V3 本番・結果は予約したホールで行われる（視点は正面）', v_show == ['large', 1, 'front'], v_show)

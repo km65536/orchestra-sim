@@ -50,7 +50,9 @@ async def run(size,w,h,shots):
     await p.click('[data-act=cgo][data-v=hallList]'); await S('hallList')
     await p.click('.cbody .crow[data-id=top]') if await p.query_selector('.cbody .crow[data-id=top]') else None
     if await p.evaluate('cmdTop().s')=='hallList': await p.click('[data-act=cpage][data-d="1"]'); await p.click('.cbody .crow[data-id=top]')
-    await p.wait_for_timeout(300); prev=await p.evaluate('use3D()?Stage3D.debug().hall:null'); await S('hallDetail')
+    await p.wait_for_timeout(300); prev=[await p.evaluate('use3D()?Stage3D.debug().hall:null')]; await S('hallDetail')
+    if await p.query_selector('[data-act=cgo][data-v=hallPreview]'):   # 「3Dで下見」を押したときだけホールの3Dになる
+        await p.click('[data-act=cgo][data-v=hallPreview]'); await p.wait_for_timeout(300); prev.append(await p.evaluate('Stage3D.debug().hall')); await S('hallPreview'); await p.click('[data-act=cback]')
     topDis=await p.get_attribute('[data-act=reserveHall]','disabled')
     await p.click('[data-act=ctab][data-v=more]'); await S('hallDetail2')
     await p.click('[data-act=cback]')
@@ -117,7 +119,7 @@ async def main():
   chk('演奏会を始める→準備画面', d['entry_ok'] and d['st1'][0]=='setup')
   chk('3項目未完了では練習へ進めない', d['dis'])
   chk('選曲：カテゴリー→一覧（ページ分割）→詳細→決定→準備へ戻る', d['back_ok'] and d['st1'][1] and d['st1'][3]=='setup' and d['pg'][1] and not set(d['pg'][0])&set(d['pg'][1]), d['st1'])
-  chk('会場：3Dプレビュー・資金不足は不可・予約で支払い', d['prev']=='top' and d['topDis'] and d['st2'][0]=='setup' and d['st2'][1]=='general' and d['f0']-d['st2'][2]==90000, d['st2'])
+  chk('会場：詳細は練習室のまま・「3Dで下見」でホールの3D・資金不足は不可・予約で支払い', d['prev']==['practice_room','top'] and d['topDis'] and d['st2'][0]=='setup' and d['st2'][1]=='general' and d['f0']-d['st2'][2]==90000, d['st2'])
   chk('会場の変更は前の予約を返金', d['st2b'][0]=='small' and d['st2b'][1]==d['f0']-30000, d['st2b'])
   chk('別タブへ移動しても選択内容を保持', d['keep'][1] and d['keep'][2]=='small', d['keep'])
   chk('指揮者を選択（前回の担当を引き継ぎ）', d['st3'][1]['conductor'] and d['st3'][1]['ready'], d['st3'])

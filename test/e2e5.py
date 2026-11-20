@@ -55,9 +55,10 @@ async def main():
     await p.screenshot(path='shots/w_hall.png')
     halls=[]
     for h in ['community','top']:
-        await F.hall_detail(p,h); await p.wait_for_timeout(300); halls.append(await p.evaluate('Stage3D.debug().hall'))
-        await p.screenshot(path=f'shots/w_prev_{h}.png')
-    chk('8 ホールごとの違い（会場の詳細で3Dが切り替わる）', halls==['community','top'], halls)
+        await F.hall_detail(p,h); await p.wait_for_timeout(300); detail_v=await p.evaluate('Stage3D.debug().hall')
+        await p.click('[data-act=cgo][data-v=hallPreview]'); await p.wait_for_timeout(300); halls.append([detail_v, await p.evaluate('Stage3D.debug().hall')])
+        await p.screenshot(path=f'shots/w_prev_{h}.png'); await p.click('[data-act=cback]')
+    chk('8 ホールごとの違い（詳細画面は練習室のまま、「3Dで下見」でそのホールの3Dに切り替わる）', halls==[['practice_room','community'],['practice_room','top']], halls)
     await F.reserve_hall(p,'large')
     phase=await p.evaluate('activeConcert().phase')
     # 募集を演奏会途中で

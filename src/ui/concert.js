@@ -25,13 +25,16 @@ const stageReason = () => (typeof Stage3D !== 'undefined' && Stage3D.reason) || 
 function soundOn() { try { return localStorage.getItem('orchestraSim.sound') !== 'off'; } catch (e) { return true; } }
 
 // 3D表示に今の状態を反映（会場・曲・指揮者・観客）
-//   通常練習の段階（全体合奏・セクション練習・個人練習）は練習室。会場の予約画面ではそのホールを下見。
-//   本番準備（ホール練習）・本番・結果は予約したホール。
-const HALL_SCREENS = ['hallList', 'hallDetail', 'hallPreview'];
+//   表示する3D空間は「いま何をしている場面か」だけで決める（ホールの選択・予約の状態とは切り離す）。
+//   ・通常は常に練習室（ホールの一覧・詳細を見ているときや、予約した直後も練習室のまま）
+//   ・「3Dで下見」の画面だけ、選んだホール（終了・予約したら練習室に戻る）
+//   ・ホール練習の画面、演奏会の本番と結果の表示中は、予約済みのホール（終わったら練習室に戻る）
+const HALL_SCREENS = ['hallPreview'];
 function venueFor(c, scr) {
-  if (HALL_SCREENS.includes(scr.s)) return (scr.s !== 'hallList' && scr.id) || UI.previewHall || c.hallId || 'general';
-  if (c.phase === 'practice' || UI.practicing) return PRACTICE_ROOM.id;
-  return c.hallId || UI.previewHall || 'general';
+  if (scr.s === 'hallPreview' && scr.id) return scr.id;
+  if (UI.showing || c.phase === 'result') return c.hallId || 'general';
+  if (scr.s === 'rehearse' && c.hallId) return c.hallId;
+  return PRACTICE_ROOM.id;
 }
 function sync3D(c) {
   if (!use3D()) return;
@@ -371,7 +374,7 @@ const SCREENS = {
   } },
 
   /* ===== 本番中（最小限） ===== */
-  show: { kind: 'show', render: () => ({ head: false, body: `<div class="showbar"><span class="muted">本番中・視点は上で切替</span><button class="cbtn" data-act="skipShow">スキップして結果へ</button></div>` }) },
+  show: { kind: 'show', render: () => ({ head: false, body: `<div class="showbar"><span class="muted">本番中</span><button class="cbtn" data-act="skipShow">スキップして結果へ</button></div>` }) },
 
   /* ===== 結果 ===== */
   result: { render: c => {
@@ -405,14 +408,21 @@ function startShow(c) {
   Music.setMuted(!soundOn());
   render();
   Stage3D.setCamera('front');
-  Stage3D.playShow({
+  const total = Stage3D.playShow({
     score: sc, quality: showQuality(c), acoustics: hall.acoustics,
     fill: clamp(r.settlement.audience / hall.capacity, 0, 1),
     applause: { S: 1, A: 0.85, B: 0.65, C: 0.45, D: 0.3 }[r.rank], standing: r.rank === 'S' || r.rank === 'A',
     applauseLabel: r.rank === 'S' || r.rank === 'A' ? 'スタンディングオベーション！' : r.success ? '観客の拍手' : '控えめな拍手',
     onCaption: (label) => { UI.caption = label; const el = document.getElementById('cap3d'); if (el) { el.textContent = label; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } },
-    onEnd: () => { UI.showing = false; render(); toast(`結果発表：総合評価 ${r.rank}`); },
+    onEnd: () => { if (!UI.showing) return; UI.showing = false; clearTimeout(UI.showGuard); render(); toast(`結果発表：総合評価 ${r.rank}`); },
   });
+  // 見張り：何らかの理由で演出が終わらない場合でも、演出の長さ＋余裕を過ぎたら結果へ進める（永遠に待たない）
+  clearTimeout(UI.showGuard);
+  if (UI.showing && Number.isFinite(total)) UI.showGuard = setTimeout(() => {
+    if (!UI.showing) return;
+    console.warn('本番の演出が時間内に終わらなかったため、結果へ進みます');
+    if (Stage3D.isShowing()) Stage3D.skipShow(); else { UI.showing = false; render(); }
+  }, (total + 20) * 1000);
 }
 
 /* ---------- 操作（演奏会タブ） ---------- */
