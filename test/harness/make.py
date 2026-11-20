@@ -1,6 +1,9 @@
 import pathlib
 src=pathlib.Path(__file__).resolve().parents[2]/'src'
-js='\n'.join((src/f).read_text() for f in ['vendor/three.min.js','config.js','data.js','logic.js','music.js','stage3d.js'])
+import json, subprocess
+_files=json.loads((src/'files.json').read_text())
+_data=subprocess.run(['node','-e',"process.stdout.write(JSON.stringify(require('./test/game_source.js').gameData()))"],cwd=src.parent,capture_output=True,text=True).stdout
+js=(src/'3d/vendor/three.min.js').read_text()+'\nconst GAME_DATA='+_data+';\n'+'\n'.join((src/f).read_text() for f in _files['logic']+['3d/music.js','3d/stage3d.js'])
 html=f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{{margin:0;background:#000}}#h{{position:fixed;inset:0}}</style></head><body><div id="h"></div><script>{js}
 localStorage.clear(); newGame();
 const c=activeConcert(); c.hallId='HALL'; c.songId='SONG';

@@ -1,0 +1,25 @@
+/* ---------- 練習クイズ（演奏会タブのパネル内） ---------- */
+.qz-song{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--ink2);flex:none;min-width:0}
+.qz-song .ell{min-width:0}
+.qz-song span:last-child{flex:none;color:var(--gold2)}
+.qz-q{font-family:var(--serif);font-size:15.5px;line-height:1.5;color:var(--ink);flex:none}
+.qz-q.sm{font-size:13px;line-height:1.45;color:var(--ink2)}
+.qz-ch{display:flex;flex-direction:column;gap:6px;flex:none}
+.qz-c{display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 12px;border-radius:10px;background:#1b1d27;border:1px solid var(--line);text-align:left;color:var(--ink);font-size:14px;line-height:1.35}
+.qz-c i{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;background:#2a2c3a;color:var(--gold2)}
+.qz-c:active{background:#2a2433;border-color:var(--gold)}
+.qz-v{display:flex;align-items:baseline;gap:10px;flex:none}
+.qz-v b{font-family:var(--serif);font-size:20px}
+.qz-v.ok b{color:#8fd6a3}.qz-v.ng b{color:#f09a8a}
+.qz-v span{font-size:12.5px;color:var(--gold2)}
+.qz-a{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-radius:9px;font-size:14px;flex:none}
+.qz-a span{flex:none;font-size:11.5px;color:var(--ink3)}
+.qz-a.ok{background:#1b2a20;border:1px solid #3d6b4b;color:#bfe8c9}
+.qz-a.ng{background:#2a1c1c;border:1px solid #7a3d3d;color:#f2c0b6}
+.qz-e{font-size:13px;line-height:1.55;color:var(--ink);flex:none}
+.qz-g{font-size:12.5px;color:var(--gold2);flex:none}
+@media (max-height:620px){
+  .qz-q{font-size:14.5px;line-height:1.42}.qz-q.sm{font-size:12.5px;line-height:1.4}
+  .qz-e{font-size:12.5px;line-height:1.45}.qz-a{padding:4px 10px;font-size:13.5px}.qz-v b{font-size:18px}
+  .qz-c{min-height:42px;padding:4px 12px}
+}

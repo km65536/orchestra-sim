@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#12131a">
 <title>楽団運営記 ― オーケストラ運営シミュレーション</title>
 <style>:root{
@@ -380,6 +380,8 @@ body.mode3d #stage3d{display:block}
 .tag.prin{margin-left:6px;padding:1px 6px;font-size:10.5px}
 .condcta{border-color:#4a3e5a;background:linear-gradient(180deg,#25222f,#1d1c27)}
 body.game .toast{bottom:calc(var(--nav) + var(--panel,320px) + 12px + env(safe-area-inset-bottom))}
+/* 3D上部の表示：今いる場所（練習室／ホール名）と音声ボタン。視点は正面固定のため視点ボタンはなし */
+.camrow .venue{flex:0 1 auto;min-width:0;align-self:center;font-size:12.5px;color:var(--ink);padding:5px 10px;border-radius:999px;background:rgba(18,18,26,.7);margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ======================================================================
  * ホーム・団員・育成・記録：階層型の固定画面（body.tabsui / .tv 配下のみに適用）
@@ -499,6 +501,58 @@ body.tabsui #app{padding-bottom:0;min-height:0}
 .tv .stat .v small,.tv small{font-size:11px}
 .tv .stat{margin:3px 0}
 body.tabsui .toast{bottom:calc(var(--nav) + 76px + env(safe-area-inset-bottom))}
+
+/* =========================================================
+ * ページ全体のスクロール・拡大の禁止（全タブ共通）
+ *   画面のレイアウトは変えず、ブラウザのスクロール・拡大・バウンスだけを止める。
+ *   touch-action は既存の個別指定（ウインドウのドラッグ部分・3D画面）を優先する。
+ * ========================================================= */
+html{overflow:hidden;height:100%;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow:hidden;overscroll-behavior:none}
+*{touch-action:manipulation}
+
+/* ---------- 練習中（演奏会タブのパネル内） ---------- */
+.prbar{height:8px;border-radius:99px;background:#262836;overflow:hidden;flex:none}
+.prbar i{display:block;height:100%;background:linear-gradient(90deg,#8a6d36,var(--gold2));border-radius:99px;transition:width .1s linear}
+.prev{background:#241f17;border:1px solid #6d5a33;border-radius:10px;padding:8px 10px;flex:none}
+.prev-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);min-width:0}
+.prev-w{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prev-w small{font-size:11px;color:var(--ink3)}
+.prev-t{font-family:var(--serif);font-size:14px;color:var(--ink);margin-top:4px;line-height:1.45}
+.prev.mini{padding:6px 10px}
+.prev.mini .prev-t{font-size:13px;margin-top:2px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prev.done{background:#1b2a20;border-color:#3d6b4b}
+.prev.done .prev-t{color:#a9dcb6}
+.prch{display:flex;flex-direction:column;gap:6px;flex:none}
+.prch .crow{height:auto;min-height:44px;padding:5px 10px}
+.prlog{font-size:12px;line-height:1.25;color:var(--gold2);margin-top:-2px;flex:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dgrid.mini.ev{line-height:1.15}
+
+/* ---------- 練習クイズ（演奏会タブのパネル内） ---------- */
+.qz-song{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--ink2);flex:none;min-width:0}
+.qz-song .ell{min-width:0}
+.qz-song span:last-child{flex:none;color:var(--gold2)}
+.qz-q{font-family:var(--serif);font-size:15.5px;line-height:1.5;color:var(--ink);flex:none}
+.qz-q.sm{font-size:13px;line-height:1.45;color:var(--ink2)}
+.qz-ch{display:flex;flex-direction:column;gap:6px;flex:none}
+.qz-c{display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 12px;border-radius:10px;background:#1b1d27;border:1px solid var(--line);text-align:left;color:var(--ink);font-size:14px;line-height:1.35}
+.qz-c i{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;background:#2a2c3a;color:var(--gold2)}
+.qz-c:active{background:#2a2433;border-color:var(--gold)}
+.qz-v{display:flex;align-items:baseline;gap:10px;flex:none}
+.qz-v b{font-family:var(--serif);font-size:20px}
+.qz-v.ok b{color:#8fd6a3}.qz-v.ng b{color:#f09a8a}
+.qz-v span{font-size:12.5px;color:var(--gold2)}
+.qz-a{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-radius:9px;font-size:14px;flex:none}
+.qz-a span{flex:none;font-size:11.5px;color:var(--ink3)}
+.qz-a.ok{background:#1b2a20;border:1px solid #3d6b4b;color:#bfe8c9}
+.qz-a.ng{background:#2a1c1c;border:1px solid #7a3d3d;color:#f2c0b6}
+.qz-e{font-size:13px;line-height:1.55;color:var(--ink);flex:none}
+.qz-g{font-size:12.5px;color:var(--gold2);flex:none}
+@media (max-height:620px){
+  .qz-q{font-size:14.5px;line-height:1.42}.qz-q.sm{font-size:12.5px;line-height:1.4}
+  .qz-e{font-size:12.5px;line-height:1.45}.qz-a{padding:4px 10px;font-size:13.5px}.qz-v b{font-size:18px}
+  .qz-c{min-height:42px;padding:4px 12px}
+}
 </style></head>
 <body><div id="app"></div>
 <script>
@@ -4190,6 +4244,8 @@ void main() {
 } catch (e) { window.THREE = undefined; console.error('three.js load failed', e); }
 </script>
 <script>
+/* GAME_DATA: data/ フォルダのJSON（build.py が検証して埋め込み） */
+const GAME_DATA = {"events/practice":{"_説明":"練習中のランダムイベント。文章の {section} などは自動で置き換わります（使える記号は data/README.md を参照）。","settings":{"chance":0.55,"timingFrom":0.32,"timingTo":0.62},"conductorTraitPhrases":{"craft":{"focus":"の縦の線を、もう一度正確にそろえたいと思います","aim":"正確さ"},"passion":{"focus":"に、もっと歌ってほしい。そこを重点的にやりましょう","aim":"歌心"},"drama":{"focus":"の強弱の幅を、思い切って広げてみましょう","aim":"強弱"},"sound":{"focus":"の響きが全体に溶け込むよう、音程を重点的に確認したいと思います","aim":"響き"},"teacher":{"focus":"を、段階を追って丁寧に確認していきましょう","aim":"基礎"}},"defaultTraitPhrase":"teacher","defaultAim":"全体","choicePresets":{"keep":{"id":"keep","label":"今の練習内容を続ける","hint":"予定どおりの成果","effect":{},"note":"予定どおり練習を続けた"},"stop":{"id":"stop","label":"今日はここまでにする","hint":"成果は少し減るが、統一感が上がる","effect":{"all":0.85,"overall":{"unity":0.8},"stop":true},"note":"団員はリフレッシュできた"}},"events":[{"id":"cond_proposal","title":"指揮者からの提案","speaker":"conductor","target":"weakestSection","requires":["conductor","practicedSection"],"weight":{"base":2.2},"text":"今日は{section}{traitFocus}。","choices":[{"id":"follow","label":"提案に従う","hint":"{section}の成果が上がる（ほかは少し減る）","effect":{"focus":1.25,"others":0.96},"note":"{section}を重点的に練習した"},{"preset":"keep","label":"予定どおり進める"}]},{"id":"prin_balance","title":"首席奏者からの指摘","speaker":"principal","target":"principalSection","requires":["principalSection","notIndividual"],"weight":{"base":1.6},"partner":{"hs":"br","ls":"br","ww":"br","br":"hs","pc":"br"},"text":"{partnerSection}との音量バランスが少し気になります。","choices":[{"id":"balance","label":"バランスを確認する","hint":"バランスが上がる（ほかの成果は少し減る）","effect":{"overall":{"balance":0.8},"all":0.97},"note":"全体の音量バランスを確認した"},{"preset":"keep","label":"このまま続ける"}]},{"id":"prin_passage","title":"首席奏者からの提案","speaker":"principal","target":"principalSection","requires":["principalSection"],"weight":{"base":1.6},"text":"{section}の細かいパッセージが揃っていません。もう少し時間をかけて練習しませんか？","choices":[{"id":"focus","label":"重点的に練習する","hint":"{section}の成果が大きく上がる（ほかは減る）","effect":{"focus":1.3,"others":0.95},"note":"{section}のパッセージを重点的に練習した"},{"preset":"keep"},{"preset":"stop"}]},{"id":"member_slow","title":"団員からの相談","speaker":"member","target":"strugglingMember","requires":["members"],"weight":{"base":1.3},"text":"『{song}』のこの部分を、もう少しゆっくり練習できませんか？","choices":[{"id":"slow","label":"ゆっくりさらう","hint":"楽曲完成度が上がる（ほかの成果は少し減る）","effect":{"mastery":{"comp":0.6},"all":0.97},"note":"テンポを落として確認した"},{"preset":"keep","label":"テンポを保つ"}]},{"id":"hard_spot","title":"難所の発見","speaker":"conductor","target":"none","requires":[],"weight":{"base":0.6,"perDifficulty":0.0166667},"places":["冒頭","中盤","終盤","展開部"],"text":"『{song}』の{place}に、演奏が難しい箇所が見つかりました。","choices":[{"id":"focus","label":"重点的に練習する","hint":"楽曲完成度が上がる（ほかの成果は少し減る）","effect":{"mastery":{"comp":0.9},"all":0.95},"note":"{place}の難所を重点的に練習した"},{"preset":"keep"},{"preset":"stop","note":"難所は次回に持ち越し、団員は休めた"}]},{"id":"good_sec","title":"好調なセクション","speaker":"conductor","target":"harmoniousSection","requires":["practicedSection"],"weight":{"base":1.4},"text":"今日は{section}の息がよく合っています！{principalNote}","principalNote":"（首席 {principal} がよくまとめています）","auto":{"effect":{"focus":1.15},"note":"{section}が好調だった"}},{"id":"tired","title":"集中力の低下","speaker":"conductor","target":"none","requires":[],"weight":{"base":0.4,"perPracticeDone":0.15},"text":"団員の集中力が落ちてきました。","choices":[{"id":"rest","label":"休憩を入れる","hint":"成果は少し減るが、統一感が少し上がる","effect":{"all":0.92,"overall":{"unity":0.4}},"note":"休憩をはさんで練習を再開した"},{"id":"push","label":"このまま続ける","hint":"集中力が落ちたまま（成果が少し減る）","effect":{"all":0.88},"note":"集中力が落ちたまま練習を続けた"},{"preset":"stop"}]},{"id":"interp","title":"指揮者の解釈","speaker":"conductor","target":"none","requires":["conductor"],"weight":{"base":1},"conductorCondition":{"minInterp":55,"orTraits":["passion","sound"]},"text":"『{song}』の聴かせどころについて、{conductor}が曲の背景を語った。","auto":{"effect":{"mastery":{"underst":0.6}},"note":"曲への理解が深まった"}},{"id":"stay_late","title":"居残り練習の申し出","speaker":"member","target":"randomMember","requires":["individual","members"],"weight":{"base":2},"text":"もう少しだけ残って練習してもいいですか？","choices":[{"id":"allow","label":"居残りを許可する","hint":"{section}の成果が上がる","effect":{"focus":1.2},"note":"{member}が居残り練習をした"},{"id":"home","label":"今日は帰らせる","hint":"統一感が少し上がる","effect":{"overall":{"unity":0.3}},"note":"団員を早めに帰した"}]}],"commentary":{"tutti":["{conductor}「では『{song}』を頭から通します」","{conductor}「{aim}を意識して、もう一度」",{"text":"コンサートマスターの{concertmaster}が弓の向きを合図している","fallback":"全員が指揮を見て呼吸を合わせている"},"{conductor}「いいですね、そのまま」"],"section":["各セクションに分かれて練習中","{conductor}がセクションを順に見て回っている","首席奏者の合図でセクションがそろっていく","{conductor}「そこはもう少し丁寧に」"],"individual":["対象の団員が個別に指導を受けている","{conductor}「自分のペースで大丈夫です」","ほかの団員は譜読みをしながら待っている","{conductor}「さっきより良くなりました」"]}},"halls/index":{"_説明":"ホール一覧。fee＝予約時の使用料、rehearsalFee＝本番準備でホール練習をするときの料金（実施時に支払い）。visual は3Dの内装（色は #RRGGBB）。","halls":[{"id":"community","name":"公民館 多目的ホール","grade":"小規模","fee":0,"capacity":200,"ticket":500,"acoustics":30,"stage":45,"attendance":0.6,"repSens":0.003,"pressure":0,"prestige":0.5,"rehearsalFee":5000,"feature":"無料で使えるが響きは乏しい。舞台が狭く大編成の曲は収まりきらない。","visual":{"w":20,"d":16,"h":6.5,"rows":9,"cols":16,"rake":0.08,"wall":"#d8d0c0","wallWood":false,"ceiling":"#e8e4da","floor":"#b89466","stageFloor":"#c49a62","seat":"#6d727a","folding":true,"light":"#eef4ff","lightI":1,"warm":0,"chandelier":0,"organ":false,"balcony":0,"panels":false,"backdrop":"#cfc6b4"}},{"id":"small","name":"市民会館 小ホール","grade":"小規模","fee":30000,"capacity":400,"ticket":800,"acoustics":50,"stage":55,"attendance":0.45,"repSens":0.004,"pressure":0,"prestige":0.8,"rehearsalFee":8000,"feature":"客席との距離が近く、満席にしやすい堅実な会場。","visual":{"w":22,"d":18,"h":8,"rows":12,"cols":18,"rake":0.14,"wall":"#b88a5c","wallWood":true,"ceiling":"#d9c4a6","floor":"#8a5a36","stageFloor":"#b07a46","seat":"#7a2630","folding":false,"light":"#fff0dc","lightI":1.05,"warm":0.3,"chandelier":0,"organ":false,"balcony":0,"panels":true,"backdrop":"#a47448"}},{"id":"general","name":"文化センター 大ホール","grade":"一般","fee":90000,"capacity":800,"ticket":1200,"acoustics":65,"stage":75,"attendance":0.25,"repSens":0.005,"pressure":0.01,"prestige":1,"rehearsalFee":20000,"feature":"標準的なコンサートホール。二管編成の交響曲も無理なく演奏できる。","visual":{"w":26,"d":22,"h":11,"rows":15,"cols":22,"rake":0.2,"wall":"#9c6b42","wallWood":true,"ceiling":"#cbb08a","floor":"#6e4528","stageFloor":"#a8713f","seat":"#8b1f2c","folding":false,"light":"#ffe8c8","lightI":1.1,"warm":0.5,"chandelier":0,"organ":false,"balcony":1,"panels":true,"backdrop":"#8a5a34"}},{"id":"large","name":"県立芸術劇場 コンサートホール","grade":"大規模","fee":200000,"capacity":1500,"ticket":1800,"acoustics":80,"stage":100,"attendance":0.06,"repSens":0.0055,"pressure":0.03,"prestige":1.3,"rehearsalFee":45000,"feature":"豊かな残響の大ホール。評判が低いうちは空席が目立つ。","visual":{"w":30,"d":26,"h":15,"rows":18,"cols":26,"rake":0.24,"wall":"#7a4c2e","wallWood":true,"ceiling":"#b89a74","floor":"#5a3820","stageFloor":"#9c6638","seat":"#7d1726","folding":false,"light":"#ffdfb4","lightI":1.15,"warm":0.7,"chandelier":0,"organ":true,"balcony":2,"panels":true,"backdrop":"#6e4428"}},{"id":"top","name":"グランシンフォニア・ホール","grade":"一流","fee":450000,"capacity":2000,"ticket":3000,"acoustics":95,"stage":110,"attendance":0,"repSens":0.0035,"pressure":0.06,"prestige":2,"rehearsalFee":90000,"feature":"世界的名演が生まれてきた一流ホール。響きは最高だが、重圧も大きい。","visual":{"w":34,"d":30,"h":18,"rows":20,"cols":30,"rake":0.28,"wall":"#5e3622","wallWood":true,"ceiling":"#d9b87a","floor":"#4a2c18","stageFloor":"#9a6232","seat":"#6e0f1e","folding":false,"light":"#ffd9a0","lightI":1.2,"warm":1,"chandelier":3,"organ":true,"balcony":3,"panels":true,"gold":true,"backdrop":"#5a3420"}}],"practiceRoom":{"id":"practice_room","name":"楽団の練習室","description":"通常練習（全体合奏・セクション練習・個人練習）を行う楽団専用の練習室。","visual":{"w":22,"d":15,"h":6.2,"wall":"#b9b2a4","floor":"#b48a58","ceiling":"#cfcac0","backdrop":"#a9a294","light":"#f4f8ff","lightI":0.78,"carpet":"#4a5866","windows":4,"whiteboard":true,"piano":true,"mirror":false}}},"members/instruments":{"_説明":"セクションと楽器。cap＝在籍上限、std＝新規ゲーム時の人数。id はセーブデータや曲の編成で使うため変更しないでください。","sections":[{"id":"hs","name":"高弦","instruments":["Vn1","Vn2"]},{"id":"ls","name":"低弦","instruments":["Va","Vc","Cb"]},{"id":"ww","name":"木管","instruments":["Fl","Ob","Cl","Fg"]},{"id":"br","name":"金管","instruments":["Hr","Tp","Tb","Tuba"]},{"id":"pc","name":"打楽器","instruments":["Perc"]}],"instruments":[{"id":"Vn1","name":"ヴァイオリン I","abbr":"Vn I","section":"hs","kind":"string","cap":12,"std":6},{"id":"Vn2","name":"ヴァイオリン II","abbr":"Vn II","section":"hs","kind":"string","cap":10,"std":5},{"id":"Va","name":"ヴィオラ","abbr":"Va","section":"ls","kind":"string","cap":8,"std":4},{"id":"Vc","name":"チェロ","abbr":"Vc","section":"ls","kind":"string","cap":8,"std":4},{"id":"Cb","name":"コントラバス","abbr":"Cb","section":"ls","kind":"string","cap":6,"std":2},{"id":"Fl","name":"フルート","abbr":"Fl","section":"ww","kind":"wind","cap":4,"std":2},{"id":"Ob","name":"オーボエ","abbr":"Ob","section":"ww","kind":"wind","cap":4,"std":2},{"id":"Cl","name":"クラリネット","abbr":"Cl","section":"ww","kind":"wind","cap":4,"std":2},{"id":"Fg","name":"ファゴット","abbr":"Fg","section":"ww","kind":"wind","cap":4,"std":2},{"id":"Hr","name":"ホルン","abbr":"Hr","section":"br","kind":"wind","cap":8,"std":4},{"id":"Tp","name":"トランペット","abbr":"Tp","section":"br","kind":"wind","cap":5,"std":3},{"id":"Tb","name":"トロンボーン","abbr":"Tb","section":"br","kind":"wind","cap":4,"std":2},{"id":"Tuba","name":"テューバ","abbr":"Tuba","section":"br","kind":"wind","cap":2,"std":1},{"id":"Perc","name":"打楽器（ティンパニ含む）","abbr":"Perc","section":"pc","kind":"perc","cap":6,"std":3}]},"members/names":{"_説明":"新しく募集する団員の名前は family（姓）と given（名）の組み合わせで作られます。feminineGiven にある名前は、衣装の初期傾向（ドレスなど）に使われます。","family":["佐藤","鈴木","高橋","田中","伊藤","渡辺","山本","中村","小林","加藤","吉田","山田","佐々木","山口","松本","井上","木村","林","清水","山崎","森","池田","橋本","阿部","石川","前田","藤田","小川","岡田","後藤","長谷川","村上","近藤","石井","坂本","遠藤","青木","藤井","西村","福田","太田","三浦","藤原","岡本","松田","中川","中野","原田","小野","竹内","金子","和田","中山","石田","上田","森田","柴田","酒井","工藤","横山","宮崎","宮本","内田","高木","安藤","谷口","大野","丸山","今井","河野","藤本","村田","武田","上野","杉山","増田","平野","大塚","千葉","久保","松井","小島","岩崎","桜井","野口","松尾","菊地","野村","新井","渡部"],"given":["陽菜","結衣","美咲","葵","凛","真央","彩花","優奈","千尋","遥","七海","紗希","杏","楓","琴音","美月","和花","詩織","奏","響子","翔太","蓮","大輝","悠真","颯太","拓海","健太","陸","直樹","亮","湊","樹","航","智也","誠","俊介","慎吾","大和","律","透","悠","晴","理沙","朋美","由佳","真理","沙織","達也","浩二","修"],"feminineGiven":["陽菜","結衣","美咲","葵","凛","真央","彩花","優奈","千尋","遥","七海","紗希","杏","楓","琴音","美月","和花","詩織","奏","響子","理沙","朋美","由佳","真理","沙織"]},"members/originals":{"_説明":"固有キャラクター。abilities/potential は団員が [技術, 音感, リズム, 音色, 強弱, 表現, 協調]、指揮者が [統率, 解釈, 技術, カリスマ] の順。initial=true の団員は新規ゲーム時から在籍、founder=true の指揮者は創設時の指揮者。","members":[{"oid":"oc_kirishima","look":{"hair":"long","hairColor":0,"skin":0,"face":2,"glasses":false,"build":0.96,"height":1.02,"style":"dress"},"name":"霧島 玲","inst":"Vn1","initial":true,"profile":"コンサートマスター。精密な技巧で楽団を引っ張るが、他人にも厳しい。","abilities":[82,80,74,76,68,70,52],"potential":[92,90,84,88,80,84,70]},{"oid":"oc_nanase","look":{"hair":"bob","hairColor":3,"skin":1,"face":0,"glasses":false,"build":0.94,"height":0.97,"style":"dress"},"name":"七瀬 灯","inst":"Ob","initial":true,"profile":"甘く澄んだ音色のオーボエ奏者。本番では驚くほど歌う。","abilities":[58,66,55,78,60,74,61],"potential":[80,84,76,95,82,93,78]},{"oid":"oc_kurogane","look":{"hair":"crop","hairColor":4,"skin":2,"face":4,"glasses":false,"build":1.12,"height":1.04,"style":"tux"},"name":"黒鉄 剛","inst":"Hr","initial":false,"cost":150000,"profile":"元プロオケの首席ホルン。豪快な鳴りで金管を支える職人。","abilities":[80,72,70,74,88,66,64],"potential":[84,78,76,80,95,74,72]},{"oid":"oc_amane","look":{"hair":"ponytail","hairColor":2,"skin":0,"face":1,"glasses":false,"build":0.92,"height":0.95,"style":"dress"},"name":"天音 しずく","inst":"Fl","initial":false,"cost":90000,"profile":"音大を出たばかりの新星。今は粗削りだが伸びしろは計り知れない。","abilities":[52,60,50,64,48,62,55],"potential":[96,95,90,97,88,96,85]},{"oid":"oc_tokiwa","look":{"hair":"wavy","hairColor":1,"skin":1,"face":3,"glasses":true,"build":1.04,"height":1.03,"style":"tux"},"name":"常盤 朔","inst":"Vc","initial":false,"cost":130000,"profile":"深く温かい響きのチェリスト。低弦の柱となる穏やかな人格者。","abilities":[74,72,70,82,72,78,84],"potential":[84,82,80,92,82,88,95]},{"oid":"oc_shinonome","look":{"hair":"short","hairColor":0,"skin":2,"face":5,"glasses":false,"build":1.02,"height":1,"style":"suit"},"name":"東雲 拍","inst":"Perc","initial":false,"cost":110000,"profile":"寸分違わぬテンポ感を持つ打楽器奏者。ティンパニを叩かせたら楽団の心臓。","abilities":[70,64,92,66,80,60,70],"potential":[80,76,98,78,90,74,82]},{"oid":"oc_hayami","look":{"hair":"side","hairColor":6,"skin":0,"face":1,"glasses":false,"build":0.98,"height":1.01,"style":"tux"},"name":"速水 透","inst":"Tp","initial":false,"cost":100000,"profile":"輝かしい高音が武器のトランペット奏者。音量の制御はまだ苦手。","abilities":[78,66,72,76,50,70,58],"potential":[90,80,84,88,78,84,74]},{"oid":"oc_yukimura","look":{"hair":"bun","hairColor":0,"skin":0,"face":0,"glasses":true,"build":0.93,"height":0.98,"style":"dress"},"name":"雪村 澪","inst":"Va","initial":false,"cost":95000,"profile":"内声を愛するヴィオラ奏者。誰とでも合わせられる調和の人。","abilities":[64,70,66,70,62,64,86],"potential":[80,84,80,86,78,80,96]},{"oid":"oc_kagura","look":{"hair":"wavy","hairColor":7,"skin":1,"face":2,"glasses":false,"build":0.97,"height":1,"style":"suit"},"name":"神楽 鈴音","inst":"Cl","initial":false,"cost":105000,"profile":"ジャズ出身の異色クラリネット奏者。表現の幅は随一。","abilities":[72,62,76,70,70,84,56],"potential":[84,76,88,84,84,96,72]}],"conductors":[{"oid":"cd_takamiya","name":"鷹宮 誠一","founder":true,"trait":"sound","look":{"hair":"side","hairColor":4,"skin":1,"face":3,"glasses":true,"build":1.02,"height":1.04,"style":"tux"},"profile":"楽団創設以来の常任指揮者。穏やかだが音には一切妥協しない。","abilities":[50,49,51,44],"potential":[76,80,82,68]},{"oid":"cd_novak","name":"エレナ・ノヴァク","trait":"passion","cost":420000,"look":{"hair":"long","hairColor":6,"skin":0,"face":2,"glasses":false,"build":0.95,"height":1.03,"style":"suit"},"profile":"東欧出身の俊英。燃えるような指揮で団員の潜在力を引き出す。","abilities":[68,74,66,72],"potential":[84,90,82,88]},{"oid":"cd_ichinose","name":"一ノ瀬 奏多","trait":"teacher","cost":160000,"look":{"hair":"crop","hairColor":0,"skin":0,"face":1,"glasses":false,"build":0.94,"height":0.99,"style":"suit"},"profile":"指揮コンクールで注目を集めた若手。今は経験不足だが、底知れない才能を秘める。","abilities":[48,56,54,50],"potential":[92,95,94,90]},{"oid":"cd_okochi","name":"大河内 巌","trait":"drama","cost":650000,"look":{"hair":"wavy","hairColor":5,"skin":2,"face":4,"glasses":false,"build":1.1,"height":1.02,"style":"tux"},"profile":"世界の歌劇場を渡り歩いた巨匠。圧倒的な存在感だが、出演料も破格。","abilities":[84,82,80,86],"potential":[88,86,84,90]},{"oid":"cd_ramaud","name":"ソフィー・ラモー","trait":"sound","cost":300000,"look":{"hair":"bun","hairColor":3,"skin":0,"face":0,"glasses":true,"build":0.93,"height":1,"style":"dress"},"profile":"パリ仕込みの響きの魔術師。透明感のあるバランスを作り上げる。","abilities":[64,70,68,62],"potential":[82,88,86,80]}]},"members/personalities":{"_説明":"指揮者の個性（性格）。policy＝得意な本番方針（stable/express/dynamics/balance）、practice＝全体合奏の練習効果の倍率。","conductorTraits":[{"id":"craft","name":"職人型","desc":"正確無比なバトン。「安定重視」の方針で真価を発揮する。","policy":"stable"},{"id":"passion","name":"情熱型","desc":"熱い指揮で団員を鼓舞する。「表現重視」の方針と好相性。","policy":"express"},{"id":"drama","name":"劇場型","desc":"大胆な強弱で聴衆を沸かせる。「ダイナミクス重視」と好相性。","policy":"dynamics"},{"id":"sound","name":"響き重視型","desc":"全体の響きの調和を大切にする。「バランス重視」と好相性。","policy":"balance"},{"id":"teacher","name":"教育者型","desc":"練習の組み立てが巧み。全体合奏の練習効果が高まる。","practice":1.08}]},"quizzes/composers":{"_説明":"作曲家ごとの問題。songs にその作曲家の曲IDを並べると、その曲の練習中に出題されます。","composers":[{"id":"beethoven","name":"ベートーヴェン","songs":["egmont","beet5","beet7","beet3"],"questions":[{"id":"c_beethoven_1","category":"life","question":"ベートーヴェンが生まれた町は？","answer":"ボン","choices":["ボン","ウィーン","ザルツブルク","ライプツィヒ"],"explanation":"ドイツのボンに生まれ、20代でウィーンに移って活躍しました。"},{"id":"c_beethoven_2","category":"life","question":"ベートーヴェンを晩年に苦しめた病気は？","answer":"耳が聞こえなくなった","choices":["耳が聞こえなくなった","目が見えなくなった","手が動かなくなった","声が出なくなった"],"explanation":"30歳前後から難聴が進みましたが、作曲を続け、晩年には第九などの傑作を残しました。"},{"id":"c_beethoven_3","category":"life","question":"ベートーヴェンが完成させた交響曲は全部で何曲？","answer":"9曲","choices":["9曲","41曲","4曲","104曲"],"explanation":"交響曲は第9番「合唱付き」までの9曲です。"}]},{"id":"mozart","name":"モーツァルト","songs":["figaro","mozart41"],"questions":[{"id":"c_mozart_1","category":"life","question":"モーツァルトが生まれた町は？","answer":"ザルツブルク","choices":["ザルツブルク","ウィーン","プラハ","ミュンヘン"],"explanation":"オーストリアのザルツブルクに生まれ、幼い頃から神童としてヨーロッパ各地を旅しました。"},{"id":"c_mozart_2","category":"trivia","question":"モーツァルトの作品に付けられている「K.」の番号は何？","answer":"ケッヘルが作った作品目録の番号","choices":["ケッヘルが作った作品目録の番号","作曲した年","楽器の数","演奏時間"],"explanation":"ケッヘルがおおむね作曲順に整理した作品目録の番号です（例：ジュピター K.551）。"}]},{"id":"rossini","name":"ロッシーニ","songs":["tell"],"questions":[{"id":"c_rossini_1","category":"life","question":"ロッシーニの代表的な喜劇オペラは？","answer":"セビリャの理髪師","choices":["セビリャの理髪師","カルメン","アイーダ","椿姫"],"explanation":"「セビリャの理髪師」はロッシーニの代表作。フィガロが活躍する、「フィガロの結婚」の前日譚にあたる物語です。"}]},{"id":"glinka","name":"グリンカ","songs":["ruslan"],"questions":[]},{"id":"brahms","name":"ブラームス","songs":["academic","hungarian5","brahms1"],"questions":[{"id":"c_brahms_1","category":"life","question":"ブラームスが生まれた町は？","answer":"ハンブルク","choices":["ハンブルク","ウィーン","ベルリン","ボン"],"explanation":"北ドイツの港町ハンブルクに生まれ、後半生はウィーンで過ごしました。"},{"id":"c_brahms_2","category":"life","question":"ブラームスが完成させた交響曲は全部で何曲？","answer":"4曲","choices":["4曲","9曲","2曲","7曲"],"explanation":"交響曲は4曲。第1番の完成には20年以上をかけました。"},{"id":"c_brahms_3","category":"life","question":"ブラームスの才能を見いだし、音楽雑誌で紹介した作曲家は？","answer":"シューマン","choices":["シューマン","ワーグナー","リスト","ショパン"],"explanation":"シューマンが論文「新しい道」でブラームスを紹介し、一躍注目を集めました。"}]},{"id":"wagner","name":"ワーグナー","songs":["meister"],"questions":[{"id":"c_wagner_1","category":"life","question":"ワーグナーが自作の楽劇を上演するために建てた劇場がある町は？","answer":"バイロイト","choices":["バイロイト","ザルツブルク","ミラノ","パリ"],"explanation":"バイロイト祝祭劇場では、今も毎年夏にワーグナー作品だけの音楽祭が開かれています。"}]},{"id":"weber","name":"ウェーバー","songs":["freischutz"],"questions":[{"id":"c_weber_1","category":"trivia","question":"ウェーバーと親戚関係にあった、モーツァルトの妻は？","answer":"コンスタンツェ","choices":["コンスタンツェ","ナンネル","クララ","マリア・テレジア"],"explanation":"モーツァルトの妻コンスタンツェ・ウェーバーは、作曲家ウェーバーのいとこにあたります。"}]},{"id":"mendelssohn","name":"メンデルスゾーン","songs":["hebrides","mendel4"],"questions":[{"id":"c_mendelssohn_1","category":"hist","question":"メンデルスゾーンが1829年に約100年ぶりに復活上演した、バッハの大作は？","answer":"マタイ受難曲","choices":["マタイ受難曲","ロ短調ミサ","ブランデンブルク協奏曲","ゴルトベルク変奏曲"],"explanation":"この上演をきっかけに、忘れられかけていたバッハの音楽が再評価されました。"}]},{"id":"smetana","name":"スメタナ","songs":["vltava"],"questions":[{"id":"c_smetana_1","category":"life","question":"スメタナが『わが祖国』を作曲していた頃に襲われた病気は？","answer":"聴覚を失った","choices":["聴覚を失った","視力を失った","右手がまひした","声が出なくなった"],"explanation":"ベートーヴェンと同じく聴覚を失いながらも、『わが祖国』を完成させました。"},{"id":"c_smetana_2","category":"hist","question":"スメタナやドヴォルザークのように、自国の民謡や歴史を音楽に取り入れた作曲家たちの流れを何と呼ぶ？","answer":"国民楽派","choices":["国民楽派","印象派","ウィーン古典派","新古典主義"],"explanation":"19世紀後半、各国の民族的な特色を音楽で表そうとした作曲家たちを国民楽派と呼びます。"}]},{"id":"dvorak","name":"ドヴォルザーク","songs":["carnival","dvorak9"],"questions":[{"id":"c_dvorak_1","category":"life","question":"ドヴォルザークの才能を認め、出版社に紹介して支えた作曲家は？","answer":"ブラームス","choices":["ブラームス","ワーグナー","チャイコフスキー","ベルリオーズ"],"explanation":"ブラームスの推薦で「スラヴ舞曲」が出版され、ドヴォルザークは国際的に知られるようになりました。"}]},{"id":"sibelius","name":"シベリウス","songs":["finlandia","sibelius2"],"questions":[{"id":"c_sibelius_1","category":"life","question":"シベリウスの祖国は？","answer":"フィンランド","choices":["フィンランド","ノルウェー","スウェーデン","デンマーク"],"explanation":"フィンランドを代表する作曲家で、肖像はかつてのフィンランドの紙幣にも使われました。"}]},{"id":"grieg","name":"グリーグ","songs":["peergynt"],"questions":[{"id":"c_grieg_1","category":"life","question":"グリーグの祖国は？","answer":"ノルウェー","choices":["ノルウェー","フィンランド","デンマーク","アイスランド"],"explanation":"ノルウェーの民俗音楽を作品に取り入れ、ピアノ協奏曲イ短調でも知られます。"}]},{"id":"bizet","name":"ビゼー","songs":["arlesienne"],"questions":[{"id":"c_bizet_1","category":"life","question":"ビゼーの代表作で、闘牛士の歌でも知られるオペラは？","answer":"カルメン","choices":["カルメン","トスカ","椿姫","ファウスト"],"explanation":"「カルメン」はビゼーの最後のオペラ。初演の数か月後にビゼーは36歳で亡くなりました。"}]},{"id":"mussorgsky","name":"ムソルグスキー","songs":["baldmtn"],"questions":[{"id":"c_mussorgsky_1","category":"hist","question":"ムソルグスキーやボロディンらが属した、ロシアの作曲家グループの呼び名は？","answer":"ロシア五人組","choices":["ロシア五人組","フランス六人組","新ウィーン楽派","マンハイム楽派"],"explanation":"バラキレフ、キュイ、ムソルグスキー、ボロディン、リムスキー＝コルサコフの5人です。"},{"id":"c_mussorgsky_2","category":"trivia","question":"ムソルグスキーのピアノ曲「展覧会の絵」を、有名な管弦楽版に編曲したのは？","answer":"ラヴェル","choices":["ラヴェル","ドビュッシー","ストラヴィンスキー","ワーグナー"],"explanation":"ラヴェルの色彩豊かな管弦楽編曲（1922年）によって、世界的な名曲になりました。"}]},{"id":"borodin","name":"ボロディン","songs":["steppes"],"questions":[]},{"id":"tchaikovsky","name":"チャイコフスキー","songs":["romeo","serenade","tchai5","tchai6"],"questions":[{"id":"c_tchaikovsky_1","category":"life","question":"次のうち、チャイコフスキーが作曲したバレエ音楽は？","answer":"くるみ割り人形","choices":["くるみ割り人形","ボレロ","火の鳥","ジゼル"],"explanation":"「白鳥の湖」「眠れる森の美女」「くるみ割り人形」はチャイコフスキーの三大バレエと呼ばれます。"}]},{"id":"elgar","name":"エルガー","songs":["enigma","pomp1"],"questions":[{"id":"c_elgar_1","category":"life","question":"エルガーの祖国は？","answer":"イギリス","choices":["イギリス","アイルランド","アメリカ","カナダ"],"explanation":"イギリスを代表する作曲家で、「愛の挨拶」や「チェロ協奏曲」も有名です。"}]},{"id":"ravel","name":"ラヴェル","songs":["bolero"],"questions":[{"id":"c_ravel_1","category":"life","question":"ラヴェルが特に名手として知られた分野は？","answer":"管弦楽法（オーケストレーション）","choices":["管弦楽法（オーケストレーション）","指揮","オルガン演奏","声楽"],"explanation":"「オーケストラの魔術師」と呼ばれ、楽器の音色を巧みに組み合わせる名手でした。"}]},{"id":"debussy","name":"ドビュッシー","songs":["faune"],"questions":[{"id":"c_debussy_1","category":"hist","question":"ドビュッシーの音楽は、一般にどの様式の代表とされる？","answer":"印象主義","choices":["印象主義","バロック","古典派","十二音音楽"],"explanation":"光や空気の移ろいを描くような響きから、絵画になぞらえて印象主義と呼ばれます。"}]},{"id":"saintsaens","name":"サン＝サーンス","songs":["macabre"],"questions":[{"id":"c_saintsaens_1","category":"life","question":"サン＝サーンスの作品で、「白鳥」などを含む組曲は？","answer":"動物の謝肉祭","choices":["動物の謝肉祭","四季","展覧会の絵","惑星"],"explanation":"「動物の謝肉祭」は14曲からなる楽しい組曲で、「白鳥」はチェロの名曲です。"}]},{"id":"jstrauss","name":"J.シュトラウス2世","songs":["fledermaus"],"questions":[{"id":"c_jstrauss_1","category":"life","question":"ヨハン・シュトラウス2世の異名は？","answer":"ワルツ王","choices":["ワルツ王","歌曲王","交響曲の父","ピアノの詩人"],"explanation":"「美しく青きドナウ」など数多くのウィンナ・ワルツを書き、ワルツ王と呼ばれました。"}]},{"id":"mascagni","name":"マスカーニ","songs":["cavalleria"],"questions":[]},{"id":"bach","name":"J.S.バッハ","songs":["air"],"questions":[{"id":"c_bach_1","category":"life","question":"J.S.バッハが後半生、音楽監督（カントル）を務めた教会がある町は？","answer":"ライプツィヒ","choices":["ライプツィヒ","ウィーン","ハンブルク","ボン"],"explanation":"ライプツィヒの聖トーマス教会のカントルとして、多くの教会カンタータを書きました。"},{"id":"c_bach_2","category":"hist","question":"バッハが活躍した時代の音楽様式は？","answer":"バロック","choices":["バロック","古典派","ロマン派","印象主義"],"explanation":"1600年頃から1750年頃（バッハの没年）までの音楽を、一般にバロック音楽と呼びます。"}]},{"id":"schubert","name":"シューベルト","songs":["rosamunde","schubert8"],"questions":[{"id":"c_schubert_1","category":"life","question":"シューベルトは、特にどの分野で数多くの作品を残し「歌曲王」と呼ばれた？","answer":"歌曲（リート）","choices":["歌曲（リート）","オペラ","バレエ","オルガン曲"],"explanation":"「魔王」「野ばら」など600曲を超える歌曲を残しました。31歳の若さで亡くなっています。"}]},{"id":"humperdinck","name":"フンパーディンク","songs":["hansel"],"questions":[]},{"id":"barber","name":"バーバー","songs":["adagio"],"questions":[{"id":"c_barber_1","category":"life","question":"サミュエル・バーバーの祖国は？","answer":"アメリカ","choices":["アメリカ","イギリス","カナダ","オーストラリア"],"explanation":"20世紀アメリカを代表する作曲家のひとりです。"}]},{"id":"berlioz","name":"ベルリオーズ","songs":["fantastique"],"questions":[{"id":"c_berlioz_1","category":"life","question":"ベルリオーズが著した、楽器の使い方を解説した有名な本は？","answer":"管弦楽法（大管弦楽法）","choices":["管弦楽法（大管弦楽法）","和声学","音楽の喜び","楽典入門"],"explanation":"楽器ごとの特徴や組み合わせ方を論じた本で、後の作曲家たちに大きな影響を与えました。"}]},{"id":"mahler","name":"マーラー","songs":["mahler1"],"questions":[{"id":"c_mahler_1","category":"life","question":"マーラーは作曲家であると同時に、何として名声を得ていた？","answer":"指揮者","choices":["指揮者","ピアニスト","音楽評論家","オルガン奏者"],"explanation":"ウィーン宮廷歌劇場の音楽監督などを務めた、当代一流の指揮者でした。"}]},{"id":"rachmaninoff","name":"ラフマニノフ","songs":["rach2"],"questions":[{"id":"c_rachmaninoff_1","category":"life","question":"ラフマニノフは作曲家であると同時に、何として世界的に活躍した？","answer":"ピアニスト","choices":["ピアニスト","ヴァイオリニスト","オペラ歌手","指揮者のみ"],"explanation":"大きな手を持つ名ピアニストで、自作のピアノ協奏曲を自ら演奏しました。"},{"id":"c_rachmaninoff_2","category":"bg","question":"交響曲第2番の大成功の前に、ラフマニノフを深く落ち込ませた出来事は？","answer":"交響曲第1番の初演の失敗","choices":["交響曲第1番の初演の失敗","恩師との決別","祖国からの追放","演奏旅行中の事故"],"explanation":"1897年の第1番の初演が不評で、しばらく作曲ができなくなりました。"}]}]},"quizzes/general":{"_説明":"音楽史・音楽用語・楽典などの一般問題（どの曲の練習でも出題）。categories は問題の分類名です。","categories":{"life":"作曲家の生涯","bg":"作曲の背景","form":"曲の構成・特徴","orch":"楽器編成","hist":"音楽史・様式","term":"音楽用語","theory":"楽典","trivia":"豆知識"},"questions":[{"id":"g_8","category":"hist","question":"100曲以上の交響曲を書き、「交響曲の父」と呼ばれる作曲家は？","answer":"ハイドン","choices":["ハイドン","バッハ","ヘンデル","ヴィヴァルディ"],"explanation":"ハイドンは交響曲の形式を確立し、モーツァルトやベートーヴェンに大きな影響を与えました。"},{"id":"g_9","category":"hist","question":"ハイドン・モーツァルト・ベートーヴェンに代表される音楽様式は？","answer":"古典派","choices":["古典派","バロック","ロマン派","印象主義"],"explanation":"18世紀後半から19世紀初めの、均整のとれた形式を重んじる様式です。"},{"id":"g_10","category":"term","question":"「Andante（アンダンテ）」の意味は？","answer":"歩くような速さで","choices":["歩くような速さで","非常に速く","できるだけ弱く","だんだん速く"],"explanation":"イタリア語で「歩く」に由来する速度記号です。"},{"id":"g_11","category":"term","question":"「crescendo（クレッシェンド）」の意味は？","answer":"だんだん強く","choices":["だんだん強く","だんだん弱く","だんだん速く","だんだん遅く"],"explanation":"反対に「だんだん弱く」はデクレッシェンド（ディミヌエンド）です。"},{"id":"g_12","category":"term","question":"弦楽器で「pizzicato（ピッツィカート）」と書かれていたら？","answer":"弦を指ではじく","choices":["弦を指ではじく","弓の木の部分で弾く","弱音器を付ける","駒の近くで弾く"],"explanation":"弓を使わず、指で弦をはじいて音を出す奏法です。弓に戻るときは「arco（アルコ）」と書かれます。"},{"id":"g_13","category":"term","question":"「tutti（トゥッティ）」の意味は？","answer":"全員で","choices":["全員で","独奏で","静かに","繰り返して"],"explanation":"イタリア語で「すべて」。独奏（ソロ）に対して、全員で演奏する部分を指します。"},{"id":"g_14","category":"term","question":"楽章の終わりに書かれた「attacca（アタッカ）」の意味は？","answer":"休まずすぐに次へ続ける","choices":["休まずすぐに次へ続ける","強いアクセントを付ける","最初に戻る","ここで終わる"],"explanation":"楽章の間を空けずに、すぐ次の楽章を始める指示です。"},{"id":"g_15","category":"term","question":"音符や休符の上に付く「フェルマータ」の意味は？","answer":"その音をほどよく延ばす","choices":["その音をほどよく延ばす","その音を短く切る","その音を強く","その音を省略する"],"explanation":"程よく延ばす記号で、どのくらい延ばすかは指揮者や奏者の解釈に委ねられます。"},{"id":"g_16","category":"term","question":"「con sordino（コン・ソルディーノ）」の意味は？","answer":"弱音器を付けて","choices":["弱音器を付けて","弓を使わずに","全員で","テンポを自由に"],"explanation":"弱音器（ミュート）を付けて、柔らかく霞んだ音色にする指示です。"},{"id":"g_17","category":"term","question":"「divisi（ディヴィジ）」と書かれていたら？","answer":"同じパートを2つ以上に分けて演奏する","choices":["同じパートを2つ以上に分けて演奏する","その部分を省略する","全員で同じ音を弾く","独奏者だけが弾く"],"explanation":"同じパートの奏者を分け、それぞれ別の音を受け持つ指示です。"},{"id":"g_18","category":"theory","question":"ハ長調の「平行調」は？","answer":"イ短調","choices":["イ短調","ハ短調","ト長調","ヘ長調"],"explanation":"同じ調号（ハ長調・イ短調ともに♯♭なし）を持つ長調と短調の関係を平行調と呼びます。"},{"id":"g_19","category":"theory","question":"ハ長調の「同主調」は？","answer":"ハ短調","choices":["ハ短調","イ短調","ト長調","ホ短調"],"explanation":"同じ主音（ド）を持つ長調と短調の関係を同主調と呼びます。"},{"id":"g_20","category":"theory","question":"ある調の「属音」は、主音から数えて何番目の音？","answer":"5番目","choices":["5番目","2番目","4番目","7番目"],"explanation":"ハ長調ならソが属音。主音へ戻ろうとする力が強く、和声の要となる音です。"},{"id":"g_21","category":"theory","question":"ソナタ形式の3つの部分の正しい順番は？","answer":"提示部 → 展開部 → 再現部","choices":["提示部 → 展開部 → 再現部","展開部 → 提示部 → 再現部","再現部 → 提示部 → 展開部","提示部 → 再現部 → 展開部"],"explanation":"主題を示し（提示部）、発展させ（展開部）、再び戻ってくる（再現部）という構成です。交響曲の第1楽章によく使われます。"},{"id":"g_22","category":"theory","question":"4分の3拍子の1小節に入る音の長さの合計は？","answer":"4分音符3つ分","choices":["4分音符3つ分","4分音符4つ分","8分音符3つ分","2分音符3つ分"],"explanation":"分母が「4分音符を1拍」、分子が「1小節に3拍」を表します。"},{"id":"g_23","category":"theory","question":"交響曲の楽章数として、古典派以降もっとも一般的なのは？","answer":"4楽章","choices":["4楽章","2楽章","6楽章","1楽章"],"explanation":"速い楽章・ゆるやかな楽章・舞曲（メヌエットやスケルツォ）・速い終楽章の4楽章が基本形です。"},{"id":"g_24","category":"trivia","question":"指揮者が使う指揮棒は、一般に何と呼ばれる？","answer":"タクト","choices":["タクト","バトンマスター","スコア","メトロノーム"],"explanation":"ドイツ語の「タクトシュトック」に由来します。なお、指揮者用の全パートが載った楽譜は「スコア（総譜）」です。"}]},"quizzes/instruments":{"_説明":"楽器・楽器編成に関する問題（どの曲の練習でも出題）。","questions":[{"id":"g_1","category":"orch","question":"オーケストラが演奏前に音合わせ（チューニング）をするとき、基準の音を出す楽器は？","answer":"オーボエ","choices":["オーボエ","ピアノ","トランペット","コントラバス"],"explanation":"音程が安定し、よく通る音色のオーボエがA（ラ）の音を出すのが一般的です。"},{"id":"g_2","category":"orch","question":"オーケストラの弦楽器で、最も低い音域を受け持つのは？","answer":"コントラバス","choices":["コントラバス","チェロ","ヴィオラ","ファゴット"],"explanation":"弦楽器はヴァイオリン・ヴィオラ・チェロ・コントラバスの順に低くなります。"},{"id":"g_3","category":"orch","question":"コンサートマスターは、通常どのパートの首席奏者？","answer":"第1ヴァイオリン","choices":["第1ヴァイオリン","チェロ","オーボエ","ティンパニ"],"explanation":"第1ヴァイオリンの首席奏者がオーケストラ全体をまとめ、指揮者と団員をつなぎます。"},{"id":"g_4","category":"orch","question":"ペダルなどで音の高さを変えられる、オーケストラの代表的な打楽器は？","answer":"ティンパニ","choices":["ティンパニ","大太鼓","シンバル","トライアングル"],"explanation":"ティンパニは決まった音程を持つ太鼓で、ペダルで素早く音の高さを変えられます。"},{"id":"g_5","category":"orch","question":"木管五重奏（フルート・オーボエ・クラリネット・ファゴット＋もう1つ）に加わる金管楽器は？","answer":"ホルン","choices":["ホルン","トランペット","トロンボーン","テューバ"],"explanation":"ホルンは木管楽器ともよく溶け合う音色のため、木管五重奏の一員になります。"},{"id":"g_6","category":"orch","question":"書かれた音と実際に鳴る音の高さが異なる「移調楽器」はどれ？","answer":"クラリネット","choices":["クラリネット","フルート","ヴァイオリン","オーボエ"],"explanation":"B♭管のクラリネットは、楽譜のドを吹くと実際にはシ♭が鳴ります。"},{"id":"g_7","category":"orch","question":"ファゴットは何の仲間の楽器？","answer":"ダブルリードの木管楽器","choices":["ダブルリードの木管楽器","金管楽器","弦楽器","打楽器"],"explanation":"オーボエと同じく2枚のリードを振動させて音を出す、低音の木管楽器です。"}]},"quizzes/songs":{"_説明":"曲ごとの問題。キーは曲ID（data/songs の id）。answer は choices のどれか1つと同じ文字列にします。","questions":{"egmont":[{"id":"egmont_1","category":"bg","question":"序曲「エグモント」は、誰の戯曲『エグモント』のための音楽として作曲された？","answer":"ゲーテ","choices":["ゲーテ","シラー","シェイクスピア","レッシング"],"explanation":"ベートーヴェンはゲーテの戯曲『エグモント』の上演のために、序曲を含む付随音楽を作曲しました。"},{"id":"egmont_2","category":"bg","question":"主人公エグモント伯は、どの地域の人々のために圧政に立ち向かった人物？","answer":"ネーデルラント（オランダ）","choices":["ネーデルラント（オランダ）","スコットランド","ボヘミア","ポーランド"],"explanation":"16世紀、スペインの支配に抵抗したネーデルラントの貴族です。自由のために戦う英雄像がベートーヴェンの心をとらえました。"},{"id":"egmont_3","category":"form","question":"序曲「エグモント」の調は？（最後は明るい長調の「勝利」で終わる）","answer":"ヘ短調","choices":["ヘ短調","ハ短調","ニ短調","ト短調"],"explanation":"重々しいヘ短調で始まり、終結部ではヘ長調に転じて勝利を高らかに歌い上げます。"}],"figaro":[{"id":"figaro_1","category":"bg","question":"歌劇「フィガロの結婚」の原作の戯曲を書いたのは？","answer":"ボーマルシェ","choices":["ボーマルシェ","モリエール","ゴルドーニ","シラー"],"explanation":"フランスの劇作家ボーマルシェの戯曲が原作です。貴族を風刺する内容で、当時は上演が問題視されたこともありました。"},{"id":"figaro_2","category":"bg","question":"モーツァルトと組んで「フィガロの結婚」の台本を書いた人物は？","answer":"ロレンツォ・ダ・ポンテ","choices":["ロレンツォ・ダ・ポンテ","シカネーダー","メタスタージオ","ボーイト"],"explanation":"ダ・ポンテは「ドン・ジョヴァンニ」「コジ・ファン・トゥッテ」の台本も手がけ、モーツァルトの名コンビでした。"},{"id":"figaro_3","category":"term","question":"序曲に書かれた速度記号「Presto（プレスト）」の意味は？","answer":"非常に速く","choices":["非常に速く","ゆるやかに","歩くような速さで","だんだん遅く"],"explanation":"Prestoは「非常に速く」。弦楽器が小声でささやくように始まり、一気に駆け抜ける序曲です。"}],"tell":[{"id":"tell_1","category":"bg","question":"「ウィリアム・テル」は、ロッシーニにとってどんな作品？","answer":"最後に作曲したオペラ","choices":["最後に作曲したオペラ","最初に作曲したオペラ","唯一の喜劇オペラ","未完のまま残ったオペラ"],"explanation":"ロッシーニは37歳で「ウィリアム・テル」を発表したあと、新しいオペラを書きませんでした。"},{"id":"tell_2","category":"orch","question":"序曲の冒頭、夜明けの情景を独奏で奏でるのはどの楽器の奏者たち？","answer":"チェロ","choices":["チェロ","ホルン","フルート","トランペット"],"explanation":"5人の独奏チェロによる静かなアンサンブルで始まり、嵐・牧歌・スイス軍の行進へと続きます。"},{"id":"tell_3","category":"bg","question":"ウィリアム・テルは、どこの国の伝説的英雄？","answer":"スイス","choices":["スイス","オーストリア","イタリア","ドイツ"],"explanation":"息子の頭上のリンゴを弓で射抜いた逸話で知られる、スイス独立の伝説の英雄です。"}],"ruslan":[{"id":"ruslan_1","category":"bg","question":"歌劇「ルスランとリュドミラ」の原作となった叙事詩の作者は？","answer":"プーシキン","choices":["プーシキン","トルストイ","ゴーゴリ","ドストエフスキー"],"explanation":"ロシアの国民的詩人プーシキンの叙事詩が原作です。"},{"id":"ruslan_2","category":"life","question":"作曲者グリンカは、しばしば何と呼ばれる？","answer":"ロシア音楽の父","choices":["ロシア音楽の父","交響曲の父","ワルツ王","歌曲王"],"explanation":"ロシアの題材と民謡的な旋律を取り入れたオペラで、後のロシア音楽の流れをつくったことからそう呼ばれます。"}],"academic":[{"id":"academic_1","category":"bg","question":"ブラームスが「大学祝典序曲」を書いたきっかけは？","answer":"ブレスラウ大学から名誉博士号を贈られた","choices":["ブレスラウ大学から名誉博士号を贈られた","母校の創立記念式典","大学の音楽教授に就任した","学生オーケストラからの依頼"],"explanation":"名誉博士号の返礼として作曲され、1881年にブレスラウ大学で初演されました。"},{"id":"academic_2","category":"form","question":"曲の最後に堂々と登場する、有名な学生歌は？","answer":"ガウデアムス（いざ楽しまん）","choices":["ガウデアムス（いざ楽しまん）","蛍の光","歓喜の歌","ラ・マルセイエーズ"],"explanation":"当時の学生歌がいくつも引用され、最後に「ガウデアムス」が全オーケストラで華やかに歌われます。"},{"id":"academic_3","category":"trivia","question":"ブラームスが「大学祝典序曲」と同じ時期に書いた、対照的な性格の序曲は？","answer":"悲劇的序曲","choices":["悲劇的序曲","英雄序曲","謝肉祭序曲","祝典序曲「1812年」"],"explanation":"ブラームスは「一方は泣き、一方は笑う」と、2つの序曲を対にして語りました。"}],"meister":[{"id":"meister_1","category":"bg","question":"楽劇「ニュルンベルクのマイスタージンガー」で、物語の中心となる親方歌手ハンス・ザックスの本業は？","answer":"靴屋","choices":["靴屋","パン屋","鍛冶屋","仕立屋"],"explanation":"ハンス・ザックスは16世紀に実在した靴職人の詩人・歌手です。"},{"id":"meister_2","category":"form","question":"前奏曲の調は？","answer":"ハ長調","choices":["ハ長調","ニ長調","変ホ長調","ト長調"],"explanation":"輝かしいハ長調で始まり、劇中の主要な旋律がいくつも重ね合わされます。"},{"id":"meister_3","category":"term","question":"ワーグナーが多用した、人物や物・考えを表す短い旋律を何と呼ぶ？","answer":"ライトモティーフ（示導動機）","choices":["ライトモティーフ（示導動機）","カデンツァ","オスティナート","リトルネロ"],"explanation":"登場人物や思想に固有の動機を結びつけ、音楽で物語を語る手法です。"}],"freischutz":[{"id":"freischutz_1","category":"bg","question":"歌劇「魔弾の射手」の主人公マックスの職業は？","answer":"狩人（猟師）","choices":["狩人（猟師）","騎士","粉屋","船乗り"],"explanation":"射撃大会で勝つために、悪魔の力を借りた「魔弾」を手に入れてしまう若い狩人の物語です。"},{"id":"freischutz_2","category":"orch","question":"序曲の序奏で、深い森の雰囲気を描く有名な四重奏を奏でる楽器は？","answer":"ホルン","choices":["ホルン","トロンボーン","クラリネット","ファゴット"],"explanation":"4本のホルンによる穏やかな合奏は、ドイツの森を象徴する響きとして知られています。"},{"id":"freischutz_3","category":"hist","question":"「魔弾の射手」は、どの音楽様式を代表するオペラとされる？","answer":"ドイツ・ロマン派","choices":["ドイツ・ロマン派","イタリアのベルカント","フランスのグランド・オペラ","バロック・オペラ"],"explanation":"民間伝承・森・超自然を題材にし、ドイツ・ロマン派オペラの出発点とされます。"}],"hebrides":[{"id":"hebrides_1","category":"bg","question":"メンデルスゾーンが序曲「フィンガルの洞窟」を着想したのは、どこを旅したとき？","answer":"スコットランド","choices":["スコットランド","イタリア","スイス","アイルランド"],"explanation":"1829年、スコットランドのヘブリディーズ諸島を訪れた体験から生まれました。"},{"id":"hebrides_2","category":"form","question":"序曲「フィンガルの洞窟」の調は？","answer":"ロ短調","choices":["ロ短調","ニ長調","ハ短調","イ長調"],"explanation":"ロ短調の寄せては返す波のような動機が、曲全体を通して現れます。"}],"vltava":[{"id":"vltava_1","category":"form","question":"「モルダウ」は、スメタナの連作交響詩『わが祖国』の何曲目？","answer":"第2曲","choices":["第2曲","第1曲","第4曲","第6曲"],"explanation":"『わが祖国』は6曲からなり、「モルダウ」はその第2曲です。"},{"id":"vltava_2","category":"bg","question":"モルダウ（ヴルタヴァ）川が流れる、チェコの首都は？","answer":"プラハ","choices":["プラハ","ウィーン","ブダペスト","ワルシャワ"],"explanation":"源流から始まり、農村や婚礼の踊りを経て、プラハの街を流れていく様子が描かれます。"},{"id":"vltava_3","category":"orch","question":"曲の冒頭、川の2つの源流を表すのはどの楽器？","answer":"フルート","choices":["フルート","オーボエ","ホルン","ハープ"],"explanation":"2本のフルートが湧き出る水を描き、やがてクラリネットが加わって流れが合わさります。"}],"carnival":[{"id":"carnival_1","category":"bg","question":"序曲「謝肉祭」は、ドヴォルザークの3つの序曲からなる連作の1曲。連作の名前は？","answer":"自然と人生と愛","choices":["自然と人生と愛","四季","わが祖国","スラヴ舞曲"],"explanation":"「自然の中で」「謝肉祭」「オセロ」の3曲で、共通の「自然の動機」が使われています。"},{"id":"carnival_2","category":"form","question":"序曲「謝肉祭」の調は？","answer":"イ長調","choices":["イ長調","ハ短調","ニ短調","ヘ長調"],"explanation":"明るいイ長調で、タンバリンやトライアングルも加わり祭りのにぎわいを描きます。"}],"finlandia":[{"id":"finlandia_1","category":"bg","question":"「フィンランディア」が作曲された当時、フィンランドを支配していた国は？","answer":"ロシア帝国","choices":["ロシア帝国","スウェーデン王国","ドイツ帝国","デンマーク王国"],"explanation":"帝政ロシアの圧政が強まる中で作られ、フィンランドの人々の愛国心を象徴する曲になりました。"},{"id":"finlandia_2","category":"trivia","question":"中間部の祈るような旋律は、のちに何として親しまれている？","answer":"歌詞を付けた合唱曲（フィンランディア賛歌）","choices":["歌詞を付けた合唱曲（フィンランディア賛歌）","国際連合の公式歌","オリンピック賛歌","北欧の結婚行進曲"],"explanation":"後に歌詞が付けられ、「フィンランディア賛歌」として広く歌われています。"},{"id":"finlandia_3","category":"orch","question":"曲の冒頭、圧政を表す重苦しい和音を響かせるのは？","answer":"金管楽器","choices":["金管楽器","弦楽器のピッツィカート","木管楽器","ハープとチェレスタ"],"explanation":"金管楽器の重い和音で始まり、やがて木管・弦が祈りのような旋律で応えます。"}],"peergynt":[{"id":"peergynt_1","category":"bg","question":"「ペール・ギュント」は、誰の戯曲のための音楽？","answer":"イプセン","choices":["イプセン","ストリンドベリ","チェーホフ","アンデルセン"],"explanation":"ノルウェーの劇作家イプセンの依頼で、グリーグが劇の付随音楽を作曲しました。"},{"id":"peergynt_2","category":"form","question":"第1組曲の第1曲は？","answer":"朝","choices":["朝","オーセの死","アニトラの踊り","山の魔王の宮殿にて"],"explanation":"第1組曲は「朝」「オーセの死」「アニトラの踊り」「山の魔王の宮殿にて」の4曲です。"},{"id":"peergynt_3","category":"orch","question":"「朝」の有名な旋律を最初に奏でる楽器は？","answer":"フルート","choices":["フルート","ヴァイオリン","ホルン","クラリネット"],"explanation":"フルートとオーボエが旋律を受け渡しながら、少しずつ夜が明けていく様子を描きます。"}],"arlesienne":[{"id":"arlesienne_1","category":"bg","question":"「アルルの女」の原作の戯曲を書いたのは？","answer":"アルフォンス・ドーデ","choices":["アルフォンス・ドーデ","ヴィクトル・ユーゴー","メリメ","デュマ"],"explanation":"ドーデの戯曲の付随音楽をビゼーが作曲し、第2組曲はビゼーの没後に友人ギローが編みました。"},{"id":"arlesienne_2","category":"orch","question":"第2組曲の「メヌエット」で美しい旋律を独奏する楽器は？","answer":"フルート","choices":["フルート","オーボエ","ヴァイオリン","トランペット"],"explanation":"ハープの伴奏に乗ってフルートが歌います。この曲はギローが別の歌劇から転用したものです。"},{"id":"arlesienne_3","category":"form","question":"終曲「ファランドール」とは何？","answer":"南フランス（プロヴァンス）の民俗舞曲","choices":["南フランス（プロヴァンス）の民俗舞曲","スペインの闘牛の音楽","ドイツの舞曲","宮廷の儀式の行進曲"],"explanation":"プロヴァンス地方の踊りで、冒頭の「王の行進」の旋律と組み合わされて盛り上がります。"}],"baldmtn":[{"id":"baldmtn_1","category":"bg","question":"交響詩「禿山の一夜」で、魔物たちが集まるのはいつの夜？","answer":"聖ヨハネ祭の前夜","choices":["聖ヨハネ祭の前夜","クリスマスの夜","大晦日の夜","復活祭の前夜"],"explanation":"夏至の頃の聖ヨハネ祭前夜に、魔物たちが禿山に集まって宴を開くという伝説に基づきます。"},{"id":"baldmtn_2","category":"form","question":"一般に演奏されるリムスキー＝コルサコフ版で、魔物の宴を終わらせるものは？","answer":"夜明けを告げる教会の鐘","choices":["夜明けを告げる教会の鐘","雷鳴","天使の合唱","雄鶏の鳴き声を表すトランペット"],"explanation":"鐘の音とともに夜が明け、魔物たちは去り、静かな音楽で曲を閉じます。"}],"steppes":[{"id":"steppes_1","category":"form","question":"「中央アジアの草原にて」で重ね合わされる2つの旋律の性格は？","answer":"ロシア風の旋律と東洋風の旋律","choices":["ロシア風の旋律と東洋風の旋律","行進曲と子守歌","聖歌と民謡","ワルツとポルカ"],"explanation":"別々に現れたロシア風と東洋風の旋律が、後半で同時に重なり合います。"},{"id":"steppes_2","category":"orch","question":"東洋風の旋律を最初に奏でる楽器は？","answer":"イングリッシュホルン","choices":["イングリッシュホルン","トランペット","ヴィオラ","ピッコロ"],"explanation":"ロシア風の旋律はクラリネット、東洋風の旋律はイングリッシュホルンで奏でられます。"},{"id":"steppes_3","category":"life","question":"作曲者ボロディンの本職は？","answer":"化学者","choices":["化学者","医師","海軍士官","法律家"],"explanation":"ボロディンは化学者として大学で教えながら、余暇に作曲をしていました。"}],"romeo":[{"id":"romeo_1","category":"bg","question":"チャイコフスキーに幻想序曲「ロメオとジュリエット」の作曲を勧めたのは？","answer":"バラキレフ","choices":["バラキレフ","リムスキー＝コルサコフ","ラフマニノフ","ルビンシテイン"],"explanation":"ロシア五人組のリーダー、バラキレフが題材と構成を助言しました。"},{"id":"romeo_2","category":"orch","question":"有名な「愛のテーマ」を最初に奏でる組み合わせは？","answer":"イングリッシュホルンと弱音器付きのヴィオラ","choices":["イングリッシュホルンと弱音器付きのヴィオラ","トランペットとトロンボーン","フルートとハープ","ピッコロとシロフォン"],"explanation":"イングリッシュホルンとヴィオラの柔らかい音色で、恋人たちの愛が歌われます。"}],"serenade":[{"id":"serenade_1","category":"orch","question":"チャイコフスキー「弦楽セレナード」の編成は？","answer":"弦楽器だけ","choices":["弦楽器だけ","弦楽器と木管楽器","弦楽器とハープ","オーケストラ全体"],"explanation":"弦楽合奏のために書かれ、弦楽器だけで豊かな響きを生み出します。"},{"id":"serenade_2","category":"form","question":"第2楽章は何の舞曲？","answer":"ワルツ","choices":["ワルツ","メヌエット","ポロネーズ","マズルカ"],"explanation":"優雅なワルツで、単独でもよく演奏されます。"},{"id":"serenade_3","category":"life","question":"チャイコフスキーが第1楽章を「敬意を表して」書いたと語った、敬愛する作曲家は？","answer":"モーツァルト","choices":["モーツァルト","ベートーヴェン","バッハ","ハイドン"],"explanation":"チャイコフスキーはモーツァルトを深く敬愛し、その様式への敬意を込めたと述べています。"}],"enigma":[{"id":"enigma_1","category":"bg","question":"エルガー「エニグマ変奏曲」の各変奏は、何を描いている？","answer":"作曲者の友人たちや妻の姿","choices":["作曲者の友人たちや妻の姿","イギリス各地の風景","四季の移り変わり","歴代の国王"],"explanation":"各変奏には友人たちのイニシャルなどが付けられ、それぞれの人柄が音楽で描かれています。"},{"id":"enigma_2","category":"form","question":"最も有名で、追悼の場でも演奏される第9変奏の名前は？","answer":"ニムロッド","choices":["ニムロッド","ドラベッラ","ロマンツァ","トロイト"],"explanation":"友人イェーガーを描いた変奏で、名前の由来は聖書の狩人ニムロデです。"},{"id":"enigma_3","category":"form","question":"「エニグマ変奏曲」の構成は？","answer":"主題と14の変奏","choices":["主題と14の変奏","主題と6の変奏","4つの楽章","序曲と3つの舞曲"],"explanation":"主題と14の変奏からなり、最後の変奏はエルガー自身を描いています。"}],"bolero":[{"id":"bolero_1","category":"bg","question":"「ボレロ」はもともと何のために作曲された？","answer":"バレエ（舞踊家イダ・ルビンシュタインの依頼）","choices":["バレエ（舞踊家イダ・ルビンシュタインの依頼）","オペラの間奏曲","映画音楽","軍楽隊の行進"],"explanation":"舞踊家イダ・ルビンシュタインのためのバレエ音楽として1928年に作曲されました。"},{"id":"bolero_2","category":"orch","question":"曲の最初から最後まで、同じリズムを刻み続ける楽器は？","answer":"小太鼓（スネアドラム）","choices":["小太鼓（スネアドラム）","ティンパニ","大太鼓","トライアングル"],"explanation":"小太鼓が一定のリズムを刻み続け、その上で旋律が楽器を替えながら繰り返されます。"},{"id":"bolero_3","category":"theory","question":"「ボレロ」の拍子は？","answer":"4分の3拍子","choices":["4分の3拍子","4分の4拍子","8分の6拍子","4分の2拍子"],"explanation":"スペインの舞曲ボレロにならった3拍子です。"},{"id":"bolero_4","category":"form","question":"「ボレロ」の大きな特徴は？","answer":"同じ旋律を繰り返しながら、楽器を増やし続けて大きく盛り上がる","choices":["同じ旋律を繰り返しながら、楽器を増やし続けて大きく盛り上がる","速さがどんどん上がっていく","途中で何度も曲調が変わる","最後は静かに消えていく"],"explanation":"速さはほぼ一定のまま、楽器の組み合わせと音量の変化だけで巨大なクレッシェンドを作ります。"}],"faune":[{"id":"faune_1","category":"bg","question":"「牧神の午後への前奏曲」が題材にした詩の作者は？","answer":"マラルメ","choices":["マラルメ","ボードレール","ランボー","ヴェルレーヌ"],"explanation":"フランスの詩人マラルメの詩『牧神の午後』の世界を音楽にしています。"},{"id":"faune_2","category":"orch","question":"曲の冒頭、けだるい旋律を独奏する楽器は？","answer":"フルート","choices":["フルート","オーボエ","クラリネット","ヴァイオリン"],"explanation":"フルート独奏の半音階的な旋律は、20世紀音楽の始まりとも言われます。"}],"macabre":[{"id":"macabre_1","category":"orch","question":"「死の舞踏」で独奏ヴァイオリンに施される特別な工夫は？","answer":"いちばん高い弦を半音低く調弦する","choices":["いちばん高い弦を半音低く調弦する","弓を使わず指ではじき続ける","弱音器を付けたまま弾く","弦を1本外して弾く"],"explanation":"最高弦（E線）をE♭に下げるスコルダトゥーラにより、不気味な響きの和音を生み出します。"},{"id":"macabre_2","category":"orch","question":"骸骨たちの骨がカタカタ鳴る様子を表す打楽器は？","answer":"シロフォン（木琴）","choices":["シロフォン（木琴）","グロッケンシュピール","カスタネット","タンバリン"],"explanation":"シロフォンの乾いた音が骨の音を表します。サン＝サーンスは後に「動物の謝肉祭」の「化石」でこの旋律を引用しました。"},{"id":"macabre_3","category":"form","question":"冒頭で真夜中を告げる時計の鐘を表すのは？","answer":"ハープが同じ音を12回鳴らす","choices":["ハープが同じ音を12回鳴らす","ティンパニの連打","チューブラーベルの和音","トランペットのファンファーレ"],"explanation":"ハープが12回同じ音を鳴らして真夜中を告げ、死神が登場します。"}],"hungarian5":[{"id":"hungarian5_1","category":"bg","question":"ブラームス「ハンガリー舞曲」の原曲の編成は？","answer":"ピアノ連弾","choices":["ピアノ連弾","弦楽四重奏","管弦楽","ヴァイオリンとピアノ"],"explanation":"もとはピアノ連弾曲集で、後にさまざまな編成に編曲されて親しまれています。"},{"id":"hungarian5_2","category":"bg","question":"ハンガリー舞曲が素材にした音楽は？","answer":"ハンガリーのロマ（ジプシー）楽団の音楽","choices":["ハンガリーのロマ（ジプシー）楽団の音楽","ハンガリーの宮廷音楽","ルネサンスの舞曲","ハンガリー国歌"],"explanation":"若きブラームスが演奏旅行で触れた、ロマの楽団が演奏するハンガリー風の音楽が素材です。"}],"pomp1":[{"id":"pomp1_1","category":"trivia","question":"「威風堂々」第1番の中間部の旋律に歌詞を付けた愛唱歌は？","answer":"希望と栄光の国","choices":["希望と栄光の国","ルール・ブリタニア","エルサレム","ゴッド・セイブ・ザ・キング"],"explanation":"戴冠式頌歌に転用され「希望と栄光の国」として、イギリスの第2の国歌とも呼ばれます。"},{"id":"pomp1_2","category":"bg","question":"「威風堂々（Pomp and Circumstance）」という題名の由来は？","answer":"シェイクスピア『オセロ』の台詞","choices":["シェイクスピア『オセロ』の台詞","イギリス国王の言葉","聖書の一節","エルガー自身の日記"],"explanation":"『オセロ』の台詞「誉れある戦の威風堂々たる様」から取られています。"}],"fledermaus":[{"id":"fledermaus_1","category":"trivia","question":"喜歌劇「こうもり」が、ウィーンなどで伝統的に上演される時期は？","answer":"大晦日（年末年始）","choices":["大晦日（年末年始）","復活祭","真夏の音楽祭","収穫祭"],"explanation":"ウィーン国立歌劇場では毎年大晦日に上演されるなど、年末年始の定番の演目です。"},{"id":"fledermaus_2","category":"hist","question":"「こうもり」のジャンル「喜歌劇（オペレッタ）」の特徴は？","answer":"台詞と歌が交互に進む、軽妙な娯楽作品","choices":["台詞と歌が交互に進む、軽妙な娯楽作品","全編が歌だけで進む悲劇","歌のない舞踊劇","宗教的な題材の合唱劇"],"explanation":"オペレッタは台詞を交えた軽い喜劇的な歌劇で、ウィーンで大いに栄えました。"}],"cavalleria":[{"id":"cavalleria_1","category":"bg","question":"「カヴァレリア・ルスティカーナ」の舞台は？","answer":"シチリアの村","choices":["シチリアの村","ヴェネツィアの宮殿","ローマの古代闘技場","ミラノの劇場"],"explanation":"復活祭の日のシチリアの村で起こる、愛と嫉妬の悲劇です。"},{"id":"cavalleria_2","category":"hist","question":"このオペラは、どの潮流を代表する作品？","answer":"ヴェリズモ（写実主義）","choices":["ヴェリズモ（写実主義）","ベルカント","バロック・オペラ","印象主義"],"explanation":"庶民の日常と激しい感情を写実的に描くヴェリズモ・オペラの代表作です。"}],"air":[{"id":"air_1","category":"bg","question":"「G線上のアリア」の原曲は？","answer":"管弦楽組曲第3番の「エア」","choices":["管弦楽組曲第3番の「エア」","ブランデンブルク協奏曲第3番","マタイ受難曲のアリア","無伴奏チェロ組曲第1番"],"explanation":"バッハの管弦楽組曲第3番 ニ長調の第2曲「エア（アリア）」が原曲です。"},{"id":"air_2","category":"trivia","question":"「G線上の」という呼び名の由来は？","answer":"ヴァイオリンのG線だけで弾けるように編曲されたから","choices":["ヴァイオリンのG線だけで弾けるように編曲されたから","作曲された町の頭文字","ト音記号で書かれているから","G公爵に献呈されたから"],"explanation":"19世紀にヴァイオリン奏者ヴィルヘルミが、G線1本で弾ける独奏曲に編曲したことに由来します。"},{"id":"air_3","category":"form","question":"原曲の調は？","answer":"ニ長調","choices":["ニ長調","ト長調","ハ長調","ヘ長調"],"explanation":"原曲はニ長調。ヴィルヘルミ編曲ではハ長調に移され、G線だけで弾けるようにしています。"}],"rosamunde":[{"id":"rosamunde_1","category":"trivia","question":"現在「ロザムンデ」序曲として演奏される曲は、もともと何の序曲？","answer":"劇付随音楽『魔法の竪琴』","choices":["劇付随音楽『魔法の竪琴』","交響曲「未完成」","歌曲集『冬の旅』","ミサ曲"],"explanation":"シューベルトの劇付随音楽『魔法の竪琴』の序曲が、のちに「ロザムンデ」の序曲として広まりました。"},{"id":"rosamunde_2","category":"bg","question":"『ロザムンデ』はどんな種類の作品のための音楽？","answer":"劇の付随音楽","choices":["劇の付随音楽","オペラ","バレエ","ミサ曲"],"explanation":"ヘルミーナ・フォン・シェジーの戯曲のための付随音楽で、間奏曲やバレエ音楽も有名です。"}],"hansel":[{"id":"hansel_1","category":"bg","question":"歌劇「ヘンゼルとグレーテル」の原作は？","answer":"グリム童話","choices":["グリム童話","アンデルセン童話","イソップ物語","ペロー童話"],"explanation":"グリム童話をもとに、作曲者の妹アーデルハイト・ヴェッテが台本を書きました。"},{"id":"hansel_2","category":"orch","question":"前奏曲の冒頭、穏やかな「夕べの祈り」の旋律を奏でる楽器は？","answer":"ホルン","choices":["ホルン","トランペット","オーボエ","ヴァイオリン"],"explanation":"ホルンの合奏で始まる旋律は、劇中で兄妹が歌う「夕べの祈り」です。"},{"id":"hansel_3","category":"life","question":"フンパーディンクが若い頃に助手を務めた大作曲家は？","answer":"ワーグナー","choices":["ワーグナー","ブラームス","ヴェルディ","リスト"],"explanation":"バイロイトで楽劇「パルジファル」の上演準備を手伝いました。"}],"adagio":[{"id":"adagio_1","category":"bg","question":"バーバー「弦楽のためのアダージョ」の原曲は？","answer":"弦楽四重奏曲の第2楽章","choices":["弦楽四重奏曲の第2楽章","交響曲の第3楽章","映画音楽","ピアノ独奏曲"],"explanation":"作曲者自身の弦楽四重奏曲の楽章を、弦楽合奏用に編曲したものです。"},{"id":"adagio_2","category":"bg","question":"「弦楽のためのアダージョ」を1938年に初演した指揮者は？","answer":"トスカニーニ","choices":["トスカニーニ","バーンスタイン","カラヤン","ストコフスキー"],"explanation":"トスカニーニがNBC交響楽団とラジオ放送で初演し、広く知られるようになりました。"},{"id":"adagio_3","category":"trivia","question":"バーバーはこの曲を、のちにどんな合唱曲に編曲した？","answer":"アニュス・デイ（神の小羊）","choices":["アニュス・デイ（神の小羊）","ハレルヤ","アヴェ・マリア","グローリア"],"explanation":"ラテン語のミサの一節「アニュス・デイ」に合わせた合唱曲に編曲しています。"}],"beet5":[{"id":"beet5_1","category":"form","question":"第5番冒頭の有名な動機のリズムは？","answer":"短い音3つと長い音1つ","choices":["短い音3つと長い音1つ","長い音3つと短い音1つ","短い音と長い音が交互","同じ長さの音が4つ"],"explanation":"「タタタ・ターン」という短い動機が、全曲を通して形を変えて現れます。"},{"id":"beet5_2","category":"form","question":"第3楽章から第4楽章へは、どのようにつながる？","answer":"切れ目なく続く","choices":["切れ目なく続く","長い休止をはさむ","第2楽章に戻ってから進む","独奏のカデンツァをはさむ"],"explanation":"暗い第3楽章から休みなく、輝かしいハ長調の第4楽章に突入します。"},{"id":"beet5_3","category":"orch","question":"第4楽章で新たに加わる楽器は？","answer":"トロンボーン","choices":["トロンボーン","ハープ","サクソフォン","チェレスタ"],"explanation":"トロンボーン、ピッコロ、コントラファゴットが加わり、勝利の響きを力強くします。"},{"id":"beet5_4","category":"trivia","question":"第5番が初演された同じ演奏会で、ほかに初演された交響曲は？","answer":"第6番「田園」","choices":["第6番「田園」","第3番「英雄」","第7番","第9番"],"explanation":"1808年12月22日のウィーンでの演奏会で、第5番と第6番「田園」が同時に初演されました。"}],"beet7":[{"id":"beet7_1","category":"trivia","question":"ワーグナーは交響曲第7番を何と評した？","answer":"舞踏の聖化","choices":["舞踏の聖化","運命の扉","英雄の生涯","田園の喜び"],"explanation":"リズムの躍動が全曲を貫くことから、ワーグナーは「舞踏の聖化」と呼びました。"},{"id":"beet7_2","category":"form","question":"初演時にアンコールされたという人気の第2楽章の速度表示は？","answer":"アレグレット","choices":["アレグレット","アダージョ","プレスト","ラルゴ"],"explanation":"「少し速く」を意味するアレグレット。同じリズムが繰り返される印象的な楽章です。"}],"beet3":[{"id":"beet3_1","category":"bg","question":"ベートーヴェンが交響曲第3番を当初献呈しようとしていた人物は？","answer":"ナポレオン","choices":["ナポレオン","ゲーテ","ハイドン","ルドルフ大公"],"explanation":"ナポレオンが皇帝に即位したと聞いて激怒し、献呈をとりやめたと伝えられています。"},{"id":"beet3_2","category":"form","question":"第2楽章は何？","answer":"葬送行進曲","choices":["葬送行進曲","ワルツ","メヌエット","ロンド"],"explanation":"「葬送行進曲」と題された、重く荘厳な楽章です。"},{"id":"beet3_3","category":"orch","question":"第3楽章のトリオで活躍する、当時としては珍しい編成は？","answer":"3本のホルン","choices":["3本のホルン","4本のトランペット","2台のハープ","6本のフルート"],"explanation":"当時の交響曲は2本が普通だったホルンを3本用い、狩りの角笛のように響かせます。"}],"mozart41":[{"id":"mozart41_1","category":"life","question":"交響曲第41番「ジュピター」は、モーツァルトにとってどんな作品？","answer":"最後に作曲した交響曲","choices":["最後に作曲した交響曲","最初に作曲した交響曲","未完のまま残った交響曲","唯一の短調の交響曲"],"explanation":"第41番はモーツァルトが書いた最後の交響曲です。"},{"id":"mozart41_2","category":"trivia","question":"「ジュピター」という愛称は誰が付けた？","answer":"モーツァルトの没後、ほかの人が付けた","choices":["モーツァルトの没後、ほかの人が付けた","モーツァルト本人","妻のコンスタンツェ","父のレオポルト"],"explanation":"モーツァルト自身の命名ではなく、後世に付けられた愛称です（興行師ザロモンによるとも伝えられます）。"},{"id":"mozart41_3","category":"form","question":"終楽章の主題「ド・レ・ファ・ミ」を、ほかの主題と重ね合わせる作曲技法は？","answer":"対位法（フーガ的な書法）","choices":["対位法（フーガ的な書法）","十二音技法","ミニマル・ミュージック","通奏低音"],"explanation":"複数の主題を同時に重ねる対位法の技が、終盤で見事に展開されます。"},{"id":"mozart41_4","category":"bg","question":"第39番・第40番・第41番の3曲は、どのくらいの期間で作曲された？","answer":"1788年の夏の約1か月半","choices":["1788年の夏の約1か月半","約10年","約3年","1日"],"explanation":"1788年の夏、わずか約6週間のうちに3つの交響曲が書き上げられました。"}],"schubert8":[{"id":"schubert8_1","category":"form","question":"「未完成」交響曲で完成しているのは何楽章まで？","answer":"第2楽章まで","choices":["第2楽章まで","第1楽章だけ","第3楽章まで","第4楽章の途中まで"],"explanation":"第2楽章までが完成した形で残され、第3楽章はスケッチのみが伝わります。"},{"id":"schubert8_2","category":"orch","question":"冒頭、低く神秘的な旋律を奏でる楽器は？","answer":"チェロとコントラバス","choices":["チェロとコントラバス","ホルンとファゴット","ヴァイオリン","トロンボーン"],"explanation":"チェロとコントラバスが弱音で始め、その上でオーボエとクラリネットが旋律を歌います。"},{"id":"schubert8_3","category":"trivia","question":"「未完成」が初演されたのはいつ頃？","answer":"作曲者の死から30年以上たってから","choices":["作曲者の死から30年以上たってから","作曲した翌年","作曲者の葬儀の日","20世紀に入ってから"],"explanation":"作曲は1822年ですが、楽譜は長く埋もれ、作曲者の死（1828年）から37年後の1865年にウィーンで初演されました。"}],"mendel4":[{"id":"mendel4_1","category":"bg","question":"交響曲第4番「イタリア」は、何をもとに書かれた？","answer":"イタリア旅行の印象","choices":["イタリア旅行の印象","イタリアの歌劇","ローマ帝国の歴史","イタリア人の友人の依頼"],"explanation":"若きメンデルスゾーンがイタリアを旅したときの明るい印象をもとにしています。"},{"id":"mendel4_2","category":"form","question":"終楽章に用いられている、イタリアの速い舞曲は？","answer":"サルタレロ","choices":["サルタレロ","メヌエット","ポロネーズ","ボレロ"],"explanation":"跳びはねるような舞曲サルタレロのリズムで、勢いよく駆け抜けます。"},{"id":"mendel4_3","category":"theory","question":"イ長調で始まるこの交響曲。終楽章はどの調で書かれている？","answer":"イ短調","choices":["イ短調","イ長調","ハ長調","ニ長調"],"explanation":"長調の交響曲でありながら、終楽章は同主調のイ短調で書かれ、短調のまま終わります。"}],"brahms1":[{"id":"brahms1_1","category":"bg","question":"ブラームスが交響曲第1番を完成させるまでにかかった期間は？","answer":"約20年","choices":["約20年","約1年","約3か月","約5年"],"explanation":"ベートーヴェンの偉大さを意識し、構想から完成まで20年以上を費やしました。"},{"id":"brahms1_2","category":"trivia","question":"指揮者ビューローは、この交響曲を何と呼んだ？","answer":"ベートーヴェンの第10交響曲","choices":["ベートーヴェンの第10交響曲","新しい第九","北ドイツの田園","ドイツ・レクイエム"],"explanation":"ベートーヴェンの後継となる交響曲だという意味を込めて、こう呼びました。"},{"id":"brahms1_3","category":"orch","question":"終楽章の序奏で、アルプホルンを思わせる旋律を朗々と吹く楽器は？","answer":"ホルン","choices":["ホルン","トランペット","オーボエ","トロンボーン"],"explanation":"ホルンの雄大な旋律のあと、ベートーヴェン「歓喜の歌」を思わせる主題が現れます。"}],"dvorak9":[{"id":"dvorak9_1","category":"bg","question":"交響曲第9番「新世界より」は、ドヴォルザークがどこに滞在していたときに作曲された？","answer":"アメリカ","choices":["アメリカ","イギリス","ロシア","フランス"],"explanation":"ニューヨークのナショナル音楽院の院長として招かれていたときに作曲されました。"},{"id":"dvorak9_2","category":"orch","question":"第2楽章の旋律（日本では「家路」として有名）を奏でる楽器は？","answer":"イングリッシュホルン","choices":["イングリッシュホルン","オーボエ","クラリネット","フルート"],"explanation":"イングリッシュホルンの温かく哀愁のある音色で、故郷への思いが歌われます。"},{"id":"dvorak9_3","category":"trivia","question":"「新世界より」でシンバルが鳴るのは、全曲を通じて何回？","answer":"1回だけ","choices":["1回だけ","1回も鳴らない","各楽章で1回ずつ","終楽章で何十回も"],"explanation":"第4楽章で一度だけ、そっと鳴らされます。オーケストラの有名な豆知識です。"}],"tchai5":[{"id":"tchai5_1","category":"orch","question":"全楽章を通して現れる「運命の動機」を、冒頭で奏でる楽器は？","answer":"クラリネット","choices":["クラリネット","トランペット","ホルン","チェロ"],"explanation":"2本のクラリネットが低い音域で暗く奏で、終楽章では輝かしい長調に変わって現れます。"},{"id":"tchai5_2","category":"orch","question":"第2楽章の有名な長い独奏を担当する楽器は？","answer":"ホルン","choices":["ホルン","フルート","トロンボーン","ファゴット"],"explanation":"弦の静かな和音に導かれ、ホルンが美しい旋律を朗々と歌います。"},{"id":"tchai5_3","category":"form","question":"第3楽章は何の舞曲？","answer":"ワルツ","choices":["ワルツ","マーチ","メヌエット","タンゴ"],"explanation":"交響曲の中にワルツを置くのは、チャイコフスキーらしい特徴です。"}],"tchai6":[{"id":"tchai6_1","category":"life","question":"「悲愴」交響曲の初演から、チャイコフスキーが亡くなるまでの期間は？","answer":"約9日","choices":["約9日","約1年","約1か月","約10年"],"explanation":"1893年の初演から9日後に、チャイコフスキーは急死しました。"},{"id":"tchai6_2","category":"theory","question":"第2楽章の珍しい拍子は？","answer":"4分の5拍子","choices":["4分の5拍子","4分の3拍子","8分の6拍子","4分の4拍子"],"explanation":"5拍子でありながら、ワルツのように優雅に流れる独特の楽章です。"},{"id":"tchai6_3","category":"form","question":"「悲愴」交響曲の終わり方の特徴は？","answer":"ゆるやかな楽章で静かに消えるように終わる","choices":["ゆるやかな楽章で静かに消えるように終わる","華やかなファンファーレで終わる","合唱が加わって終わる","冒頭の楽章に戻って終わる"],"explanation":"終楽章をアダージョ（ゆるやかに）とし、静かに消えていく異例の構成です。"}],"sibelius2":[{"id":"sibelius2_1","category":"bg","question":"シベリウスが交響曲第2番の構想を練ったのは、どこに滞在していたとき？","answer":"イタリア","choices":["イタリア","アメリカ","イギリス","ロシア"],"explanation":"1901年、イタリアに滞在していたときに構想を練りました。"},{"id":"sibelius2_2","category":"form","question":"交響曲第2番の終楽章の特徴は？","answer":"壮大な長調で輝かしく終わる","choices":["壮大な長調で輝かしく終わる","静かに消えるように終わる","独唱が加わる","短調のまま暗く終わる"],"explanation":"大きな高まりを経て、ニ長調の壮麗な響きで締めくくられます。"}],"rach2":[{"id":"rach2_1","category":"orch","question":"第3楽章（アダージョ）で、長く美しい独奏を奏でる楽器は？","answer":"クラリネット","choices":["クラリネット","オーボエ","ホルン","ヴァイオリン"],"explanation":"クラリネットの息の長い旋律は、この交響曲でもっとも有名な場面です。"},{"id":"rach2_2","category":"bg","question":"ラフマニノフが交響曲第2番を作曲したのは、どこに住んでいたとき？","answer":"ドレスデン","choices":["ドレスデン","ニューヨーク","パリ","ローマ"],"explanation":"1906年から一家でドイツのドレスデンに住み、そこで作曲を進めました。"}],"fantastique":[{"id":"fantastique_1","category":"term","question":"幻想交響曲で、恋する女性を表し全楽章に現れる旋律を何と呼ぶ？","answer":"固定楽想（イデー・フィクス）","choices":["固定楽想（イデー・フィクス）","ライトモティーフ","カノン","オスティナート"],"explanation":"ベルリオーズは、恋人を表す旋律を楽章ごとに姿を変えて登場させました。"},{"id":"fantastique_2","category":"bg","question":"作曲のきっかけとなった、ベルリオーズが熱烈に恋した女優は？","answer":"ハリエット・スミッソン","choices":["ハリエット・スミッソン","ジョルジュ・サンド","サラ・ベルナール","ジェニー・リンド"],"explanation":"シェイクスピア劇で見た女優スミッソンへの恋が、この作品の背景にあります（のちに結婚）。"},{"id":"fantastique_3","category":"form","question":"幻想交響曲の第4楽章の題名は？","answer":"断頭台への行進","choices":["断頭台への行進","野の風景","舞踏会","魔女の夜宴の夢"],"explanation":"全5楽章のうち第4楽章が「断頭台への行進」。第5楽章「魔女の夜宴の夢」では聖歌「怒りの日」も引用されます。"}],"mahler1":[{"id":"mahler1_1","category":"bg","question":"交響曲第1番の愛称「巨人」の由来は？","answer":"ジャン・パウルの小説","choices":["ジャン・パウルの小説","ギリシア神話","ゲーテの詩","マーラー自身のあだ名"],"explanation":"作家ジャン・パウルの小説『巨人（ティタン）』に由来します。マーラーは後にこの標題を外しました。"},{"id":"mahler1_2","category":"orch","question":"第3楽章で、短調にした「フレール・ジャック（グーチョキパーの歌）」の旋律を最初に独奏する楽器は？","answer":"コントラバス","choices":["コントラバス","ファゴット","チューバ","チェロ"],"explanation":"弱音器を付けたコントラバスの独奏で始まる、不思議な葬送行進曲です。"},{"id":"mahler1_3","category":"trivia","question":"終楽章のクライマックスで、マーラーがホルン奏者に求めた演出は？","answer":"立ち上がって演奏する","choices":["立ち上がって演奏する","客席に移動して演奏する","楽器を逆さに持つ","舞台裏で演奏する"],"explanation":"ホルン奏者全員が起立して、勝利の旋律を力強く吹き鳴らすよう指示されています。"}]}},"songs/orchestral":{"_説明":"曲データ。strings＝弦五部の必要人数、winds＝管打楽器の必要人数（楽器IDは data/members/instruments.json）。difficulty 0〜100、popularity 1〜5。","genre":"orchestral","genreName":"管弦楽曲","songs":[{"id":"egmont","title":"序曲「エグモント」","composer":"ベートーヴェン","year":1810,"duration":9,"difficulty":48,"popularity":4,"mood":"劇的","description":"圧政に抗う英雄を描いた劇付随音楽の序曲。重い序奏から勝利の終結へ駆け上がる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"figaro","title":"歌劇「フィガロの結婚」序曲","composer":"モーツァルト","year":1786,"duration":4,"difficulty":45,"popularity":5,"mood":"軽快","description":"囁くような弦の走句で始まる快活な序曲。短いが音の粒を揃えるのは意外に難しい。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"tell","title":"歌劇「ウィリアム・テル」序曲","composer":"ロッシーニ","year":1829,"duration":12,"difficulty":58,"popularity":5,"mood":"華麗","description":"チェロ独奏の夜明け、嵐、牧歌、そして有名な行進へ。場面転換が多彩な序曲。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Perc":3}},{"id":"ruslan","title":"歌劇「ルスランとリュドミラ」序曲","composer":"グリンカ","year":1842,"duration":5,"difficulty":66,"popularity":4,"mood":"華麗","description":"猛烈な速さで弦が駆け抜ける序曲。指揮者もテンポ設定に腕を問われる難所揃い。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Perc":1}},{"id":"academic","title":"大学祝典序曲","composer":"ブラームス","year":1880,"duration":10,"difficulty":57,"popularity":4,"mood":"祝祭","description":"学生歌を織り込んだ明るい祝典序曲。終盤の「ガウデアムス」は堂々たる響き。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":3,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":4}},{"id":"meister","title":"楽劇「ニュルンベルクのマイスタージンガー」前奏曲","composer":"ワーグナー","year":1868,"duration":10,"difficulty":64,"popularity":4,"mood":"壮麗","description":"複数の主題が重なり合う壮麗な前奏曲。厚い響きの中で各声部を聴かせる力が要る。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":2}},{"id":"freischutz","title":"歌劇「魔弾の射手」序曲","composer":"ウェーバー","year":1821,"duration":10,"difficulty":52,"popularity":3,"mood":"ロマン的","description":"4本のホルンによる森の情景で知られる序曲。ドイツ・ロマン派オペラの幕開け。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Perc":1}},{"id":"hebrides","title":"序曲「フィンガルの洞窟」","composer":"メンデルスゾーン","year":1830,"duration":10,"difficulty":55,"popularity":3,"mood":"叙景","description":"スコットランドの海と洞窟の印象を描いた演奏会用序曲。波のうねりを弦で表す。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"vltava","title":"交響詩「モルダウ」","composer":"スメタナ","year":1874,"duration":12,"difficulty":60,"popularity":5,"mood":"叙景","description":"源流から大河へ成長する川の旅。フルートの水音に始まり、雄大な主題が流れる。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":2}},{"id":"carnival","title":"序曲「謝肉祭」","composer":"ドヴォルザーク","year":1891,"duration":9,"difficulty":65,"popularity":3,"mood":"祝祭","description":"タンバリンやトライアングルが彩る熱狂的な序曲。中間部の静けさとの対比が鍵。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":4}},{"id":"finlandia","title":"交響詩「フィンランディア」","composer":"シベリウス","year":1900,"duration":8,"difficulty":45,"popularity":5,"mood":"壮麗","description":"重苦しい金管の序奏から祖国への賛歌へ。中間部の讃歌は単独でも愛唱される。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":3}},{"id":"peergynt","title":"「ペール・ギュント」第1組曲","composer":"グリーグ","year":1888,"duration":15,"difficulty":42,"popularity":5,"mood":"叙情","description":"「朝」「オーセの死」「アニトラの踊り」「山の魔王の宮殿にて」の4曲。親しみやすい名曲集。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":2}},{"id":"arlesienne","title":"「アルルの女」第2組曲","composer":"ビゼー（ギロー編）","year":1879,"duration":17,"difficulty":50,"popularity":4,"mood":"叙情","description":"南仏の情景を描く4曲。フルートの「メヌエット」と熱い「ファランドール」で知られる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Perc":3}},{"id":"baldmtn","title":"交響詩「禿山の一夜」","composer":"ムソルグスキー（R=コルサコフ編）","year":1886,"duration":11,"difficulty":62,"popularity":4,"mood":"劇的","description":"魔物たちの饗宴が夜明けの鐘で退散する幻想的な音詩。金管の咆哮が聴きどころ。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":4}},{"id":"steppes","title":"中央アジアの草原にて","composer":"ボロディン","year":1880,"duration":7,"difficulty":40,"popularity":3,"mood":"叙景","description":"草原を行く隊商の情景。ロシアと東洋の二つの旋律が重なり、遠ざかっていく。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Perc":1}},{"id":"romeo","title":"幻想序曲「ロメオとジュリエット」","composer":"チャイコフスキー","year":1880,"duration":20,"difficulty":70,"popularity":4,"mood":"劇的","description":"争いの激しさと愛の主題の甘美さ。悲劇を凝縮したドラマティックな音楽。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":2}},{"id":"serenade","title":"弦楽セレナード","composer":"チャイコフスキー","year":1880,"duration":30,"difficulty":63,"popularity":4,"mood":"叙情","description":"弦楽合奏のための4楽章。冒頭の重厚な和音と優美なワルツで知られる。管打楽器は不要。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{}},{"id":"enigma","title":"エニグマ変奏曲","composer":"エルガー","year":1899,"duration":30,"difficulty":66,"popularity":3,"mood":"叙情","description":"友人たちの肖像を描いた変奏曲。第9変奏「ニムロッド」は特に有名。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":3,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":4}},{"id":"bolero","title":"ボレロ","composer":"ラヴェル","year":1928,"duration":15,"difficulty":68,"popularity":5,"mood":"高揚","description":"同じリズムと旋律を楽器を替えて繰り返す。管楽器のソロが次々と試され、小太鼓は一瞬も気を抜けない。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":3,"Cl":3,"Fg":3,"Hr":4,"Tp":4,"Tb":3,"Tuba":1,"Perc":4}},{"id":"faune","title":"牧神の午後への前奏曲","composer":"ドビュッシー","year":1894,"duration":10,"difficulty":72,"popularity":4,"mood":"幻想","description":"フルート独奏の気だるい旋律で始まる印象派の傑作。繊細な音色の制御が要求される。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Perc":1}},{"id":"macabre","title":"交響詩「死の舞踏」","composer":"サン＝サーンス","year":1874,"duration":7,"difficulty":55,"popularity":4,"mood":"幻想","description":"真夜中に骸骨たちが踊り出す。シロフォンの骨の音と独奏ヴァイオリンが印象的。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":4}},{"id":"hungarian5","title":"ハンガリー舞曲 第5番","composer":"ブラームス","year":1869,"duration":3,"difficulty":35,"popularity":5,"mood":"軽快","description":"緩急自在のテンポ変化が楽しい舞曲。アンコールの定番。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Perc":2}},{"id":"pomp1","title":"行進曲「威風堂々」第1番","composer":"エルガー","year":1901,"duration":6,"difficulty":46,"popularity":5,"mood":"祝祭","description":"躍動的な主部と、広く歌われる気高いトリオ。祝典の定番曲。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":4}},{"id":"fledermaus","title":"喜歌劇「こうもり」序曲","composer":"J.シュトラウス2世","year":1874,"duration":9,"difficulty":55,"popularity":4,"mood":"軽快","description":"ウィンナ・ワルツの粋が詰まった序曲。独特の揺れるリズムをどう表現するかが問われる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":1,"Perc":3}},{"id":"cavalleria","title":"「カヴァレリア・ルスティカーナ」間奏曲","composer":"マスカーニ","year":1890,"duration":4,"difficulty":30,"popularity":4,"mood":"叙情","description":"祈りのように静かに歌う弦の旋律。短く美しい名旋律。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2}},{"id":"air","title":"G線上のアリア","composer":"J.S.バッハ","year":1730,"duration":5,"difficulty":25,"popularity":5,"mood":"叙情","description":"管弦楽組曲第3番のアリア。弦楽のみで静かに奏でられる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{}},{"id":"rosamunde","title":"「ロザムンデ」序曲","composer":"シューベルト","year":1820,"duration":10,"difficulty":47,"popularity":3,"mood":"叙情","description":"歌心あふれる旋律が次々と現れる序曲。軽やかさと品の良さが求められる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Perc":1,"Tb":3}},{"id":"hansel","title":"歌劇「ヘンゼルとグレーテル」前奏曲","composer":"フンパーディンク","year":1893,"duration":8,"difficulty":50,"popularity":3,"mood":"幻想","description":"ホルンの祈りの歌に始まる温かな前奏曲。重なり合う声部をまとめる力が要る。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":2}},{"id":"adagio","title":"弦楽のためのアダージョ","composer":"バーバー","year":1936,"duration":8,"difficulty":55,"popularity":4,"mood":"悲歌","description":"息の長い旋律が頂点へと高まる弦楽の哀歌。弦のみの編成。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{}}]},"songs/symphonies":{"_説明":"曲データ。strings＝弦五部の必要人数、winds＝管打楽器の必要人数（楽器IDは data/members/instruments.json）。difficulty 0〜100、popularity 1〜5。","genre":"symphony","genreName":"交響曲","songs":[{"id":"beet5","title":"交響曲第5番 ハ短調「運命」","composer":"ベートーヴェン","year":1808,"duration":33,"difficulty":68,"popularity":5,"mood":"劇的","description":"4つの音の動機で全曲を構築した革新的交響曲。暗から明への劇的な展開。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":3,"Hr":2,"Tp":2,"Tb":3,"Perc":1}},{"id":"beet7","title":"交響曲第7番 イ長調","composer":"ベートーヴェン","year":1812,"duration":38,"difficulty":70,"popularity":5,"mood":"高揚","description":"全楽章をリズムが支配する「舞踏の神化」。終楽章の熱狂は持久力が勝負。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"beet3","title":"交響曲第3番 変ホ長調「英雄」","composer":"ベートーヴェン","year":1804,"duration":48,"difficulty":72,"popularity":4,"mood":"壮麗","description":"交響曲の規模を一気に拡大した記念碑。葬送行進曲を含む堂々たる4楽章。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":3,"Tp":2,"Perc":1}},{"id":"mozart41","title":"交響曲第41番 ハ長調「ジュピター」","composer":"モーツァルト","year":1788,"duration":32,"difficulty":60,"popularity":4,"mood":"壮麗","description":"モーツァルト最後の交響曲。終楽章では5つの主題が見事な対位法で結合する。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":1,"Ob":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"schubert8","title":"交響曲第7（8）番 ロ短調「未完成」","composer":"シューベルト","year":1822,"duration":25,"difficulty":58,"popularity":4,"mood":"叙情","description":"2楽章のみが残された神秘的な交響曲。低弦の暗い開始から深い叙情が広がる。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1,"Tb":3}},{"id":"mendel4","title":"交響曲第4番 イ長調「イタリア」","composer":"メンデルスゾーン","year":1833,"duration":28,"difficulty":62,"popularity":4,"mood":"軽快","description":"南国の陽光を思わせる明るい交響曲。終楽章のサルタレッロは息つく暇もない。","strings":{"Vn1":6,"Vn2":5,"Va":4,"Vc":4,"Cb":2},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":2,"Tp":2,"Perc":1}},{"id":"brahms1","title":"交響曲第1番 ハ短調","composer":"ブラームス","year":1876,"duration":46,"difficulty":78,"popularity":5,"mood":"壮麗","description":"構想20年余りの末に完成した重厚な交響曲。苦悩から歓喜へ至る長大なドラマ。","strings":{"Vn1":10,"Vn2":9,"Va":7,"Vc":6,"Cb":5},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":3,"Hr":4,"Tp":2,"Tb":3,"Perc":1}},{"id":"dvorak9","title":"交響曲第9番 ホ短調「新世界より」","composer":"ドヴォルザーク","year":1893,"duration":42,"difficulty":66,"popularity":5,"mood":"叙情","description":"アメリカ滞在中に書かれた人気作。イングリッシュホルンの「家路」の旋律が有名。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":2}},{"id":"tchai5","title":"交響曲第5番 ホ短調","composer":"チャイコフスキー","year":1888,"duration":48,"difficulty":74,"popularity":4,"mood":"高揚","description":"運命の主題が全楽章を貫き、最後は凱歌となる。第2楽章のホルン独奏は難所。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":1}},{"id":"tchai6","title":"交響曲第6番 ロ短調「悲愴」","composer":"チャイコフスキー","year":1893,"duration":46,"difficulty":82,"popularity":5,"mood":"悲歌","description":"静かに消えゆく終楽章で閉じる異例の交響曲。極端な強弱幅の制御が求められる。","strings":{"Vn1":10,"Vn2":9,"Va":7,"Vc":6,"Cb":5},"winds":{"Fl":3,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":2,"Tb":3,"Tuba":1,"Perc":3}},{"id":"sibelius2","title":"交響曲第2番 ニ長調","composer":"シベリウス","year":1902,"duration":44,"difficulty":75,"popularity":4,"mood":"壮麗","description":"北欧の自然と民族の高揚を感じさせる交響曲。長い上昇の末の終楽章は圧巻。","strings":{"Vn1":8,"Vn2":7,"Va":5,"Vc":5,"Cb":3},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":2,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":1}},{"id":"rach2","title":"交響曲第2番 ホ短調","composer":"ラフマニノフ","year":1907,"duration":60,"difficulty":84,"popularity":4,"mood":"ロマン的","description":"甘美な旋律が尽きることなく溢れる大曲。第3楽章のクラリネット独奏が白眉。","strings":{"Vn1":10,"Vn2":9,"Va":7,"Vc":6,"Cb":5},"winds":{"Fl":3,"Ob":3,"Cl":3,"Fg":3,"Hr":4,"Tp":3,"Tb":3,"Tuba":1,"Perc":4}},{"id":"fantastique","title":"幻想交響曲","composer":"ベルリオーズ","year":1830,"duration":50,"difficulty":86,"popularity":4,"mood":"幻想","description":"恋に破れた芸術家の幻覚を描く標題交響曲。4人の奏者によるティンパニなど型破りな管弦楽法。","strings":{"Vn1":10,"Vn2":9,"Va":7,"Vc":6,"Cb":5},"winds":{"Fl":2,"Ob":2,"Cl":2,"Fg":4,"Hr":4,"Tp":4,"Tb":3,"Tuba":2,"Perc":5}},{"id":"mahler1","title":"交響曲第1番 ニ長調「巨人」","composer":"マーラー","year":1888,"duration":55,"difficulty":88,"popularity":4,"mood":"高揚","description":"自然の目覚めから勝利の終結まで。7本のホルンが起立して吹く終結部は大編成ならでは。","strings":{"Vn1":10,"Vn2":9,"Va":7,"Vc":6,"Cb":5},"winds":{"Fl":4,"Ob":4,"Cl":4,"Fg":3,"Hr":7,"Tp":4,"Tb":3,"Tuba":1,"Perc":5}}]}};
 /* =========================================================
  * CONFIG — ゲームバランス用の数値はすべてここで一元管理
  *   金額の単位はすべて「円」
@@ -4306,28 +4362,13 @@ const CONFIG = {
     { name: 'プロモデル', cost: 200000, gains: { tone: [5, 7, 1], dyn: [2, 3, 1], tech: [1, 2, 1], expr: [1, 2, 1] } },
   ],
 
-  /* ---- ホール（各サイクルの最初に選択・使用料は選択時に支払い）----
+  /* ---- ホール：一覧（名前・使用料・ホール練習料金・席数・音響など）は data/halls/index.json で編集する ----
    * acoustics: 音響性能（評価に影響）  stage: 舞台に乗る最大人数（超えると響きが飽和）
    * attendance: 基本集客率  repSens: 評判1あたりの集客率上昇
    * pressure: 一流会場の重圧（成功率低下。ホール練習で解消）  prestige: 評判の増減倍率
+   * fee: 予約時の使用料  rehearsalFee: ホール練習の料金（実施するときに支払う）
    */
-  halls: [
-    { id: 'community', name: '公民館 多目的ホール', grade: '小規模', fee: 0, capacity: 200, ticket: 500,
-      acoustics: 30, stage: 45, attendance: 0.60, repSens: 0.003, pressure: 0, prestige: 0.5, rehearsalFee: 0,
-      feature: '無料で使えるが響きは乏しい。舞台が狭く大編成の曲は収まりきらない。' },
-    { id: 'small', name: '市民会館 小ホール', grade: '小規模', fee: 30000, capacity: 400, ticket: 800,
-      acoustics: 50, stage: 55, attendance: 0.45, repSens: 0.004, pressure: 0, prestige: 0.8, rehearsalFee: 8000,
-      feature: '客席との距離が近く、満席にしやすい堅実な会場。' },
-    { id: 'general', name: '文化センター 大ホール', grade: '一般', fee: 90000, capacity: 800, ticket: 1200,
-      acoustics: 65, stage: 75, attendance: 0.25, repSens: 0.005, pressure: 0.01, prestige: 1.0, rehearsalFee: 20000,
-      feature: '標準的なコンサートホール。二管編成の交響曲も無理なく演奏できる。' },
-    { id: 'large', name: '県立芸術劇場 コンサートホール', grade: '大規模', fee: 200000, capacity: 1500, ticket: 1800,
-      acoustics: 80, stage: 100, attendance: 0.06, repSens: 0.0055, pressure: 0.03, prestige: 1.3, rehearsalFee: 45000,
-      feature: '豊かな残響の大ホール。評判が低いうちは空席が目立つ。' },
-    { id: 'top', name: 'グランシンフォニア・ホール', grade: '一流', fee: 450000, capacity: 2000, ticket: 3000,
-      acoustics: 95, stage: 110, attendance: 0.0, repSens: 0.0035, pressure: 0.06, prestige: 2.0, rehearsalFee: 90000,
-      feature: '世界的名演が生まれてきた一流ホール。響きは最高だが、重圧も大きい。' },
-  ],
+  halls: [],   // 起動時に data/halls/index.json から読み込む（core/data.js）
   hallEffect: {
     acousticsBase: 60,         // これより良い音響で評価にプラス
     acousticsEval: 0.15,       // (音響-基準)×係数 を表現・バランス評価に加算（他項目は半分）
@@ -4394,6 +4435,14 @@ const CONFIG = {
     growthChance: 0.45,          // 演奏会の経験による成長：各能力がこの確率で +1〜2
   },
   // ---- 首席奏者 ----
+  // ---- 練習クイズ（通常練習2回ごとに1問。回答で、その演奏会の既存の「楽曲理解度」が上がる） ----
+  quiz: {
+    every: 2,                    // 通常練習この回数ごとに1問
+    gainCorrect: 2.0,            // 正解で楽曲理解度に加える量（既存の上昇処理＝逓減・上限つきで加算）
+    gainWrong: 0.6,              // 不正解でも少し上がる
+    streakBonus: 0.4,            // 連続正解ボーナス：2問連続で+0.4、3問で+0.8 …
+    streakBonusMax: 1.2,         //   ボーナスの上限
+  },
   principal: {
     baseWeight: 1.5,             // セクション基礎能力の計算で首席の能力を重く数える
     soloWeight: 0.08,            // 管打楽器の首席の（音色+表現）/2 が55を超えた分 × 係数 を音楽表現の評価へ
@@ -4409,35 +4458,22 @@ const CONFIG = {
 };
 
 /* =========================================================
- * DATA — 楽器・セクション・能力・曲データ
+ * DATA — ゲームの定義データ
+ *   ・編集用のデータ（曲・楽器・名前・固有キャラクター・指揮者の個性・ホール・クイズ・練習イベント）は
+ *     data/ フォルダのJSONにあり、build.py が検証して GAME_DATA としてゲームに埋め込む。
+ *     ここでは GAME_DATA を、ゲーム内で使う形（従来と同じ定数名）に整える。
+ *   ・能力の種類や練習の重点項目など、計算式と一体の定義はプログラム側（このファイル）に置く。
  * ========================================================= */
+const GD = (key) => { if (!GAME_DATA[key]) throw new Error(`データ ${key}.json がありません`); return GAME_DATA[key]; };
+const hexColor = v => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v) ? parseInt(v.slice(1), 16) : v;
+const colorsOf = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, hexColor(v)]));
 
-// 楽器（abbr は表示用略称、cap は在籍上限、std は標準人数＝初期編成）
-const INSTRUMENTS = [
-  { id: 'Vn1',  abbr: 'Vn I',  section: 'hs', cap: 12, std: 6, kind: 'string' },
-  { id: 'Vn2',  abbr: 'Vn II', section: 'hs', cap: 10, std: 5, kind: 'string' },
-  { id: 'Va',   abbr: 'Va',    section: 'ls', cap: 8,  std: 4, kind: 'string' },
-  { id: 'Vc',   abbr: 'Vc',    section: 'ls', cap: 8,  std: 4, kind: 'string' },
-  { id: 'Cb',   abbr: 'Cb',    section: 'ls', cap: 6,  std: 2, kind: 'string' },
-  { id: 'Fl',   abbr: 'Fl',    section: 'ww', cap: 4,  std: 2, kind: 'wind' },
-  { id: 'Ob',   abbr: 'Ob',    section: 'ww', cap: 4,  std: 2, kind: 'wind' },
-  { id: 'Cl',   abbr: 'Cl',    section: 'ww', cap: 4,  std: 2, kind: 'wind' },
-  { id: 'Fg',   abbr: 'Fg',    section: 'ww', cap: 4,  std: 2, kind: 'wind' },
-  { id: 'Hr',   abbr: 'Hr',    section: 'br', cap: 8,  std: 4, kind: 'wind' },
-  { id: 'Tp',   abbr: 'Tp',    section: 'br', cap: 5,  std: 3, kind: 'wind' },
-  { id: 'Tb',   abbr: 'Tb',    section: 'br', cap: 4,  std: 2, kind: 'wind' },
-  { id: 'Tuba', abbr: 'Tuba',  section: 'br', cap: 2,  std: 1, kind: 'wind' },
-  { id: 'Perc', abbr: 'Perc',  section: 'pc', cap: 6,  std: 3, kind: 'perc' },
-];
+// 楽器・セクション（data/members/instruments.json）
+const INSTRUMENTS = GD('members/instruments').instruments.map(i => ({ id: i.id, abbr: i.abbr, section: i.section, cap: i.cap, std: i.std, kind: i.kind, name: i.name }));
 const INST = Object.fromEntries(INSTRUMENTS.map(i => [i.id, i]));
+const INST_NAME = Object.fromEntries(INSTRUMENTS.map(i => [i.id, i.name || i.abbr]));
 
-const SECTIONS = [
-  { id: 'hs', name: '高弦',   insts: ['Vn1', 'Vn2'] },
-  { id: 'ls', name: '低弦',   insts: ['Va', 'Vc', 'Cb'] },
-  { id: 'ww', name: '木管',   insts: ['Fl', 'Ob', 'Cl', 'Fg'] },
-  { id: 'br', name: '金管',   insts: ['Hr', 'Tp', 'Tb', 'Tuba'] },
-  { id: 'pc', name: '打楽器', insts: ['Perc'] }   // 打楽器は Perc に統一（ティンパニ含む）,
-];
+const SECTIONS = GD('members/instruments').sections.map(s => ({ id: s.id, name: s.name, insts: s.instruments }));
 const SEC = Object.fromEntries(SECTIONS.map(s => [s.id, s]));
 
 // 個人能力 → セクション基礎能力／発表会セクションパラメータ
@@ -4489,40 +4525,13 @@ const SONG_PARAMS = [
   { id: 'expr',   name: '表現' },
 ];
 
-const NAME_FAMILY = ['佐藤','鈴木','高橋','田中','伊藤','渡辺','山本','中村','小林','加藤','吉田','山田','佐々木','山口','松本','井上','木村','林','清水','山崎','森','池田','橋本','阿部','石川','前田','藤田','小川','岡田','後藤','長谷川','村上','近藤','石井','坂本','遠藤','青木','藤井','西村','福田','太田','三浦','藤原','岡本','松田','中川','中野','原田','小野','竹内','金子','和田','中山','石田','上田','森田','柴田','酒井','工藤','横山','宮崎','宮本','内田','高木','安藤','谷口','大野','丸山','今井','河野','藤本','村田','武田','上野','杉山','増田','平野','大塚','千葉','久保','松井','小島','岩崎','桜井','野口','松尾','菊地','野村','新井','渡部'];
-const NAME_GIVEN = ['陽菜','結衣','美咲','葵','凛','真央','彩花','優奈','千尋','遥','七海','紗希','杏','楓','琴音','美月','和花','詩織','奏','響子','翔太','蓮','大輝','悠真','颯太','拓海','健太','陸','直樹','亮','湊','樹','航','智也','誠','俊介','慎吾','大和','律','透','悠','晴','理沙','朋美','由佳','真理','沙織','達也','浩二','修'];
+// 名前の候補（data/members/names.json）
+const NAME_FAMILY = GD('members/names').family;
+const NAME_GIVEN = GD('members/names').given;
 
-// オリジナルキャラクター（固定の個性・能力構成）
+// オリジナルキャラクター（data/members/originals.json：固定の個性・能力構成）
 // abilities / potential は 7能力の順: tech, ear, rhythm, tone, dyn, expr, coop
-const ORIGINAL_CHARACTERS = [
-  { oid: 'oc_kirishima', look: { hair: 'long', hairColor: 0, skin: 0, face: 2, glasses: false, build: 0.96, height: 1.02, style: 'dress' }, name: '霧島 玲', inst: 'Vn1', initial: true,
-    profile: 'コンサートマスター。精密な技巧で楽団を引っ張るが、他人にも厳しい。',
-    abilities: [82, 80, 74, 76, 68, 70, 52], potential: [92, 90, 84, 88, 80, 84, 70] },
-  { oid: 'oc_nanase', look: { hair: 'bob', hairColor: 3, skin: 1, face: 0, glasses: false, build: 0.94, height: 0.97, style: 'dress' }, name: '七瀬 灯', inst: 'Ob', initial: true,
-    profile: '甘く澄んだ音色のオーボエ奏者。本番では驚くほど歌う。',
-    abilities: [58, 66, 55, 78, 60, 74, 61], potential: [80, 84, 76, 95, 82, 93, 78] },
-  { oid: 'oc_kurogane', look: { hair: 'crop', hairColor: 4, skin: 2, face: 4, glasses: false, build: 1.12, height: 1.04, style: 'tux' }, name: '黒鉄 剛', inst: 'Hr', initial: false, cost: 150000,
-    profile: '元プロオケの首席ホルン。豪快な鳴りで金管を支える職人。',
-    abilities: [80, 72, 70, 74, 88, 66, 64], potential: [84, 78, 76, 80, 95, 74, 72] },
-  { oid: 'oc_amane', look: { hair: 'ponytail', hairColor: 2, skin: 0, face: 1, glasses: false, build: 0.92, height: 0.95, style: 'dress' }, name: '天音 しずく', inst: 'Fl', initial: false, cost: 90000,
-    profile: '音大を出たばかりの新星。今は粗削りだが伸びしろは計り知れない。',
-    abilities: [52, 60, 50, 64, 48, 62, 55], potential: [96, 95, 90, 97, 88, 96, 85] },
-  { oid: 'oc_tokiwa', look: { hair: 'wavy', hairColor: 1, skin: 1, face: 3, glasses: true, build: 1.04, height: 1.03, style: 'tux' }, name: '常盤 朔', inst: 'Vc', initial: false, cost: 130000,
-    profile: '深く温かい響きのチェリスト。低弦の柱となる穏やかな人格者。',
-    abilities: [74, 72, 70, 82, 72, 78, 84], potential: [84, 82, 80, 92, 82, 88, 95] },
-  { oid: 'oc_shinonome', look: { hair: 'short', hairColor: 0, skin: 2, face: 5, glasses: false, build: 1.02, height: 1.0, style: 'suit' }, name: '東雲 拍', inst: 'Perc', initial: false, cost: 110000,
-    profile: '寸分違わぬテンポ感を持つ打楽器奏者。ティンパニを叩かせたら楽団の心臓。',
-    abilities: [70, 64, 92, 66, 80, 60, 70], potential: [80, 76, 98, 78, 90, 74, 82] },
-  { oid: 'oc_hayami', look: { hair: 'side', hairColor: 6, skin: 0, face: 1, glasses: false, build: 0.98, height: 1.01, style: 'tux' }, name: '速水 透', inst: 'Tp', initial: false, cost: 100000,
-    profile: '輝かしい高音が武器のトランペット奏者。音量の制御はまだ苦手。',
-    abilities: [78, 66, 72, 76, 50, 70, 58], potential: [90, 80, 84, 88, 78, 84, 74] },
-  { oid: 'oc_yukimura', look: { hair: 'bun', hairColor: 0, skin: 0, face: 0, glasses: true, build: 0.93, height: 0.98, style: 'dress' }, name: '雪村 澪', inst: 'Va', initial: false, cost: 95000,
-    profile: '内声を愛するヴィオラ奏者。誰とでも合わせられる調和の人。',
-    abilities: [64, 70, 66, 70, 62, 64, 86], potential: [80, 84, 80, 86, 78, 80, 96] },
-  { oid: 'oc_kagura', look: { hair: 'wavy', hairColor: 7, skin: 1, face: 2, glasses: false, build: 0.97, height: 1.0, style: 'suit' }, name: '神楽 鈴音', inst: 'Cl', initial: false, cost: 105000,
-    profile: 'ジャズ出身の異色クラリネット奏者。表現の幅は随一。',
-    abilities: [72, 62, 76, 70, 70, 84, 56], potential: [84, 76, 88, 84, 84, 96, 72] },
-];
+const ORIGINAL_CHARACTERS = GD('members/originals').members;
 
 /* ---------------------------------------------------------
  * 外見（3Dモデルの部品の組み合わせ）
@@ -4537,7 +4546,7 @@ const LOOK_PARTS = {
   styles: ['dress', 'tux', 'suit'],   // ロングドレス／燕尾服（白シャツ・蝶ネクタイ）／黒スーツ
 };
 // 名前（下の名前）から性別表現の傾向を決める（服装の初期傾向にのみ使用）
-const FEMININE_GIVEN = new Set(['陽菜','結衣','美咲','葵','凛','真央','彩花','優奈','千尋','遥','七海','紗希','杏','楓','琴音','美月','和花','詩織','奏','響子','理沙','朋美','由佳','真理','沙織']);
+const FEMININE_GIVEN = new Set(GD('members/names').feminineGiven);
 
 /* ---------------------------------------------------------
  * 指揮者
@@ -4549,179 +4558,54 @@ const CONDUCTOR_ABILITIES = [
   { id: 'charisma', name: 'カリスマ', short: '人気', desc: '聴衆を惹きつける力。集客と評判に影響' },
 ];
 const CABIL = Object.fromEntries(CONDUCTOR_ABILITIES.map(a => [a.id, a]));
-const CONDUCTOR_TRAITS = [
-  { id: 'craft',   name: '職人型',     desc: '正確無比なバトン。「安定重視」の方針で真価を発揮する。', policy: 'stable' },
-  { id: 'passion', name: '情熱型',     desc: '熱い指揮で団員を鼓舞する。「表現重視」の方針と好相性。', policy: 'express' },
-  { id: 'drama',   name: '劇場型',     desc: '大胆な強弱で聴衆を沸かせる。「ダイナミクス重視」と好相性。', policy: 'dynamics' },
-  { id: 'sound',   name: '響き重視型', desc: '全体の響きの調和を大切にする。「バランス重視」と好相性。', policy: 'balance' },
-  { id: 'teacher', name: '教育者型',   desc: '練習の組み立てが巧み。全体合奏の練習効果が高まる。', practice: 1.08 },
-];
+// 指揮者の個性（data/members/personalities.json）
+const CONDUCTOR_TRAITS = GD('members/personalities').conductorTraits;
 const CTRAIT = Object.fromEntries(CONDUCTOR_TRAITS.map(t => [t.id, t]));
-// abilities / potential は lead, interp, baton, charisma の順
-const ORIGINAL_CONDUCTORS = [
-  { oid: 'cd_takamiya', name: '鷹宮 誠一', founder: true, trait: 'sound',
-    look: { hair: 'side', hairColor: 4, skin: 1, face: 3, glasses: true, build: 1.02, height: 1.04, style: 'tux' },
-    profile: '楽団創設以来の常任指揮者。穏やかだが音には一切妥協しない。',
-    abilities: [50, 49, 51, 44], potential: [76, 80, 82, 68] },
-  { oid: 'cd_novak', name: 'エレナ・ノヴァク', trait: 'passion', cost: 420000,
-    look: { hair: 'long', hairColor: 6, skin: 0, face: 2, glasses: false, build: 0.95, height: 1.03, style: 'suit' },
-    profile: '東欧出身の俊英。燃えるような指揮で団員の潜在力を引き出す。',
-    abilities: [68, 74, 66, 72], potential: [84, 90, 82, 88] },
-  { oid: 'cd_ichinose', name: '一ノ瀬 奏多', trait: 'teacher', cost: 160000,
-    look: { hair: 'crop', hairColor: 0, skin: 0, face: 1, glasses: false, build: 0.94, height: 0.99, style: 'suit' },
-    profile: '指揮コンクールで注目を集めた若手。今は経験不足だが、底知れない才能を秘める。',
-    abilities: [48, 56, 54, 50], potential: [92, 95, 94, 90] },
-  { oid: 'cd_okochi', name: '大河内 巌', trait: 'drama', cost: 650000,
-    look: { hair: 'wavy', hairColor: 5, skin: 2, face: 4, glasses: false, build: 1.1, height: 1.02, style: 'tux' },
-    profile: '世界の歌劇場を渡り歩いた巨匠。圧倒的な存在感だが、出演料も破格。',
-    abilities: [84, 82, 80, 86], potential: [88, 86, 84, 90] },
-  { oid: 'cd_ramaud', name: 'ソフィー・ラモー', trait: 'sound', cost: 300000,
-    look: { hair: 'bun', hairColor: 3, skin: 0, face: 0, glasses: true, build: 0.93, height: 1.0, style: 'dress' },
-    profile: 'パリ仕込みの響きの魔術師。透明感のあるバランスを作り上げる。',
-    abilities: [64, 70, 68, 62], potential: [82, 88, 86, 80] },
-];
+// 固有の指揮者（data/members/originals.json）。abilities / potential は lead, interp, baton, charisma の順
+const ORIGINAL_CONDUCTORS = GD('members/originals').conductors;
 
 /* ---------------------------------------------------------
- * ホールの3D表現（CONFIG.halls の id に対応）
- *   w/d/h: 客席部分の幅・奥行・天井高  rows×cols: 3D上の客席数（集客率に応じて観客が座る）
+ * ホール（data/halls/index.json）
+ *   CONFIG.halls：使用料・席数・音響・ホール練習料金などのゲーム上の値
+ *   HALL_VISUALS：3Dの内装（w/d/h: 客席部分の幅・奥行・天井高  rows×cols: 3D上の客席数）
+ *   PRACTICE_ROOM：通常練習を行う練習室（3Dの内装）
  * --------------------------------------------------------- */
-const HALL_VISUALS = {
-  community: { w: 20, d: 16, h: 6.5, rows: 9, cols: 16, rake: 0.08, wall: 0xd8d0c0, wallWood: false, ceiling: 0xe8e4da,
-    floor: 0xb89466, stageFloor: 0xc49a62, seat: 0x6d727a, folding: true, light: 0xeef4ff, lightI: 1.0, warm: 0.0,
-    chandelier: 0, organ: false, balcony: 0, panels: false, backdrop: 0xcfc6b4 },
-  small: { w: 22, d: 18, h: 8, rows: 12, cols: 18, rake: 0.14, wall: 0xb88a5c, wallWood: true, ceiling: 0xd9c4a6,
-    floor: 0x8a5a36, stageFloor: 0xb07a46, seat: 0x7a2630, folding: false, light: 0xfff0dc, lightI: 1.05, warm: 0.3,
-    chandelier: 0, organ: false, balcony: 0, panels: true, backdrop: 0xa47448 },
-  general: { w: 26, d: 22, h: 11, rows: 15, cols: 22, rake: 0.2, wall: 0x9c6b42, wallWood: true, ceiling: 0xcbb08a,
-    floor: 0x6e4528, stageFloor: 0xa8713f, seat: 0x8b1f2c, folding: false, light: 0xffe8c8, lightI: 1.1, warm: 0.5,
-    chandelier: 0, organ: false, balcony: 1, panels: true, backdrop: 0x8a5a34 },
-  large: { w: 30, d: 26, h: 15, rows: 18, cols: 26, rake: 0.24, wall: 0x7a4c2e, wallWood: true, ceiling: 0xb89a74,
-    floor: 0x5a3820, stageFloor: 0x9c6638, seat: 0x7d1726, folding: false, light: 0xffdfb4, lightI: 1.15, warm: 0.7,
-    chandelier: 0, organ: true, balcony: 2, panels: true, backdrop: 0x6e4428 },
-  top: { w: 34, d: 30, h: 18, rows: 20, cols: 30, rake: 0.28, wall: 0x5e3622, wallWood: true, ceiling: 0xd9b87a,
-    floor: 0x4a2c18, stageFloor: 0x9a6232, seat: 0x6e0f1e, folding: false, light: 0xffd9a0, lightI: 1.2, warm: 1.0,
-    chandelier: 3, organ: true, balcony: 3, panels: true, gold: true, backdrop: 0x5a3420 },
-};
+CONFIG.halls = GD('halls/index').halls.map(h => { const { visual, ...rest } = h; return rest; });
+const HALL_VISUALS = Object.fromEntries(GD('halls/index').halls.map(h => [h.id, colorsOf(h.visual)]));
+const PRACTICE_ROOM = { ...GD('halls/index').practiceRoom, visual: colorsOf(GD('halls/index').practiceRoom.visual) };
 
 /* ---------------------------------------------------------
- * 曲データ
- *   曲を追加するときは SONG_LIBRARY に1件追加するだけでよい。
- *   genre: 'orchestral'（管弦楽曲：序曲・前奏曲・交響詩・組曲など）
- *          'symphony'  （交響曲）
+ * 曲データ（data/songs/orchestral.json・symphonies.json）
+ *   ファイルの genre が曲のジャンルになる（'orchestral' 管弦楽曲／'symphony' 交響曲）
  * フィールド:
  *   id, title, composer, year, duration(分), difficulty(0-100),
  *   popularity(1-5), mood, description,
  *   strings: {Vn1,Vn2,Va,Vc,Cb} 弦五部の必要人数（null=弦なし）
  *   winds:   {Fl,Ob,Cl,Fg,Hr,Tp,Tb,Tuba,Perc} 管打の必要人数（打楽器はティンパニを含めて Perc）
  * --------------------------------------------------------- */
-const S_SMALL  = { Vn1: 6, Vn2: 5, Va: 4, Vc: 4, Cb: 2 };
-const S_MID    = { Vn1: 8, Vn2: 7, Va: 5, Vc: 5, Cb: 3 };
-const S_LARGE  = { Vn1: 10, Vn2: 9, Va: 7, Vc: 6, Cb: 5 };
-const W_CLASS  = { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 2, Tp: 2, Perc: 1 };
+const SONG_FILES = ['songs/orchestral', 'songs/symphonies'].map(GD);
+const GENRES = SONG_FILES.map(f => ({ id: f.genre, name: f.genreName }));
+const SONG_LIBRARY = SONG_FILES.flatMap(f => f.songs.map(s => ({ ...s, genre: f.genre, strings: s.strings ? { ...s.strings } : null, winds: { ...(s.winds || {}) } })));
 
-const GENRES = [
-  { id: 'orchestral', name: '管弦楽曲' },
-  { id: 'symphony',   name: '交響曲' },
-];
-const SONG_LIBRARY = [
-  // ---- 管弦楽曲 ----
-    { id: 'egmont', genre: 'orchestral', title: '序曲「エグモント」', composer: 'ベートーヴェン', year: 1810, duration: 9, difficulty: 48, popularity: 4, mood: '劇的',
-      description: '圧政に抗う英雄を描いた劇付随音楽の序曲。重い序奏から勝利の終結へ駆け上がる。', strings: S_SMALL, winds: { ...W_CLASS } },
-    { id: 'figaro', genre: 'orchestral', title: '歌劇「フィガロの結婚」序曲', composer: 'モーツァルト', year: 1786, duration: 4, difficulty: 45, popularity: 5, mood: '軽快',
-      description: '囁くような弦の走句で始まる快活な序曲。短いが音の粒を揃えるのは意外に難しい。', strings: S_SMALL, winds: { ...W_CLASS } },
-    { id: 'tell', genre: 'orchestral', title: '歌劇「ウィリアム・テル」序曲', composer: 'ロッシーニ', year: 1829, duration: 12, difficulty: 58, popularity: 5, mood: '華麗',
-      description: 'チェロ独奏の夜明け、嵐、牧歌、そして有名な行進へ。場面転換が多彩な序曲。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Perc: 3 } },
-    { id: 'ruslan', genre: 'orchestral', title: '歌劇「ルスランとリュドミラ」序曲', composer: 'グリンカ', year: 1842, duration: 5, difficulty: 66, popularity: 4, mood: '華麗',
-      description: '猛烈な速さで弦が駆け抜ける序曲。指揮者もテンポ設定に腕を問われる難所揃い。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Perc: 1 } },
-    { id: 'academic', genre: 'orchestral', title: '大学祝典序曲', composer: 'ブラームス', year: 1880, duration: 10, difficulty: 57, popularity: 4, mood: '祝祭',
-      description: '学生歌を織り込んだ明るい祝典序曲。終盤の「ガウデアムス」は堂々たる響き。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 3, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'meister', genre: 'orchestral', title: '楽劇「ニュルンベルクのマイスタージンガー」前奏曲', composer: 'ワーグナー', year: 1868, duration: 10, difficulty: 64, popularity: 4, mood: '壮麗',
-      description: '複数の主題が重なり合う壮麗な前奏曲。厚い響きの中で各声部を聴かせる力が要る。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'freischutz', genre: 'orchestral', title: '歌劇「魔弾の射手」序曲', composer: 'ウェーバー', year: 1821, duration: 10, difficulty: 52, popularity: 3, mood: 'ロマン的',
-      description: '4本のホルンによる森の情景で知られる序曲。ドイツ・ロマン派オペラの幕開け。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Perc: 1 } },
-    { id: 'hebrides', genre: 'orchestral', title: '序曲「フィンガルの洞窟」', composer: 'メンデルスゾーン', year: 1830, duration: 10, difficulty: 55, popularity: 3, mood: '叙景',
-      description: 'スコットランドの海と洞窟の印象を描いた演奏会用序曲。波のうねりを弦で表す。', strings: S_SMALL, winds: { ...W_CLASS } },
-    { id: 'vltava', genre: 'orchestral', title: '交響詩「モルダウ」', composer: 'スメタナ', year: 1874, duration: 12, difficulty: 60, popularity: 5, mood: '叙景',
-      description: '源流から大河へ成長する川の旅。フルートの水音に始まり、雄大な主題が流れる。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'carnival', genre: 'orchestral', title: '序曲「謝肉祭」', composer: 'ドヴォルザーク', year: 1891, duration: 9, difficulty: 65, popularity: 3, mood: '祝祭',
-      description: 'タンバリンやトライアングルが彩る熱狂的な序曲。中間部の静けさとの対比が鍵。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'finlandia', genre: 'orchestral', title: '交響詩「フィンランディア」', composer: 'シベリウス', year: 1900, duration: 8, difficulty: 45, popularity: 5, mood: '壮麗',
-      description: '重苦しい金管の序奏から祖国への賛歌へ。中間部の讃歌は単独でも愛唱される。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 3 } },
-    { id: 'peergynt', genre: 'orchestral', title: '「ペール・ギュント」第1組曲', composer: 'グリーグ', year: 1888, duration: 15, difficulty: 42, popularity: 5, mood: '叙情',
-      description: '「朝」「オーセの死」「アニトラの踊り」「山の魔王の宮殿にて」の4曲。親しみやすい名曲集。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'arlesienne', genre: 'orchestral', title: '「アルルの女」第2組曲', composer: 'ビゼー（ギロー編）', year: 1879, duration: 17, difficulty: 50, popularity: 4, mood: '叙情',
-      description: '南仏の情景を描く4曲。フルートの「メヌエット」と熱い「ファランドール」で知られる。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Perc: 3 } },
-    { id: 'baldmtn', genre: 'orchestral', title: '交響詩「禿山の一夜」', composer: 'ムソルグスキー（R=コルサコフ編）', year: 1886, duration: 11, difficulty: 62, popularity: 4, mood: '劇的',
-      description: '魔物たちの饗宴が夜明けの鐘で退散する幻想的な音詩。金管の咆哮が聴きどころ。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'steppes', genre: 'orchestral', title: '中央アジアの草原にて', composer: 'ボロディン', year: 1880, duration: 7, difficulty: 40, popularity: 3, mood: '叙景',
-      description: '草原を行く隊商の情景。ロシアと東洋の二つの旋律が重なり、遠ざかっていく。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Perc: 1 } },
-    { id: 'romeo', genre: 'orchestral', title: '幻想序曲「ロメオとジュリエット」', composer: 'チャイコフスキー', year: 1880, duration: 20, difficulty: 70, popularity: 4, mood: '劇的',
-      description: '争いの激しさと愛の主題の甘美さ。悲劇を凝縮したドラマティックな音楽。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'serenade', genre: 'orchestral', title: '弦楽セレナード', composer: 'チャイコフスキー', year: 1880, duration: 30, difficulty: 63, popularity: 4, mood: '叙情',
-      description: '弦楽合奏のための4楽章。冒頭の重厚な和音と優美なワルツで知られる。管打楽器は不要。', strings: S_MID, winds: {} },
-    { id: 'enigma', genre: 'orchestral', title: 'エニグマ変奏曲', composer: 'エルガー', year: 1899, duration: 30, difficulty: 66, popularity: 3, mood: '叙情',
-      description: '友人たちの肖像を描いた変奏曲。第9変奏「ニムロッド」は特に有名。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 3, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'bolero', genre: 'orchestral', title: 'ボレロ', composer: 'ラヴェル', year: 1928, duration: 15, difficulty: 68, popularity: 5, mood: '高揚',
-      description: '同じリズムと旋律を楽器を替えて繰り返す。管楽器のソロが次々と試され、小太鼓は一瞬も気を抜けない。', strings: S_MID, winds: { Fl: 3, Ob: 3, Cl: 3, Fg: 3, Hr: 4, Tp: 4, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'faune', genre: 'orchestral', title: '牧神の午後への前奏曲', composer: 'ドビュッシー', year: 1894, duration: 10, difficulty: 72, popularity: 4, mood: '幻想',
-      description: 'フルート独奏の気だるい旋律で始まる印象派の傑作。繊細な音色の制御が要求される。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Perc: 1 } },
-    { id: 'macabre', genre: 'orchestral', title: '交響詩「死の舞踏」', composer: 'サン＝サーンス', year: 1874, duration: 7, difficulty: 55, popularity: 4, mood: '幻想',
-      description: '真夜中に骸骨たちが踊り出す。シロフォンの骨の音と独奏ヴァイオリンが印象的。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'hungarian5', genre: 'orchestral', title: 'ハンガリー舞曲 第5番', composer: 'ブラームス', year: 1869, duration: 3, difficulty: 35, popularity: 5, mood: '軽快',
-      description: '緩急自在のテンポ変化が楽しい舞曲。アンコールの定番。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Perc: 2 } },
-    { id: 'pomp1', genre: 'orchestral', title: '行進曲「威風堂々」第1番', composer: 'エルガー', year: 1901, duration: 6, difficulty: 46, popularity: 5, mood: '祝祭',
-      description: '躍動的な主部と、広く歌われる気高いトリオ。祝典の定番曲。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'fledermaus', genre: 'orchestral', title: '喜歌劇「こうもり」序曲', composer: 'J.シュトラウス2世', year: 1874, duration: 9, difficulty: 55, popularity: 4, mood: '軽快',
-      description: 'ウィンナ・ワルツの粋が詰まった序曲。独特の揺れるリズムをどう表現するかが問われる。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 1, Perc: 3 } },
-    { id: 'cavalleria', genre: 'orchestral', title: '「カヴァレリア・ルスティカーナ」間奏曲', composer: 'マスカーニ', year: 1890, duration: 4, difficulty: 30, popularity: 4, mood: '叙情',
-      description: '祈りのように静かに歌う弦の旋律。短く美しい名旋律。', strings: S_SMALL, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 2 } },
-    { id: 'air', genre: 'orchestral', title: 'G線上のアリア', composer: 'J.S.バッハ', year: 1730, duration: 5, difficulty: 25, popularity: 5, mood: '叙情',
-      description: '管弦楽組曲第3番のアリア。弦楽のみで静かに奏でられる。', strings: S_SMALL, winds: {} },
-    { id: 'rosamunde', genre: 'orchestral', title: '「ロザムンデ」序曲', composer: 'シューベルト', year: 1820, duration: 10, difficulty: 47, popularity: 3, mood: '叙情',
-      description: '歌心あふれる旋律が次々と現れる序曲。軽やかさと品の良さが求められる。', strings: S_SMALL, winds: { ...W_CLASS, Hr: 4, Tb: 3 } },
-    { id: 'hansel', genre: 'orchestral', title: '歌劇「ヘンゼルとグレーテル」前奏曲', composer: 'フンパーディンク', year: 1893, duration: 8, difficulty: 50, popularity: 3, mood: '幻想',
-      description: 'ホルンの祈りの歌に始まる温かな前奏曲。重なり合う声部をまとめる力が要る。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'adagio', genre: 'orchestral', title: '弦楽のためのアダージョ', composer: 'バーバー', year: 1936, duration: 8, difficulty: 55, popularity: 4, mood: '悲歌',
-      description: '息の長い旋律が頂点へと高まる弦楽の哀歌。弦のみの編成。', strings: S_MID, winds: {} },
-  // ---- 交響曲 ----
-    { id: 'beet5', genre: 'symphony', title: '交響曲第5番 ハ短調「運命」', composer: 'ベートーヴェン', year: 1808, duration: 33, difficulty: 68, popularity: 5, mood: '劇的',
-      description: '4つの音の動機で全曲を構築した革新的交響曲。暗から明への劇的な展開。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 3, Hr: 2, Tp: 2, Tb: 3, Perc: 1 } },
-    { id: 'beet7', genre: 'symphony', title: '交響曲第7番 イ長調', composer: 'ベートーヴェン', year: 1812, duration: 38, difficulty: 70, popularity: 5, mood: '高揚',
-      description: '全楽章をリズムが支配する「舞踏の神化」。終楽章の熱狂は持久力が勝負。', strings: S_MID, winds: { ...W_CLASS } },
-    { id: 'beet3', genre: 'symphony', title: '交響曲第3番 変ホ長調「英雄」', composer: 'ベートーヴェン', year: 1804, duration: 48, difficulty: 72, popularity: 4, mood: '壮麗',
-      description: '交響曲の規模を一気に拡大した記念碑。葬送行進曲を含む堂々たる4楽章。', strings: S_MID, winds: { ...W_CLASS, Hr: 3 } },
-    { id: 'mozart41', genre: 'symphony', title: '交響曲第41番 ハ長調「ジュピター」', composer: 'モーツァルト', year: 1788, duration: 32, difficulty: 60, popularity: 4, mood: '壮麗',
-      description: 'モーツァルト最後の交響曲。終楽章では5つの主題が見事な対位法で結合する。', strings: S_SMALL, winds: { Fl: 1, Ob: 2, Fg: 2, Hr: 2, Tp: 2, Perc: 1 } },
-    { id: 'schubert8', genre: 'symphony', title: '交響曲第7（8）番 ロ短調「未完成」', composer: 'シューベルト', year: 1822, duration: 25, difficulty: 58, popularity: 4, mood: '叙情',
-      description: '2楽章のみが残された神秘的な交響曲。低弦の暗い開始から深い叙情が広がる。', strings: S_SMALL, winds: { ...W_CLASS, Tb: 3 } },
-    { id: 'mendel4', genre: 'symphony', title: '交響曲第4番 イ長調「イタリア」', composer: 'メンデルスゾーン', year: 1833, duration: 28, difficulty: 62, popularity: 4, mood: '軽快',
-      description: '南国の陽光を思わせる明るい交響曲。終楽章のサルタレッロは息つく暇もない。', strings: S_SMALL, winds: { ...W_CLASS } },
-    { id: 'brahms1', genre: 'symphony', title: '交響曲第1番 ハ短調', composer: 'ブラームス', year: 1876, duration: 46, difficulty: 78, popularity: 5, mood: '壮麗',
-      description: '構想20年余りの末に完成した重厚な交響曲。苦悩から歓喜へ至る長大なドラマ。', strings: S_LARGE, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 3, Hr: 4, Tp: 2, Tb: 3, Perc: 1 } },
-    { id: 'dvorak9', genre: 'symphony', title: '交響曲第9番 ホ短調「新世界より」', composer: 'ドヴォルザーク', year: 1893, duration: 42, difficulty: 66, popularity: 5, mood: '叙情',
-      description: 'アメリカ滞在中に書かれた人気作。イングリッシュホルンの「家路」の旋律が有名。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 2 } },
-    { id: 'tchai5', genre: 'symphony', title: '交響曲第5番 ホ短調', composer: 'チャイコフスキー', year: 1888, duration: 48, difficulty: 74, popularity: 4, mood: '高揚',
-      description: '運命の主題が全楽章を貫き、最後は凱歌となる。第2楽章のホルン独奏は難所。', strings: S_MID, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 1 } },
-    { id: 'tchai6', genre: 'symphony', title: '交響曲第6番 ロ短調「悲愴」', composer: 'チャイコフスキー', year: 1893, duration: 46, difficulty: 82, popularity: 5, mood: '悲歌',
-      description: '静かに消えゆく終楽章で閉じる異例の交響曲。極端な強弱幅の制御が求められる。', strings: S_LARGE, winds: { Fl: 3, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 2, Tb: 3, Tuba: 1, Perc: 3 } },
-    { id: 'sibelius2', genre: 'symphony', title: '交響曲第2番 ニ長調', composer: 'シベリウス', year: 1902, duration: 44, difficulty: 75, popularity: 4, mood: '壮麗',
-      description: '北欧の自然と民族の高揚を感じさせる交響曲。長い上昇の末の終楽章は圧巻。', strings: S_MID, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 2, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 1 } },
-    { id: 'rach2', genre: 'symphony', title: '交響曲第2番 ホ短調', composer: 'ラフマニノフ', year: 1907, duration: 60, difficulty: 84, popularity: 4, mood: 'ロマン的',
-      description: '甘美な旋律が尽きることなく溢れる大曲。第3楽章のクラリネット独奏が白眉。', strings: S_LARGE, winds: { Fl: 3, Ob: 3, Cl: 3, Fg: 3, Hr: 4, Tp: 3, Tb: 3, Tuba: 1, Perc: 4 } },
-    { id: 'fantastique', genre: 'symphony', title: '幻想交響曲', composer: 'ベルリオーズ', year: 1830, duration: 50, difficulty: 86, popularity: 4, mood: '幻想',
-      description: '恋に破れた芸術家の幻覚を描く標題交響曲。4人の奏者によるティンパニなど型破りな管弦楽法。', strings: S_LARGE, winds: { Fl: 2, Ob: 2, Cl: 2, Fg: 4, Hr: 4, Tp: 4, Tb: 3, Tuba: 2, Perc: 5 } },
-    { id: 'mahler1', genre: 'symphony', title: '交響曲第1番 ニ長調「巨人」', composer: 'マーラー', year: 1888, duration: 55, difficulty: 88, popularity: 4, mood: '高揚',
-      description: '自然の目覚めから勝利の終結まで。7本のホルンが起立して吹く終結部は大編成ならでは。', strings: S_LARGE, winds: { Fl: 4, Ob: 4, Cl: 4, Fg: 3, Hr: 7, Tp: 4, Tb: 3, Tuba: 1, Perc: 5 } },
-  ];
+/* ---------------------------------------------------------
+ * 練習クイズ（data/quizzes/*.json）
+ *   QUIZ_SONG[曲ID] / QUIZ_COMPOSER[作曲家ID] / QUIZ_GENERAL（楽器＋一般）
+ *   1問 = { id, k: 分類, q: 問題文, c: [選択肢4つ（先頭が正解に並べ直す）], e: 解説 }
+ * --------------------------------------------------------- */
+const quizItem = x => ({ id: x.id, k: x.category, q: x.question, c: [x.answer, ...x.choices.filter(c => c !== x.answer)], e: x.explanation });
+const QUIZ_CATS = GD('quizzes/general').categories;
+const QUIZ_SONG = Object.fromEntries(Object.entries(GD('quizzes/songs').questions).map(([sid, qs]) => [sid, qs.map(quizItem)]));
+const QUIZ_COMPOSER = Object.fromEntries(GD('quizzes/composers').composers.map(c => [c.id, { name: c.name, songs: c.songs, qs: c.questions.map(quizItem) }]));
+const QUIZ_GENERAL = [...GD('quizzes/instruments').questions, ...GD('quizzes/general').questions].map(quizItem);
+
+/* ---------------------------------------------------------
+ * 練習のランダムイベント（data/events/practice.json）
+ * --------------------------------------------------------- */
+const PRACTICE_EVENT_DATA = GD('events/practice');
 
 /* =========================================================
- * LOGIC — ゲームの状態と計算（UIから独立）
- *   団員個人能力  : STATE.members[].abilities / potential
- *   曲パラメータ  : STATE.songParams[songId]  （長期・演奏会をまたいで保持）
- *   発表会パラメータ: STATE.concertPrograms[id].perf（演奏会ごと、0から開始）
+ * 汎用の小さな関数（乱数・平均など）
  * ========================================================= */
-let STATE = null;
-
 /* ---------- 汎用 ---------- */
 const rnd = (a, b) => a + Math.random() * (b - a);
 const randInt = (a, b) => Math.floor(rnd(a, b + 1));
@@ -4740,6 +4624,273 @@ function weightedPick(obj) {
 }
 function newId(prefix) { STATE.nextId = (STATE.nextId || 1) + 1; return prefix + STATE.nextId; }
 
+/* =========================================================
+ * 曲・ホールの参照と資金の出入り
+ * ========================================================= */
+/* ---------- 曲 ---------- */
+const findSong = id => SONG_LIBRARY.find(s => s.id === id) || null;
+const songsOfGenre = g => SONG_LIBRARY.filter(s => s.genre === g);
+const genreName = g => (GENRES.find(x => x.id === g) || {}).name || '';
+function songRequirements(song) {
+  const req = {};
+  if (song.strings) Object.entries(song.strings).forEach(([k, v]) => { if (v) req[k] = v; });
+  Object.entries(song.winds || {}).forEach(([k, v]) => { if (v) req[k] = v; });
+  return req;
+}
+const songPlayers = song => Object.values(songRequirements(song)).reduce((s, v) => s + v, 0);
+function songSections(song) {
+  const req = songRequirements(song);
+  return SECTIONS.filter(s => s.insts.some(i => req[i])).map(s => s.id);
+}
+function difficultyLabel(d) { return d <= 40 ? '初級' : d <= 60 ? '中級' : d <= 80 ? '上級' : '最高難度'; }
+function songParam(id) {
+  if (!STATE.songParams[id]) STATE.songParams[id] = { base: 0, underst: 0, expr: 0, performed: 0 };
+  return STATE.songParams[id];
+}
+function songLongBonus(id) {
+  const p = STATE.songParams[id]; if (!p) return 0;
+  const sum = p.base + p.underst + p.expr;
+  return CONFIG.songParam.bonusMax * (1 - Math.exp(-sum / CONFIG.songParam.bonusScale));
+}
+
+// 編成不足（楽器単位）
+function shortageOf(song) {
+  const have = countByInst();
+  const req = songRequirements(song);
+  const sc = CONFIG.concert.shortage;
+  const items = []; let penalty = 0;
+  for (const [inst, need] of Object.entries(req)) {
+    const lack = Math.max(0, need - have[inst]);
+    if (!lack) continue;
+    const kind = INST[inst].kind;
+    const per = kind === 'string' ? sc.perStringPlayer : kind === 'perc' ? sc.perPercPlayer : sc.perWindPlayer;
+    const missing = have[inst] === 0;
+    penalty += lack * per + (missing ? sc.missingInstrument : 0);
+    items.push({ inst, need, have: have[inst], lack, missing });
+  }
+  return { items, penalty };
+}
+function formatInstrumentation(song) {
+  const parts = [];
+  const w = song.winds || {};
+  for (const g of [['Fl', 'Ob', 'Cl', 'Fg'], ['Hr', 'Tp', 'Tb', 'Tuba'], ['Perc']]) {
+    const s = g.filter(i => w[i]).map(i => `${INST[i].abbr} ${w[i]}`).join(', ');
+    if (s) parts.push(s);
+  }
+  if (song.strings) { const s = song.strings; parts.push(`弦五部 (${s.Vn1}-${s.Vn2}-${s.Va}-${s.Vc}-${s.Cb})`); }
+  return parts;
+}
+
+/* ---------- ホール ---------- */
+const findHall = id => CONFIG.halls.find(h => h.id === id) || null;
+const concertHall = c => findHall(c.hallId);
+
+/* ---------- 資金 ---------- */
+function spend(c, label, amount) {
+  if (amount > 0 && STATE.funds < amount) return false;
+  STATE.funds -= amount;
+  if (amount) c.ledger.push({ label, amount: -amount });
+  return true;
+}
+function earn(c, label, amount) { STATE.funds += amount; c.ledger.push({ label, amount }); }
+const operatingCost = () => CONFIG.economy.operatingBase + CONFIG.economy.operatingPerMember * STATE.members.length;
+
+/* ---------- 選曲（プレイヤーが一覧から1曲を選ぶ） ---------- */
+function confirmSong(c, songId) {
+  if (!inSetup(c) || !findSong(songId)) return false;
+  c.songId = songId; c.started = true;
+  songParam(songId);
+  save(); return true;
+}
+
+/* =========================================================
+ * STATE — ゲームの状態（演奏会の初期状態・新規ゲーム）。計算は systems/ の各ファイル（UIから独立）
+ *   団員個人能力  : STATE.members[].abilities / potential
+ *   曲パラメータ  : STATE.songParams[songId]  （長期・演奏会をまたいで保持）
+ *   発表会パラメータ: STATE.concertPrograms[id].perf（演奏会ごと、0から開始）
+ * ========================================================= */
+let STATE = null;
+
+/* ---------- 演奏会 ---------- */
+function emptyPerf() {
+  const sections = {};
+  SECTIONS.forEach(s => { sections[s.id] = {}; SECTION_PARAMS.forEach(p => sections[s.id][p.id] = 0); });
+  return {
+    sections,
+    overall: { ensemble: 0, balance: 0, unity: 0 },  // balance は合奏での上積み分（実効値は算出）
+    mastery: { underst: 0, comp: 0 },                // 今回の曲の楽曲理解度・楽曲完成度
+  };
+}
+
+function createConcert() {
+  const number = STATE.concertOrder.length + 1;
+  const id = 'c' + number + '_' + Date.now().toString(36);
+  const c = {
+    id, number, title: `第${number}回 定期演奏会`,
+    phase: 'setup',      // setup（準備：選曲・会場・指揮者）→ practice → prep → result → done（募集は独立）
+    started: false,      // 「演奏会を始める」を押したか
+    hallId: null,
+    songId: null,        // 演奏する曲（1曲）
+    conductorId: (STATE.conductors || []).some(x => x.id === STATE.conductorId) ? STATE.conductorId : null,  // 前回の担当を引き継ぐ
+    practiceDone: 0,
+    practices: [],       // 練習履歴
+    perf: emptyPerf(),   // 発表会パラメータ（毎回0から）
+    rehearsal: { done: false },  // ホール練習
+    policy: 'stable',
+    growth: {},          // 今回の育成による能力上昇 { memberId: { abil: +n } }
+    trainingUsed: {},    // 育成の実施済み記録 { 'lesson:m12': true }
+    trainingLog: [],
+    songGrowth: {},      // { songId: { param: +n } }
+    ledger: [],          // 収支 [{label, amount}]
+    result: null,
+  };
+  STATE.concertPrograms[id] = c;
+  STATE.concertOrder.push(id);
+  STATE.activeConcertId = id;
+  return c;
+}
+const activeConcert = () => STATE.concertPrograms[STATE.activeConcertId];
+
+/* ---------- 新規ゲーム ---------- */
+function newGame(name) {
+  STATE = {
+    version: CONFIG.SAVE_VERSION,
+    orchestraName: name || '星霜フィルハーモニー管弦楽団',
+    funds: CONFIG.initialFunds,
+    reputation: CONFIG.initialReputation,
+    members: [],
+    songParams: {},
+    concertPrograms: {},
+    concertOrder: [],
+    activeConcertId: null,
+    recruit: emptyRecruit(),  // 団員募集（演奏会から独立）
+    ledger: [],               // 演奏会に属さない支出（採用費・追加募集）
+    nextId: 1,
+    createdAt: Date.now(),
+  };
+  const initialOC = ORIGINAL_CHARACTERS.filter(o => o.initial);
+  for (const inst of INSTRUMENTS) {
+    let n = inst.std;
+    for (const oc of initialOC.filter(o => o.inst === inst.id)) { STATE.members.push(makeOriginal(oc, 0)); n--; }
+    for (let i = 0; i < n; i++) STATE.members.push(generateMember(inst.id, weightedPick(CONFIG.initialRankWeights), 0));
+  }
+  STATE.conductors = [makeConductor(ORIGINAL_CONDUCTORS.find(o => o.founder))];
+  STATE.conductorId = STATE.conductors[0].id;
+  ensurePrincipals();
+  createConcert();
+  generateRecruitCandidates();
+  generateConductorCandidates();
+  save();
+}
+
+/* =========================================================
+ * 保存・読み込み（セーブデータの版の移行を含む）
+ * ========================================================= */
+/* ---------- 保存・読み込み ---------- */
+function save() {
+  try { localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(STATE)); } catch (e) { /* ストレージ不可 */ }
+}
+function migrate(s) {
+  if (!s || typeof s !== 'object' || !s.concertPrograms) return null;
+  // v1（3曲構成・練習で成長）は構造が大きく異なるため引き継がない
+  if ((s.version || 1) < 2) return null;
+  if (!s.songParams) s.songParams = {};
+  // v2 → v3：募集を演奏会から切り離す
+  if (s.version < 3) {
+    const order = (s.concertOrder || []).map(id => s.concertPrograms[id]).filter(Boolean);
+    const cur = s.concertPrograms[s.activeConcertId];
+    s.recruit = emptyRecruit();
+    if (cur && cur.recruit) s.recruit = { candidates: cur.recruit.candidates || [], hired: cur.recruit.hired || [], rerolls: cur.recruit.rerolls || 0 };
+    for (const c of order) {
+      delete c.recruit;
+      if (c.phase === 'recruit') c.phase = 'selection';   // 募集工程にいた演奏会は選曲から再開
+    }
+    s.ledger = s.ledger || [];
+    s.version = 3;
+    s._needCandidates = !s.recruit.candidates.length;
+  }
+  if (!s.recruit) s.recruit = emptyRecruit();
+  // v3 → v4：Timp を Perc に統一／外見・首席・指揮者を追加
+  if (s.version < 4) {
+    for (const m of [...(s.members || []), ...((s.recruit && s.recruit.candidates) || [])]) if (m.inst === 'Timp') m.inst = 'Perc';
+    s.version = 4;
+    s._needV4 = true;
+  }
+  // v4 → v5：会場選択・選曲の段階を「演奏会の準備（setup）」に統合。決定済みの内容は引き継ぐ
+  if (s.version < 5) {
+    for (const c of Object.values(s.concertPrograms)) {
+      if (c.phase === 'hall' || c.phase === 'selection') { c.phase = 'setup'; c.started = !!(c.hallId || c.songId); }
+      if (!('conductorId' in c)) c.conductorId = c.phase === 'done' || c.phase === 'result' ? (c.result && c.result.conductorId) || null : s.conductorId || null;
+    }
+    s.version = 5;
+  }
+  if (!s.ledger) s.ledger = [];
+  if (s.reputation == null) s.reputation = CONFIG.initialReputation;
+  return s;
+}
+let LOAD_NOTE = '';
+function load() {
+  try {
+    const raw = localStorage.getItem(CONFIG.SAVE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    const s = migrate(parsed);
+    if (!s || !s.concertPrograms[s.activeConcertId]) {
+      if (parsed && (parsed.version || 1) < 2) LOAD_NOTE = 'ゲームの仕組みが新しくなったため、以前のセーブデータは引き継げません。新しく楽団を始めてください。';
+      return false;
+    }
+    STATE = s;
+    if (STATE._needCandidates) { delete STATE._needCandidates; generateRecruitCandidates(); }
+    if (STATE._needV4 || !STATE.conductors || !STATE.conductors.length) {
+      delete STATE._needV4;
+      STATE.conductors = [makeConductor(ORIGINAL_CONDUCTORS.find(o => o.founder))];
+      STATE.conductorId = STATE.conductors[0].id;
+    }
+    if (!STATE.conductorMarket) generateConductorCandidates();
+    if (!activeConductor()) STATE.conductorId = STATE.conductors[0].id;
+    ensureLooks();
+    ensurePrincipals();
+    ensureQuizState();
+    save();
+    return true;
+  } catch (e) { return false; }
+}
+function resetSave() { try { localStorage.removeItem(CONFIG.SAVE_KEY); } catch (e) {} }
+
+if (typeof module !== 'undefined') module.exports = {};
+
+/* ---------- 練習クイズの記録 ----------
+ * クイズの回答は、その演奏会の既存の「楽曲理解度」（c.perf.mastery.underst）を上げる（新しい数値は作らない）。
+ * STATE.quiz = { count: 通常練習の回数（出題タイミング用）, streak: 連続正解数, best: 最高連続正解数,
+ *               songs: { 曲ID: { asked: [出題済みの問題ID], answered, correct } },
+ *               pending: 出題中の問題（回答前に再起動しても続きから出す）, history: 直近の回答 }
+ * 古いセーブデータには無いので、読み込み時に安全な初期値で補う（セーブの版は変えない） */
+function ensureQuizState() {
+  const q = STATE.quiz = (STATE.quiz && typeof STATE.quiz === 'object') ? STATE.quiz : {};
+  const num = (v, d = 0) => Number.isFinite(v) ? v : d;
+  q.count = Math.max(0, Math.floor(num(q.count))); q.streak = Math.max(0, num(q.streak)); q.best = Math.max(q.streak, num(q.best));
+  q.songs = (q.songs && typeof q.songs === 'object') ? q.songs : {};
+  for (const [id, s] of Object.entries(q.songs)) {
+    if (!s || typeof s !== 'object') { delete q.songs[id]; continue; }
+    delete s.und;   // 以前の版で使っていた独自の理解度（今は既存の楽曲理解度に一本化）
+    s.asked = Array.isArray(s.asked) ? s.asked : []; s.answered = num(s.answered); s.correct = num(s.correct);
+  }
+  q.pending = (q.pending && typeof q.pending === 'object' && q.pending.qid && Array.isArray(q.pending.order)) ? q.pending : null;
+  q.history = Array.isArray(q.history) ? q.history.slice(-50) : [];
+  return q;
+}
+
+// 管打楽器の首席によるソロの出来（音楽表現の評価へ）
+function principalSoloBonus(song) {
+  const req = songRequirements(song);
+  const ps = Object.keys(req).filter(i => INST[i].kind !== 'string').map(principalOf).filter(Boolean);
+  if (!ps.length) return 0;
+  return (mean(ps.map(m => (m.abilities.tone + m.abilities.expr) / 2)) - 55) * CONFIG.principal.soloWeight;
+}
+
+/* =========================================================
+ * 団員（能力・外見・首席奏者・セクション基礎能力・募集・採用・除籍）
+ * ========================================================= */
 /* ---------- 団員 ---------- */
 function rankFromAvg(avg) {
   for (const [r, t] of CONFIG.rankThresholds) if (avg >= t) return r;
@@ -4823,9 +4974,13 @@ const membersOfSection = sec => STATE.members.filter(m => INST[m.inst].section =
 /* ---------- 首席奏者（各楽器に1名） ---------- */
 const principalOf = inst => STATE.members.find(m => m.id === (STATE.principals || {})[inst]) || null;
 const isPrincipal = m => !!m && (STATE.principals || {})[m.inst] === m.id;
-// 首席が未設定・退団済みの楽器は、その楽器で最も能力の高い団員を自動で任命する
+// 首席はプレイヤーが任命する。ここでは「首席が不在」の楽器だけを補う（任命済みの首席は能力に関係なく維持する）。
+//   ・団員の採用で、その楽器に初めて団員が入ったとき
+//   ・首席が退団したとき（後任の自動任命）
+//   ・セーブデータ読み込み時に、首席が存在しない／別の楽器の団員になっている不整合を直すとき
 function ensurePrincipals() {
   STATE.principals = STATE.principals || {};
+  for (const k of Object.keys(STATE.principals)) if (!INST[k]) delete STATE.principals[k];
   for (const ins of INSTRUMENTS) {
     const cur = STATE.members.find(m => m.id === STATE.principals[ins.id] && m.inst === ins.id);
     if (cur) continue;
@@ -4833,9 +4988,19 @@ function ensurePrincipals() {
     if (best) STATE.principals[ins.id] = best.id; else delete STATE.principals[ins.id];
   }
 }
-function setPrincipal(memberId) {
+// 同じ楽器の団員なら能力に関係なく誰でも任命できる。首席は楽器ごとに1名（前の首席は自動的に通常団員に戻る）
+function setPrincipal(memberId, inst) {
   const m = STATE.members.find(x => x.id === memberId); if (!m) return false;
+  if (inst && m.inst !== inst) return false;   // 他の楽器の団員は任命できない
+  STATE.principals = STATE.principals || {};
   STATE.principals[m.inst] = m.id; save(); return true;
+}
+// 除籍できない理由（首席奏者は、同じ楽器の別の団員を首席にしてからでないと除籍できない）
+function dismissBlockReason(m) {
+  if (!m) return '対象の団員がいません';
+  if (isPrincipal(m) && STATE.members.some(x => x.inst === m.inst && x.id !== m.id))
+    return '首席奏者はそのまま除籍できません。先に別の団員を首席に任命してください。';
+  return null;
 }
 
 /* ---------- セクション基礎能力（内部値） ---------- */
@@ -4855,186 +5020,6 @@ function sectionBase(secId) {
 }
 const allSectionBases = () => Object.fromEntries(SECTIONS.map(s => [s.id, sectionBase(s.id)]));
 const orchestraAbility = id => mean(STATE.members.map(m => m.abilities[id]));
-
-
-/* ---------- 曲 ---------- */
-const findSong = id => SONG_LIBRARY.find(s => s.id === id) || null;
-const songsOfGenre = g => SONG_LIBRARY.filter(s => s.genre === g);
-const genreName = g => (GENRES.find(x => x.id === g) || {}).name || '';
-function songRequirements(song) {
-  const req = {};
-  if (song.strings) Object.entries(song.strings).forEach(([k, v]) => { if (v) req[k] = v; });
-  Object.entries(song.winds || {}).forEach(([k, v]) => { if (v) req[k] = v; });
-  return req;
-}
-const songPlayers = song => Object.values(songRequirements(song)).reduce((s, v) => s + v, 0);
-function songSections(song) {
-  const req = songRequirements(song);
-  return SECTIONS.filter(s => s.insts.some(i => req[i])).map(s => s.id);
-}
-function difficultyLabel(d) { return d <= 40 ? '初級' : d <= 60 ? '中級' : d <= 80 ? '上級' : '最高難度'; }
-function songParam(id) {
-  if (!STATE.songParams[id]) STATE.songParams[id] = { base: 0, underst: 0, expr: 0, performed: 0 };
-  return STATE.songParams[id];
-}
-function songLongBonus(id) {
-  const p = STATE.songParams[id]; if (!p) return 0;
-  const sum = p.base + p.underst + p.expr;
-  return CONFIG.songParam.bonusMax * (1 - Math.exp(-sum / CONFIG.songParam.bonusScale));
-}
-
-// 編成不足（楽器単位）
-function shortageOf(song) {
-  const have = countByInst();
-  const req = songRequirements(song);
-  const sc = CONFIG.concert.shortage;
-  const items = []; let penalty = 0;
-  for (const [inst, need] of Object.entries(req)) {
-    const lack = Math.max(0, need - have[inst]);
-    if (!lack) continue;
-    const kind = INST[inst].kind;
-    const per = kind === 'string' ? sc.perStringPlayer : kind === 'perc' ? sc.perPercPlayer : sc.perWindPlayer;
-    const missing = have[inst] === 0;
-    penalty += lack * per + (missing ? sc.missingInstrument : 0);
-    items.push({ inst, need, have: have[inst], lack, missing });
-  }
-  return { items, penalty };
-}
-function formatInstrumentation(song) {
-  const parts = [];
-  const w = song.winds || {};
-  for (const g of [['Fl', 'Ob', 'Cl', 'Fg'], ['Hr', 'Tp', 'Tb', 'Tuba'], ['Perc']]) {
-    const s = g.filter(i => w[i]).map(i => `${INST[i].abbr} ${w[i]}`).join(', ');
-    if (s) parts.push(s);
-  }
-  if (song.strings) { const s = song.strings; parts.push(`弦五部 (${s.Vn1}-${s.Vn2}-${s.Va}-${s.Vc}-${s.Cb})`); }
-  return parts;
-}
-
-/* ---------- ホール ---------- */
-const findHall = id => CONFIG.halls.find(h => h.id === id) || null;
-const concertHall = c => findHall(c.hallId);
-
-/* ---------- 資金 ---------- */
-function spend(c, label, amount) {
-  if (amount > 0 && STATE.funds < amount) return false;
-  STATE.funds -= amount;
-  if (amount) c.ledger.push({ label, amount: -amount });
-  return true;
-}
-function earn(c, label, amount) { STATE.funds += amount; c.ledger.push({ label, amount }); }
-const operatingCost = () => CONFIG.economy.operatingBase + CONFIG.economy.operatingPerMember * STATE.members.length;
-
-/* ---------- 演奏会 ---------- */
-function emptyPerf() {
-  const sections = {};
-  SECTIONS.forEach(s => { sections[s.id] = {}; SECTION_PARAMS.forEach(p => sections[s.id][p.id] = 0); });
-  return {
-    sections,
-    overall: { ensemble: 0, balance: 0, unity: 0 },  // balance は合奏での上積み分（実効値は算出）
-    mastery: { underst: 0, comp: 0 },                // 今回の曲の楽曲理解度・楽曲完成度
-  };
-}
-
-function createConcert() {
-  const number = STATE.concertOrder.length + 1;
-  const id = 'c' + number + '_' + Date.now().toString(36);
-  const c = {
-    id, number, title: `第${number}回 定期演奏会`,
-    phase: 'setup',      // setup（準備：選曲・会場・指揮者）→ practice → prep → result → done（募集は独立）
-    started: false,      // 「演奏会を始める」を押したか
-    hallId: null,
-    songId: null,        // 演奏する曲（1曲）
-    conductorId: (STATE.conductors || []).some(x => x.id === STATE.conductorId) ? STATE.conductorId : null,  // 前回の担当を引き継ぐ
-    practiceDone: 0,
-    practices: [],       // 練習履歴
-    perf: emptyPerf(),   // 発表会パラメータ（毎回0から）
-    rehearsal: { done: false },  // ホール練習
-    policy: 'stable',
-    growth: {},          // 今回の育成による能力上昇 { memberId: { abil: +n } }
-    trainingUsed: {},    // 育成の実施済み記録 { 'lesson:m12': true }
-    trainingLog: [],
-    songGrowth: {},      // { songId: { param: +n } }
-    ledger: [],          // 収支 [{label, amount}]
-    result: null,
-  };
-  STATE.concertPrograms[id] = c;
-  STATE.concertOrder.push(id);
-  STATE.activeConcertId = id;
-  return c;
-}
-const activeConcert = () => STATE.concertPrograms[STATE.activeConcertId];
-
-/* ---------- 新規ゲーム ---------- */
-function newGame(name) {
-  STATE = {
-    version: CONFIG.SAVE_VERSION,
-    orchestraName: name || '星霜フィルハーモニー管弦楽団',
-    funds: CONFIG.initialFunds,
-    reputation: CONFIG.initialReputation,
-    members: [],
-    songParams: {},
-    concertPrograms: {},
-    concertOrder: [],
-    activeConcertId: null,
-    recruit: emptyRecruit(),  // 団員募集（演奏会から独立）
-    ledger: [],               // 演奏会に属さない支出（採用費・追加募集）
-    nextId: 1,
-    createdAt: Date.now(),
-  };
-  const initialOC = ORIGINAL_CHARACTERS.filter(o => o.initial);
-  for (const inst of INSTRUMENTS) {
-    let n = inst.std;
-    for (const oc of initialOC.filter(o => o.inst === inst.id)) { STATE.members.push(makeOriginal(oc, 0)); n--; }
-    for (let i = 0; i < n; i++) STATE.members.push(generateMember(inst.id, weightedPick(CONFIG.initialRankWeights), 0));
-  }
-  STATE.conductors = [makeConductor(ORIGINAL_CONDUCTORS.find(o => o.founder))];
-  STATE.conductorId = STATE.conductors[0].id;
-  ensurePrincipals();
-  createConcert();
-  generateRecruitCandidates();
-  generateConductorCandidates();
-  save();
-}
-
-/* ---------- 演奏会の準備（選曲・会場の予約・指揮者の選択。順不同） ---------- */
-const inSetup = c => c.phase === 'setup';
-function startSetup(c) { if (inSetup(c) && !c.started) { c.started = true; save(); } }
-// 会場の予約：使用料は予約時に支払う。練習が始まるまでは変更でき、その場合は前の予約を全額返金する
-function hallBlockReason(c, hall) {
-  if (!inSetup(c)) return '会場は演奏会の準備中にのみ予約できます';
-  if (c.hallId === hall.id) return '予約済みの会場です';
-  const refund = c.hallId ? findHall(c.hallId).fee : 0;
-  if (hall.fee > 0 && STATE.funds + refund < hall.fee) return `資金不足（あと ¥${(hall.fee - STATE.funds - refund).toLocaleString('ja-JP')}）`;
-  return null;
-}
-function selectHall(c, hallId) {
-  const hall = findHall(hallId);
-  if (!hall || hallBlockReason(c, hall)) return false;
-  if (c.hallId) { const old = findHall(c.hallId); if (old.fee) earn(c, `予約取消・返金（${old.name}）`, old.fee); }
-  spend(c, `ホール使用料（${hall.name}）`, hall.fee);
-  c.hallId = hallId; c.started = true;
-  save(); return true;
-}
-// 今回の演奏会を担当する指揮者（契約中の最大3名から1名）
-function selectConcertConductor(c, id) {
-  if (!inSetup(c) || !(STATE.conductors || []).some(x => x.id === id)) return false;
-  c.conductorId = id; STATE.conductorId = id; c.started = true;
-  save(); return true;
-}
-function setupStatus(c) {
-  const song = !!(c.songId && findSong(c.songId));
-  const hall = !!(c.hallId && findHall(c.hallId));
-  const conductor = !!(c.conductorId && (STATE.conductors || []).some(x => x.id === c.conductorId));
-  return { song, hall, conductor, ready: song && hall && conductor };
-}
-// 3項目がそろったら練習期間へ（ここから先は従来どおり）
-function startPractice(c) {
-  if (!inSetup(c) || !setupStatus(c).ready) return false;
-  STATE.conductorId = c.conductorId;
-  c.phase = 'practice';
-  save(); return true;
-}
 
 /* ---------- 募集（演奏会の進行から独立。団員タブからいつでも実行） ----------
  * 状態は STATE.recruit に保持し、演奏会データ（concertPrograms）には一切触れない。
@@ -5088,7 +5073,9 @@ function rerollRecruit() {
   STATE.recruit.rerolls++;
   generateRecruitCandidates(); save(); return true;
 }
-function dismissMember(memberId) {
+// opts.force：契約終了など、プレイヤーの除籍操作以外で退団する場合（首席でも退団し、後任を自動任命する）
+function dismissMember(memberId, opts = {}) {
+  if (!opts.force && dismissBlockReason(STATE.members.find(m => m.id === memberId))) return false;
   const before = STATE.members.length;
   STATE.members = STATE.members.filter(m => m.id !== memberId);
   if (STATE.members.length === before) return false;
@@ -5096,6 +5083,51 @@ function dismissMember(memberId) {
   save(); return true;
 }
 
+/* =========================================================
+ * 演奏会の準備（選曲・会場の予約・指揮者の選択）
+ * ========================================================= */
+/* ---------- 演奏会の準備（選曲・会場の予約・指揮者の選択。順不同） ---------- */
+const inSetup = c => c.phase === 'setup';
+function startSetup(c) { if (inSetup(c) && !c.started) { c.started = true; save(); } }
+// 会場の予約：使用料は予約時に支払う。練習が始まるまでは変更でき、その場合は前の予約を全額返金する
+function hallBlockReason(c, hall) {
+  if (!inSetup(c)) return '会場は演奏会の準備中にのみ予約できます';
+  if (c.hallId === hall.id) return '予約済みの会場です';
+  const refund = c.hallId ? findHall(c.hallId).fee : 0;
+  if (hall.fee > 0 && STATE.funds + refund < hall.fee) return `資金不足（あと ¥${(hall.fee - STATE.funds - refund).toLocaleString('ja-JP')}）`;
+  return null;
+}
+function selectHall(c, hallId) {
+  const hall = findHall(hallId);
+  if (!hall || hallBlockReason(c, hall)) return false;
+  if (c.hallId) { const old = findHall(c.hallId); if (old.fee) earn(c, `予約取消・返金（${old.name}）`, old.fee); }
+  spend(c, `ホール使用料（${hall.name}）`, hall.fee);
+  c.hallId = hallId; c.started = true;
+  save(); return true;
+}
+// 今回の演奏会を担当する指揮者（契約中の最大3名から1名）
+function selectConcertConductor(c, id) {
+  if (!inSetup(c) || !(STATE.conductors || []).some(x => x.id === id)) return false;
+  c.conductorId = id; STATE.conductorId = id; c.started = true;
+  save(); return true;
+}
+function setupStatus(c) {
+  const song = !!(c.songId && findSong(c.songId));
+  const hall = !!(c.hallId && findHall(c.hallId));
+  const conductor = !!(c.conductorId && (STATE.conductors || []).some(x => x.id === c.conductorId));
+  return { song, hall, conductor, ready: song && hall && conductor };
+}
+// 3項目がそろったら練習期間へ（ここから先は従来どおり）
+function startPractice(c) {
+  if (!inSetup(c) || !setupStatus(c).ready) return false;
+  STATE.conductorId = c.conductorId;
+  c.phase = 'practice';
+  save(); return true;
+}
+
+/* =========================================================
+ * 指揮者（採用・変更・育成・成長）
+ * ========================================================= */
 /* ---------- 指揮者（採用・変更・育成・成長） ---------- */
 const condAvg = c => mean(CONDUCTOR_ABILITIES.map(a => c.abilities[a.id]));
 const condPotAvg = c => mean(CONDUCTOR_ABILITIES.map(a => c.potential[a.id]));
@@ -5213,22 +5245,10 @@ function conductorEffect(policyId) {
     prob: match ? K.traitProb : 0, evalBonus: match ? K.traitEval : 0,
   };
 }
-// 管打楽器の首席によるソロの出来（音楽表現の評価へ）
-function principalSoloBonus(song) {
-  const req = songRequirements(song);
-  const ps = Object.keys(req).filter(i => INST[i].kind !== 'string').map(principalOf).filter(Boolean);
-  if (!ps.length) return 0;
-  return (mean(ps.map(m => (m.abilities.tone + m.abilities.expr) / 2)) - 55) * CONFIG.principal.soloWeight;
-}
 
-/* ---------- 選曲（プレイヤーが一覧から1曲を選ぶ） ---------- */
-function confirmSong(c, songId) {
-  if (!inSetup(c) || !findSong(songId)) return false;
-  c.songId = songId; c.started = true;
-  songParam(songId);
-  save(); return true;
-}
-
+/* =========================================================
+ * 育成（資金で団員・指揮者の能力を伸ばす）
+ * ========================================================= */
 /* ---------- 育成（資金で団員の能力を伸ばす） ---------- */
 const findTraining = id => CONFIG.trainings.find(t => t.id === id);
 function trainingTargets(t, targetId) {
@@ -5312,6 +5332,9 @@ function runTraining(c, tId, targetId, ability) {
   return entry;
 }
 
+/* =========================================================
+ * 練習（通常練習・ホール練習の成果の計算）
+ * ========================================================= */
 /* ---------- 練習（発表会の仕上がりのみ。団員の恒久的な能力は上がらない） ---------- */
 const eff = base => CONFIG.practice.effMin + base / CONFIG.practice.effDiv;
 const dim = cur => 1 / (1 + Math.max(0, cur) / CONFIG.practice.diminishScale);
@@ -5513,6 +5536,9 @@ function runHallPractice(c) {
   return log;
 }
 
+/* =========================================================
+ * 演奏会（成功確率・集客・収支・本番の評価・講評）
+ * ========================================================= */
 /* ---------- 実効パラメータ／成功確率 ---------- */
 function effectiveOverall(c) {
   const present = SECTIONS.filter(s => membersOfSection(s.id).length).map(s => s.id);
@@ -5715,77 +5741,288 @@ function proceedToNextConcert() {
   save();
 }
 
-/* ---------- 保存・読み込み ---------- */
-function save() {
-  try { localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(STATE)); } catch (e) { /* ストレージ不可 */ }
+/* =========================================================
+ * 練習中のランダムイベント（ゲームロジック・画面とは独立）
+ *   ・練習の成果そのものは既存の runPractice() がこれまでどおり計算する。
+ *   ・イベントは「その回の練習で得た成果」に小さな補正をかけるだけ（選択肢による追加効果）。
+ *   ・イベントの抽選には Math.random とは別の乱数を使い、既存の計算の乱数の並びを変えない。
+ *   ・結果は練習ログ（log.events）に記録し、既存の練習報告・練習履歴に反映する。
+ *   ・イベントの文章・選択肢・効果・発生しやすさは data/events/practice.json で編集する。
+ *     ここには「誰が話すか」「どのセクションが対象になるか」などの選び方（プログラム）だけを置く。
+ * ========================================================= */
+const PRACTICE_EVENT_CFG = {
+  chance: PRACTICE_EVENT_DATA.settings.chance,          // 1回の練習でイベントが起きる確率（起きるのは最大1件）
+  minAt: PRACTICE_EVENT_DATA.settings.timingFrom, maxAt: PRACTICE_EVENT_DATA.settings.timingTo,   // イベントが起きるタイミングの範囲
+};
+// 別系統の乱数（mulberry32）
+let PEV_SEED = (Date.now() ^ 0x9e3779b9) >>> 0;
+function pevRand() {
+  PEV_SEED = (PEV_SEED + 0x6D2B79F5) >>> 0;
+  let t = PEV_SEED;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
-function migrate(s) {
-  if (!s || typeof s !== 'object' || !s.concertPrograms) return null;
-  // v1（3曲構成・練習で成長）は構造が大きく異なるため引き継がない
-  if ((s.version || 1) < 2) return null;
-  if (!s.songParams) s.songParams = {};
-  // v2 → v3：募集を演奏会から切り離す
-  if (s.version < 3) {
-    const order = (s.concertOrder || []).map(id => s.concertPrograms[id]).filter(Boolean);
-    const cur = s.concertPrograms[s.activeConcertId];
-    s.recruit = emptyRecruit();
-    if (cur && cur.recruit) s.recruit = { candidates: cur.recruit.candidates || [], hired: cur.recruit.hired || [], rerolls: cur.recruit.rerolls || 0 };
-    for (const c of order) {
-      delete c.recruit;
-      if (c.phase === 'recruit') c.phase = 'selection';   // 募集工程にいた演奏会は選曲から再開
-    }
-    s.ledger = s.ledger || [];
-    s.version = 3;
-    s._needCandidates = !s.recruit.candidates.length;
-  }
-  if (!s.recruit) s.recruit = emptyRecruit();
-  // v3 → v4：Timp を Perc に統一／外見・首席・指揮者を追加
-  if (s.version < 4) {
-    for (const m of [...(s.members || []), ...((s.recruit && s.recruit.candidates) || [])]) if (m.inst === 'Timp') m.inst = 'Perc';
-    s.version = 4;
-    s._needV4 = true;
-  }
-  // v4 → v5：会場選択・選曲の段階を「演奏会の準備（setup）」に統合。決定済みの内容は引き継ぐ
-  if (s.version < 5) {
-    for (const c of Object.values(s.concertPrograms)) {
-      if (c.phase === 'hall' || c.phase === 'selection') { c.phase = 'setup'; c.started = !!(c.hallId || c.songId); }
-      if (!('conductorId' in c)) c.conductorId = c.phase === 'done' || c.phase === 'result' ? (c.result && c.result.conductorId) || null : s.conductorId || null;
-    }
-    s.version = 5;
-  }
-  if (!s.ledger) s.ledger = [];
-  if (s.reputation == null) s.reputation = CONFIG.initialReputation;
-  return s;
+const pevPick = arr => arr[Math.floor(pevRand() * arr.length)];
+function pevWeighted(list) {
+  const tot = list.reduce((s, x) => s + x.w, 0); if (tot <= 0) return null;
+  let r = pevRand() * tot;
+  for (const x of list) { if ((r -= x.w) < 0) return x; }
+  return list[list.length - 1];
 }
-let LOAD_NOTE = '';
-function load() {
-  try {
-    const raw = localStorage.getItem(CONFIG.SAVE_KEY);
-    if (!raw) return false;
-    const parsed = JSON.parse(raw);
-    const s = migrate(parsed);
-    if (!s || !s.concertPrograms[s.activeConcertId]) {
-      if (parsed && (parsed.version || 1) < 2) LOAD_NOTE = 'ゲームの仕組みが新しくなったため、以前のセーブデータは引き継げません。新しく楽団を始めてください。';
-      return false;
-    }
-    STATE = s;
-    if (STATE._needCandidates) { delete STATE._needCandidates; generateRecruitCandidates(); }
-    if (STATE._needV4 || !STATE.conductors || !STATE.conductors.length) {
-      delete STATE._needV4;
-      STATE.conductors = [makeConductor(ORIGINAL_CONDUCTORS.find(o => o.founder))];
-      STATE.conductorId = STATE.conductors[0].id;
-    }
-    if (!STATE.conductorMarket) generateConductorCandidates();
-    if (!activeConductor()) STATE.conductorId = STATE.conductors[0].id;
-    ensureLooks();
-    ensurePrincipals();
-    save();
-    return true;
-  } catch (e) { return false; }
-}
-function resetSave() { try { localStorage.removeItem(CONFIG.SAVE_KEY); } catch (e) {} }
+const secName = sec => SEC[sec].name;
+const pevGain = (log, sec) => Object.values(log.sections[sec] || {}).reduce((a, b) => a + b, 0);
+// その回の練習で成果が出たセクション（＝練習対象）
+const pevSecs = log => SECTIONS.map(s => s.id).filter(s => pevGain(log, s) > 0);
+const secPrincipal = sec => SEC[sec].insts.map(principalOf).find(Boolean) || null;
+const secAvg = (c, sec, key) => mean(SECTION_PARAMS.map(p => c.perf.sections[sec][p.id]));
 
-if (typeof module !== 'undefined') module.exports = {};
+// 指揮者の個性ごとの口ぐせ（指揮者からの提案・練習中のひとこと）
+const PEV_TRAIT = PRACTICE_EVENT_DATA.conductorTraitPhrases;
+const pevTrait = cd => (cd && PEV_TRAIT[cd.trait]) || PEV_TRAIT[PRACTICE_EVENT_DATA.defaultTraitPhrase] || { focus: '', aim: PRACTICE_EVENT_DATA.defaultAim };
+// 文章の {名前} を置き換える。値のない記号があれば null を返す（代わりの文章を使うため）
+function pevFill(t, vars) {
+  let missing = false;
+  const out = String(t).replace(/\{(\w+)\}/g, (_, k) => { const v = vars[k]; if (v == null) { missing = true; return ''; } return v; });
+  return missing ? null : out;
+}
+const pevText = (t, vars) => pevFill(t, vars) ?? String(t).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+
+/* 発生条件（requires）：イベントが起きるために必要な状況 */
+const PEV_REQUIRES = {
+  conductor: (c, log, ctx) => !!ctx.cd,
+  practicedSection: (c, log, ctx) => ctx.secs.length > 0,
+  principalSection: (c, log, ctx) => ctx.secs.some(secPrincipal),
+  members: (c, log, ctx) => ctx.members.length > 0,
+  individual: (c, log) => log.menu === 'individual',
+  notIndividual: (c, log) => log.menu !== 'individual',
+};
+/* 対象の選び方（target）：どのセクション・団員についてのイベントか */
+const PEV_TARGETS = {
+  none: () => ({}),
+  // いちばん仕上がりが遅れているセクション
+  weakestSection: (c, log, ctx) => ({ sec: ctx.secs.slice().sort((a, b) => secAvg(c, a) - secAvg(c, b))[0] }),
+  // 首席奏者がいる練習中のセクション（話すのはその首席）
+  principalSection: (c, log, ctx) => { const sec = pevPick(ctx.secs.filter(secPrincipal)); return { sec, principal: secPrincipal(sec) }; },
+  // 技術に不安のある団員ほど相談しにくる
+  strugglingMember: (c, log, ctx) => { const m = ctx.members.slice().sort((a, b) => a.abilities.tech - b.abilities.tech)[Math.floor(pevRand() * Math.min(3, ctx.members.length))]; return { sec: INST[m.inst].section, member: m }; },
+  // 協調性の高いセクションほど好調になりやすい
+  harmoniousSection: (c, log, ctx) => { const sec = ctx.secs.slice().sort((a, b) => mean(membersOfSection(b).map(m => m.abilities.coop)) - mean(membersOfSection(a).map(m => m.abilities.coop)))[Math.floor(pevRand() * Math.min(2, ctx.secs.length))]; return { sec, principal: secPrincipal(sec) }; },
+  randomMember: (c, log, ctx) => { const m = pevPick(ctx.members); return { sec: INST[m.inst].section, member: m }; },
+};
+/* 話す人（speaker） */
+const PEV_SPEAKERS = {
+  conductor: (ctx) => ({ who: ctx.cd ? ctx.cd.name : '指揮者', whoRole: '指揮者' }),
+  principal: (ctx, t) => ({ who: t.principal.name, whoRole: `${INST[t.principal.inst].abbr} 首席` }),
+  member: (ctx, t) => ({ who: t.member.name, whoRole: INST[t.member.inst].abbr }),
+};
+// 選択肢の効果をプログラム用の形に（focus はそのイベントの対象セクションに対する倍率）
+function pevEffect(e, sec) {
+  const out = {};
+  if (e.focus != null && sec) out.focus = { sec, mult: e.focus };
+  for (const k of ['others', 'all', 'overall', 'mastery', 'stop']) if (e[k] != null) out[k] = e[k];
+  return out;
+}
+const PRACTICE_EVENTS = PRACTICE_EVENT_DATA.events.map(E => ({
+  id: E.id, title: E.title, role: E.speaker,
+  weight: (c, log, ctx) => {
+    if (!(E.requires || []).every(r => PEV_REQUIRES[r] && PEV_REQUIRES[r](c, log, ctx))) return 0;
+    const cc = E.conductorCondition;
+    if (cc && !(ctx.cd && (ctx.cd.abilities.interp >= (cc.minInterp ?? 101) || (cc.orTraits || []).includes(ctx.cd.trait)))) return 0;
+    const w = E.weight || {};
+    return (w.base || 0) + (w.perDifficulty || 0) * ctx.song.difficulty + (w.perPracticeDone || 0) * c.practiceDone;
+  },
+  build: (c, log, ctx) => {
+    const t = (PEV_TARGETS[E.target] || PEV_TARGETS.none)(c, log, ctx);
+    const sp = (PEV_SPEAKERS[E.speaker] || PEV_SPEAKERS.conductor)(ctx, t);
+    const tr = pevTrait(ctx.cd);
+    const vars = {
+      section: t.sec ? secName(t.sec) : null, partnerSection: t.sec && E.partner && E.partner[t.sec] ? secName(E.partner[t.sec]) : null,
+      song: ctx.song.title, conductor: ctx.cd ? ctx.cd.name : '指揮者', member: t.member ? t.member.name : null,
+      principal: t.principal ? t.principal.name : null, traitFocus: tr.focus, aim: tr.aim,
+      place: E.places ? pevPick(E.places) : null,
+    };
+    vars.principalNote = E.principalNote && t.principal ? pevText(E.principalNote, vars) : '';
+    const choice = ch => {
+      const base = ch.preset ? PRACTICE_EVENT_DATA.choicePresets[ch.preset] : {};
+      const m = { ...base, ...ch }; delete m.preset;
+      return { id: m.id, label: pevText(m.label, vars), hint: pevText(m.hint, vars), effect: pevEffect(m.effect || {}, t.sec), note: pevText(m.note, vars) };
+    };
+    const out = { sec: t.sec || null, ...sp, text: pevText(E.text, vars) };
+    if (E.choices) out.choices = E.choices.map(choice);
+    else out.auto = { effect: pevEffect((E.auto || {}).effect || {}, t.sec), note: pevText((E.auto || {}).note || '', vars) };
+    return out;
+  },
+}));
+
+// 練習のログからイベントを1件選ぶ（起きない場合は null）。force=true で必ず起こす（テスト用）
+function pickPracticeEvent(c, log, opts = {}) {
+  if (!opts.force && pevRand() >= PRACTICE_EVENT_CFG.chance) return null;
+  const ctx = {
+    cd: activeConductor(), song: findSong(c.songId), secs: pevSecs(log),
+    members: log.menu === 'individual' ? (log.plan.members || []).map(memberById).filter(Boolean) : STATE.members.filter(m => pevSecs(log).includes(INST[m.inst].section)),
+  };
+  const list = PRACTICE_EVENTS.filter(e => !opts.id || e.id === opts.id).map(e => ({ e, w: e.weight(c, log, ctx) })).filter(x => x.w > 0);
+  const hit = pevWeighted(list); if (!hit) return null;
+  const ev = hit.e.build(c, log, ctx);
+  return { id: hit.e.id, title: hit.e.title, role: hit.e.role, at: PRACTICE_EVENT_CFG.minAt + pevRand() * (PRACTICE_EVENT_CFG.maxAt - PRACTICE_EVENT_CFG.minAt), ...ev };
+}
+
+// 選んだ結果を、その回の成果に反映する（既存の上昇処理 addSec / addOverall / addMastery を使う）
+function scaleLogSection(c, log, sec, mult) {
+  if (!log.sections[sec] || mult === 1) return;
+  for (const [p, v] of Object.entries(log.sections[sec])) {
+    if (v <= 0) continue;
+    const d = v * (mult - 1);
+    if (d > 0) addSec(c, log, sec, p, d);
+    else { const before = c.perf.sections[sec][p]; c.perf.sections[sec][p] = Math.max(0, before + d); log.sections[sec][p] += c.perf.sections[sec][p] - before; }
+  }
+}
+function scaleLogMap(c, log, key, target, mult) {
+  if (mult === 1) return;
+  for (const [k, v] of Object.entries(log[key])) {
+    if (v <= 0) continue;
+    const d = v * (mult - 1);
+    if (d > 0) (key === 'overall' ? addOverall : addMastery)(c, log, k, d);
+    else { const before = target[k]; target[k] = Math.max(0, before + d); log[key][k] += target[k] - before; }
+  }
+}
+function applyPracticeEvent(c, log, ev, choiceId) {
+  const ch = ev.choices ? ev.choices.find(x => x.id === choiceId) || ev.choices.find(x => x.id === 'keep') || ev.choices[0] : ev.auto;
+  const e = ch.effect || {};
+  const totalBefore = logTotal(log);
+  const focusSec = e.focus && log.sections[e.focus.sec] ? e.focus.sec : null;
+  for (const s of SECTIONS) {
+    let mult = e.all || 1;
+    if (focusSec) mult *= s.id === focusSec ? e.focus.mult : (e.others || 1);
+    scaleLogSection(c, log, s.id, mult);
+  }
+  if (e.all) { scaleLogMap(c, log, 'overall', c.perf.overall, e.all); scaleLogMap(c, log, 'mastery', c.perf.mastery, e.all); }
+  for (const [k, v] of Object.entries(e.overall || {})) addOverall(c, log, k, v);
+  for (const [k, v] of Object.entries(e.mastery || {})) addMastery(c, log, k, v);
+  const delta = logTotal(log) - totalBefore;
+  log.events = log.events || [];
+  log.events.push({ id: ev.id, title: ev.title, who: ev.who, whoRole: ev.whoRole, text: ev.text, choice: ev.choices ? ch.label : null, note: ch.note, delta: Math.round(delta * 10) / 10 });
+  log.summary = summarizeLog(log) + `／${ev.title}：${ch.note}`;
+  save();
+  return { choice: ch, delta };
+}
+function logTotal(log) {
+  let t = 0;
+  Object.values(log.sections).forEach(o => Object.values(o).forEach(v => t += v));
+  Object.values(log.overall).forEach(v => t += v);
+  Object.values(log.mastery).forEach(v => t += v);
+  return t;
+}
+
+/* =========================================================
+ * 練習クイズ（ゲームロジック）
+ *   ・通常練習（全体合奏・セクション練習・個人練習）の回数を数え、2回ごとに1問を出題待ちにする。
+ *     ホール練習（本番準備）は runHallPractice なので数えない。
+ *   ・出題は「練習中の曲の問題」→「その曲の作曲家の問題」→「一般の音楽の問題」の優先順。
+ *     出題済みの問題は曲ごとに記録し、一通り出題したら記録をリセットして再出題する。
+ *   ・回答で、その演奏会の既存の「楽曲理解度」が上がる（正解は大きく、不正解でも少し、連続正解でボーナス）。
+ *     楽曲理解度は演奏会（＝その曲）ごとの値なので、ほかの曲には影響しない。演奏会の評価への効き方も既存のまま。
+ *   ・既存の練習の計算には手を加えず、runPractice の後に回数を数えるだけ。
+ * ========================================================= */
+// 問題の索引：ID → 問題
+const QUIZ_INDEX = {};
+const QUIZ_BY_SONG = {}, QUIZ_BY_COMPOSER = {}, QUIZ_COMPOSER_OF = {};
+(() => {
+  for (const [sid, qs] of Object.entries(QUIZ_SONG)) QUIZ_BY_SONG[sid] = qs.map(q => (QUIZ_INDEX[q.id] = { ...q, scope: 'song' }).id);
+  for (const [cid, d] of Object.entries(QUIZ_COMPOSER)) {
+    QUIZ_BY_COMPOSER[cid] = d.qs.map(q => (QUIZ_INDEX[q.id] = { ...q, scope: 'composer' }).id);
+    d.songs.forEach(s => QUIZ_COMPOSER_OF[s] = cid);
+  }
+  QUIZ_GENERAL.forEach(q => QUIZ_INDEX[q.id] = { ...q, scope: 'general' });
+})();
+const QUIZ_GENERAL_IDS = QUIZ_GENERAL.map(q => q.id);
+// 出題の抽選は既存の計算に使う Math.random とは別の乱数で行う
+let QZ_SEED = (Date.now() ^ 0x51ed27a3) >>> 0;
+function qzRand() {
+  QZ_SEED = (QZ_SEED + 0x6D2B79F5) >>> 0;
+  let t = QZ_SEED; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+function quizSong(songId) {
+  const q = ensureQuizState();
+  return q.songs[songId] = q.songs[songId] || { asked: [], answered: 0, correct: 0 };
+}
+// 曲に関係する問題の候補（優先順の3段階）
+const quizTiers = songId => [QUIZ_BY_SONG[songId] || [], QUIZ_BY_COMPOSER[QUIZ_COMPOSER_OF[songId]] || [], QUIZ_GENERAL_IDS];
+function pickQuizQuestion(songId) {
+  const s = quizSong(songId), tiers = quizTiers(songId);
+  let pool = null;
+  for (const t of tiers) { const left = t.filter(id => !s.asked.includes(id)); if (left.length) { pool = left; break; } }
+  if (!pool) {
+    // 一通り出題した：記録をリセット（直前に出した数問はしばらく避ける）
+    const recent = s.asked.slice(-3);
+    s.asked = [];
+    for (const t of tiers) { const left = t.filter(id => !recent.includes(id)); if (left.length) { pool = left; break; } }
+    pool = pool || tiers.flat();
+  }
+  return pool[Math.floor(qzRand() * pool.length)];
+}
+// 通常練習が1回終わるたびに呼ぶ。出題回なら出題待ちの問題を作る
+function quizAfterPractice(c, log) {
+  const q = ensureQuizState();
+  q.count++;
+  if (q.count % CONFIG.quiz.every === 0 && c.songId) {
+    const qid = pickQuizQuestion(c.songId);
+    const order = [0, 1, 2, 3];
+    for (let i = 3; i > 0; i--) { const j = Math.floor(qzRand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    q.pending = { qid, songId: c.songId, concertId: c.id, practiceNo: log.no, count: q.count, order };
+  }
+  save();
+  return q.pending;
+}
+// 出題中の問題がデータから削除されていた場合（JSONの編集後など）は、出題をなかったことにする
+const quizPending = () => { const q = ensureQuizState(); if (q.pending && !QUIZ_INDEX[q.pending.qid]) { q.pending = null; save(); } return q.pending; };
+// 練習ログの一言（練習履歴）を作り直す：既存の要約＋イベント＋クイズ
+function quizRebuildSummary(log) {
+  let sum = summarizeLog(log);
+  for (const e of log.events || []) sum += `／${e.title}：${e.note}`;
+  if (log.quiz) sum += `／クイズ${log.quiz.correct ? '正解' : '不正解'}`;
+  log.summary = sum;
+}
+// 回答（choice は画面上の並び順の番号 0〜3）。その演奏会の既存の楽曲理解度に、既存の上昇処理（addMastery）で加える
+function answerQuiz(choice) {
+  const q = ensureQuizState(), p = quizPending(); if (!p) return null;
+  const item = QUIZ_INDEX[p.qid], K = CONFIG.quiz, s = quizSong(p.songId);
+  const picked = p.order[choice], correct = picked === 0;
+  let base, bonus = 0;
+  if (correct) { q.streak++; bonus = Math.min(K.streakBonusMax, (q.streak - 1) * K.streakBonus); base = K.gainCorrect; q.best = Math.max(q.best, q.streak); s.correct++; }
+  else { q.streak = 0; base = K.gainWrong; }
+  s.answered++;
+  if (!s.asked.includes(p.qid)) s.asked.push(p.qid);
+  // 出題した演奏会（まだ本番前）の楽曲理解度と、その回の練習ログに反映する
+  const c = STATE.concertPrograms[p.concertId];
+  let before = null, after = null, gain = 0;
+  if (c && !c.result && c.songId === p.songId) {
+    const log = c.practices.find(l => l.no === p.practiceNo) || { mastery: {} };
+    before = c.perf.mastery.underst;
+    addMastery(c, log, 'underst', base + bonus);
+    after = c.perf.mastery.underst; gain = after - before;
+    log.quiz = { qid: p.qid, correct, gain };
+    if (log.sections) quizRebuildSummary(log);
+  }
+  const res = { qid: p.qid, songId: p.songId, correct, picked: item.c[picked], answer: item.c[0], gain, bonus: correct && gain ? gain * bonus / (base + bonus) : 0, before, after, streak: q.streak, practiceNo: p.practiceNo, concertId: p.concertId };
+  q.history.push({ qid: p.qid, songId: p.songId, correct, gain: Math.round(gain * 10) / 10, concertId: p.concertId, practiceNo: p.practiceNo });
+  q.history = q.history.slice(-50);
+  q.pending = null;
+  save();
+  return res;
+}
+
+// 既存の通常練習（runPractice）の後に回数を数える。計算・結果は一切変えない
+(() => {
+  const base = runPractice;
+  runPractice = function (c, plan) {
+    const r = base(c, plan);
+    if (r && !r.error) quizAfterPractice(c, r.log);
+    return r;
+  };
+})();
 
 /* =========================================================
  * MUSIC — 演奏会の音楽（自動生成スコア＋WebAudio再生）
@@ -6134,7 +6371,7 @@ const Stage3D = (() => {
   let hallGroup = null, orchGroup = null, hallKey = '', lineupKey = '';
   let hemi, keyLight, fillLight;
   let actors = [], conductor = null, seats = [], audience = null, layoutInfo = null;
-  let cam = { name: 'overview', from: null, to: null, fromT: null, toT: null, t0: 0, dur: 0.8, pos: null, tgt: null };
+  let cam = { name: 'front', from: null, to: null, fromT: null, toT: null, t0: 0, dur: 0.8, pos: null, tgt: null };
   let mode = 'idle', show = null, practice = null;
   let captionCb = null;
   const geoCache = new Map(), matCache = new Map();
@@ -6451,8 +6688,81 @@ const Stage3D = (() => {
     return { seats: out, podium: { x: O.x, y: stageY + 0.22, z: O.z } };
   }
 
+  /* ---------- 練習室（通常練習の場所。data/halls/index.json の practiceRoom） ----------
+   * 客席のない楽団専用の部屋。明るい木の床・演奏エリアのカーペット・低いひな壇・窓・ホワイトボード・
+   * アップライトピアノ・蛍光灯など。団員の配置・動き・カメラはホールと同じ仕組みをそのまま使う。 */
+  function buildPracticeRoom() {
+    if (hallGroup) { scene.remove(hallGroup); disposeGroup(hallGroup); }
+    audience = null;
+    const R = PRACTICE_ROOM.visual;
+    const g = new T.Group(); hallGroup = g; scene.add(g);
+    const W = R.w, D = R.d, H = R.h, stageW = Math.min(W - 2, 20), stageD = 12, stageY = 0.02, back = -stageD;
+    const depth = D + stageD + 2, cz = (D - stageD) / 2;
+    // 床（明るいフローリング）と演奏エリアのカーペット
+    const floorTex = woodTexture(R.floor); floorTex.repeat.set(W / 3, depth / 3);
+    const floor = new T.Mesh(new T.PlaneGeometry(W, depth), new T.MeshLambertMaterial({ map: floorTex }));
+    floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, cz); g.add(floor);
+    const carpet = new T.Mesh(new T.PlaneGeometry(stageW, stageD + 1.5), mat(R.carpet)); carpet.rotation.x = -Math.PI / 2; carpet.position.set(0, 0.012, back / 2 + 0.6); g.add(carpet);
+    // 低いひな壇（管・打楽器。高さはホールと同じなので座る位置も同じ）
+    const riserMat = mat(new T.Color(R.carpet).multiplyScalar(0.8).getHex());
+    [[5.0, 0.3], [7.0, 0.6], [8.3, 0.9]].forEach(([r, h], i) => {
+      const plat = new T.Mesh(G.box(Math.min(stageW - 1, 6 + r * 1.6), h, 1.2 + (2 - i) * 0.2), riserMat);
+      plat.position.set(0, h / 2, -1.6 - r - 0.2 + (i === 2 ? -0.2 : 0)); g.add(plat);
+    });
+    // 壁・天井（白い壁、明るい天井）
+    const room = new T.Mesh(G.box(W, H, depth), new T.MeshLambertMaterial({ color: R.wall, side: T.BackSide })); room.position.set(0, H / 2, cz); g.add(room);
+    const ceil = new T.Mesh(new T.PlaneGeometry(W, depth), new T.MeshLambertMaterial({ color: R.ceiling, emissive: new T.Color(R.ceiling).multiplyScalar(0.18) }));
+    ceil.rotation.x = Math.PI / 2; ceil.position.set(0, H - 0.01, cz); g.add(ceil);
+    const backWall = new T.Mesh(new T.PlaneGeometry(W, H), mat(R.backdrop)); backWall.position.set(0, H / 2, back - 0.9); g.add(backWall);
+    // 腰壁（木）
+    for (const [x, rot, len] of [[-W / 2 + 0.03, Math.PI / 2, depth], [W / 2 - 0.03, -Math.PI / 2, depth]]) {
+      const wain = new T.Mesh(new T.PlaneGeometry(len, 1.0), mat(new T.Color(R.floor).multiplyScalar(0.85).getHex())); wain.rotation.y = rot; wain.position.set(x, 0.5, cz); g.add(wain);
+    }
+    // 蛍光灯
+    const lg = G.box(2.4, 0.06, 0.3), lm = mat(0xf4f8ff, { basic: true });
+    for (let x = -6; x <= 6; x += 4) for (let z = back + 1.5; z < D - 1; z += 4) { const l = new T.Mesh(lg, lm); l.position.set(x, H - 0.05, z); g.add(l); }
+    // 左の壁の窓（外の光）
+    const nw = Math.round(R.windows || 0);
+    for (let k = 0; k < nw; k++) {
+      const z = back + 1.5 + k * ((depth - 4) / Math.max(1, nw));
+      const glass = new T.Mesh(new T.PlaneGeometry(2.2, 1.7), mat(0xcfe6f7, { basic: true })); glass.rotation.y = Math.PI / 2; glass.position.set(-W / 2 + 0.04, 2.6, z); g.add(glass);
+      const frameM = mat(0xf2f2f0);
+      for (const [dy, dz, w, h] of [[0.9, 0, 0.08, 2.4], [-0.9, 0, 0.08, 2.4], [0, 0, 1.8, 0.08], [0, 1.15, 1.8, 0.08], [0, -1.15, 1.8, 0.08]]) {
+        const f = new T.Mesh(G.box(0.06, w, h), frameM); f.position.set(-W / 2 + 0.07, 2.6 + dy, z + dz); g.add(f);
+      }
+    }
+    // 右の壁の吸音パネル
+    const pg = G.box(0.08, 1.6, 1.2), pm = mat(0x7b8794); const np = Math.floor(depth / 2.6);
+    const inst = new T.InstancedMesh(pg, pm, np); const o = new T.Object3D();
+    for (let k = 0; k < np; k++) { o.position.set(W / 2 - 0.06, 2.8, back + 0.8 + k * 2.6); o.updateMatrix(); inst.setMatrixAt(k, o.matrix); }
+    g.add(inst);
+    // 奥の壁：ホワイトボードと時計
+    if (R.whiteboard) {
+      const wb = new T.Mesh(G.box(6.4, 2.0, 0.06), mat(0xfbfbf8)); wb.position.set(0, 3.0, back - 0.85); g.add(wb);
+      const fr = new T.Mesh(G.box(6.6, 0.08, 0.1), mat(0x9a9a9a)); fr.position.set(0, 1.97, back - 0.8); g.add(fr);
+      for (const [x, w, c] of [[-1.8, 2.2, 0x3a5fa8], [0.6, 1.6, 0x3a5fa8], [-0.8, 2.8, 0xb03a3a]]) { const ln = new T.Mesh(G.box(w, 0.05, 0.02), mat(c, { basic: true })); ln.position.set(x, 3.4 - (c === 0xb03a3a ? 0.5 : x > 0 ? 0.25 : 0), back - 0.81); g.add(ln); }
+    }
+    const clock = new T.Mesh(G.cyl(0.38, 0.38, 0.06, 20), mat(0xffffff, { basic: true })); clock.rotation.x = Math.PI / 2; clock.position.set(W * 0.3, 4.6, back - 0.85); g.add(clock);
+    const rim = new T.Mesh(G.cyl(0.42, 0.42, 0.04, 20), mat(0x333333)); rim.rotation.x = Math.PI / 2; rim.position.set(W * 0.3, 4.6, back - 0.88); g.add(rim);
+    // アップライトピアノ・楽器ケース・積み重ねた椅子（手前の左右）
+    if (R.piano) {
+      const pz = Math.min(D - 2, 4.5);
+      const body = new T.Mesh(G.box(1.5, 1.25, 0.6), mat(0x161616)); body.position.set(-W / 2 + 1.2, 0.62, pz); body.rotation.y = Math.PI / 2; g.add(body);
+      const keys = new T.Mesh(G.box(1.4, 0.06, 0.25), mat(0xf4f1e8)); keys.position.set(-W / 2 + 1.55, 0.75, pz); keys.rotation.y = Math.PI / 2; g.add(keys);
+    }
+    for (let k = 0; k < 5; k++) { const cs = new T.Mesh(G.box(0.35, 0.25 + (k % 3) * 0.12, 1.1 + (k % 2) * 0.4), mat([0x2b2b30, 0x5a3b28, 0x1e2a3a][k % 3])); cs.position.set(W / 2 - 0.5, 0.15 + (k % 3) * 0.06, Math.min(D - 1.5, 2.5) + k * 0.55); g.add(cs); }
+    for (let k = 0; k < 6; k++) { const ch = new T.Mesh(G.box(0.48, 0.05, 0.45), mat(0x30343c)); ch.position.set(W / 2 - 2.0, 0.45 + k * 0.08, Math.min(D - 2, 6)); g.add(ch); }
+    // ライティング（昼白色）
+    hemi.color.set(R.light); hemi.intensity = 1.15 * R.lightI;
+    keyLight.color.set(R.light); keyLight.intensity = 1.5 * R.lightI;
+    scene.background = new T.Color(R.ceiling).multiplyScalar(0.15);
+    layoutInfo = { W, D, H, stageW, stageD, stageY, back, V3: { lightI: R.lightI }, rakeAt: () => 0, room: true, maxZ: D - 0.6 };
+    return layoutInfo;
+  }
+
   /* ---------- ホール ---------- */
   function buildHall(hallId) {
+    if (hallId === PRACTICE_ROOM.id) return buildPracticeRoom();
     if (hallGroup) { scene.remove(hallGroup); disposeGroup(hallGroup); }
     const V3 = HALL_VISUALS[hallId] || HALL_VISUALS.general;
     const g = new T.Group(); hallGroup = g; scene.add(g);
@@ -6828,17 +7138,23 @@ const Stage3D = (() => {
       overview: { pos: V(0, y + 5.6 + 1.8 * k, 5.5 + 5.0 * k), tgt: V(0, y + 0.2, -4.8) },
       front: { pos: V(0, y + 2.6, 3.5 + 4.2 * k), tgt: V(0, y + 1.5, -4.6) },
       conductor: { pos: V(0, y + 2.6, -1.4), tgt: V(0, y + 0.3, -6.5) },   // 指揮者の目の位置（本人は非表示）
+      // ホールの下見（予約前の3Dプレビュー）用：客席後方・側方の上・舞台から客席を見る
+      hallRear: { pos: V(0, (L.rakeAt ? L.rakeAt(L.D - 1.5) : 0) + 2.4, L.D - 1.5), tgt: V(0, y + 1.2, -5) },
+      hallSide: { pos: V((L.W || 20) / 2 - 2.2, Math.min((L.H || 10) - 1.2, y + 4.5), (L.D || 16) * 0.45), tgt: V(0, y + 0.6, -4) },
+      fromStage: { pos: V(0, y + 2.0, -2.6), tgt: V(0, (L.H || 10) * 0.3, L.D || 16) },
       hs: sec('hs'), ls: sec('ls'), ww: sec('ww'), br: sec('br'), pc: sec('pc'),
     };
   }
-  function setCamera(name, instant) {
+  function setCamera(name, instant, dur) {
     if (!ok) return;
-    const p = presets()[name] || presets().overview;
+    const p = presets()[name] || presets().front;
     if (layoutInfo) {
       if (p.pos.z > 2) p.pos.y = Math.max(p.pos.y, layoutInfo.rakeAt(p.pos.z) + 1.7);   // 段状の客席に埋もれない
       p.pos.y = Math.min(p.pos.y, layoutInfo.H - 0.7);   // 天井より上に出ない（天井の低いホール）
+      if (layoutInfo.maxZ) p.pos.z = Math.min(p.pos.z, layoutInfo.maxZ);   // 練習室：部屋の壁より外に出ない
     }
-    cam.name = presets()[name] ? name : 'overview';
+    cam.dur = dur || 0.8;
+    cam.name = presets()[name] ? name : 'front';
     if (instant || !cam.pos) { cam.pos = p.pos.clone(); cam.tgt = p.tgt.clone(); cam.from = null; }
     else { cam.from = cam.pos.clone(); cam.fromT = cam.tgt.clone(); cam.to = p.pos; cam.toT = p.tgt; cam.t0 = performance.now() / 1000; }
   }
@@ -6968,23 +7284,54 @@ const Stage3D = (() => {
     if (tt >= s.total) { const cb = s.onEnd; endShowState(); cb && cb(); }
   }
 
-  /* ---------- 練習のアニメーション（音なし・数秒） ---------- */
-  function playPractice(plan, q) {
+  /* ---------- 練習のアニメーション（音なし・数秒） ----------
+   * opts.loop=true：練習時間中くり返し演奏する（練習の進行は画面側が管理し、endPractice() で終える）
+   *   setPracticeFocus(['hs','ls']) で中心に演奏させるセクションを切り替え、pausePractice(true) で手を止めて話を聞く姿勢にする */
+  function playPractice(plan, q, opts = {}) {
     if (!ok || mode === 'show' || !scoreSong) return;
     const sc = Music.createScore(scoreSong, { seed: Math.floor(Math.random() * 1e9), bars: 4, sections: SECTIONS.map(s => s.id) });
     score = sc; setQuality(q);
     const targets = new Set(plan.members || []);
     const secOffset = { hs: 0, ls: 1, ww: 2, br: 3, pc: 1.5 };
+    // くり返し再生では、各セクションが「楽譜上で演奏している拍」だけをつないで動かす（休符ばかりで動かないのを防ぐ）
+    // 個人練習の対象が今回の曲の編成に入っていない（舞台にいない）ときは、その団員のセクションを演奏させる
+    const anyOn = actors.some(a => a.member && targets.has(a.member.id)), fb = new Set(opts.fallbackSecs || []);
+    const act = {};
+    if (opts.loop) for (const s of SECTIONS) { act[s.id] = []; for (let x = 0; x < sc.beats; x += 0.25) if (Music.isActive(sc, s.id, x)) act[s.id].push(x); }
     practice = {
-      t0: Music.now(), plan,
-      who: a => plan.menu === 'tutti' ? true : plan.menu === 'individual' ? targets.has(a.member.id) : true,
-      off: a => plan.menu === 'section' ? secOffset[a.sec] * 2 : 0,
+      t0: Music.now(), plan, loop: !!opts.loop, focus: null, paused: false, pausedAt: 0, pausedTotal: 0, act,
+      who: a => (plan.menu === 'tutti' ? true : plan.menu === 'individual' ? (anyOn ? targets.has(a.member.id) : fb.has(a.sec)) : true) && (!practice.focus || practice.focus.has(a.sec)),
+      off: a => plan.menu === 'section' && !practice.loop ? secOffset[a.sec] * 2 : 0,
     };
     mode = 'practice';
     start();
   }
   function stopPractice() { practice = null; if (mode === 'practice') { mode = 'idle'; score = null; } }
+  function endPractice() { if (practice) { stopPractice(); poseAll(0, 1, true); } }
+  function setPracticeFocus(secs) { if (practice) practice.focus = secs && secs.length ? new Set(secs) : null; }
+  function pausePractice(on) {
+    const p = practice; if (!p || p.paused === !!on) return;
+    const t = Music.now();
+    if (on) p.pausedAt = t; else p.pausedTotal += t - p.pausedAt;
+    p.paused = !!on;
+  }
+  function updateLoopPractice(t) {
+    const p = practice, b = Math.max(0, (p.paused ? p.pausedAt : t) - p.t0 - p.pausedTotal) / score.spb, bb = b % score.beats;
+    curBeat = bb;
+    // 指揮者：演奏中は拍を振り、手を止めているあいだは団員に向かって話している姿勢
+    if (conductor) poseConductor(conductor, bb, 0.6, p.paused ? 'idle' : 'beat', t);
+    for (const a of actors) {
+      const play = !p.paused && p.who(a);
+      const L = p.act[a.sec] || [];
+      const sb = L.length ? L[Math.floor(b * 4) % L.length] + (b * 4 % 1) / 4 : bb;
+      const m = play ? musicState(a, sb, score) : { active: false, u: 0, dyn: 0.3, onset: 9 };
+      const target = play && m.active ? 1 : 0;
+      a.w += (target - a.w) * Math.min(1, frameDt * 4);
+      poseActor(a, m, t);
+    }
+  }
   function updatePractice(t) {
+    if (practice.loop) return updateLoopPractice(t);
     const p = practice, b = (t - p.t0) / score.spb;
     if (conductor) poseConductor(conductor, b, 0.6, p.plan.menu === 'tutti' && b < score.beats ? 'beat' : 'idle', t);
     if (b > score.beats + 2) { stopPractice(); poseAll(0, 1, true); return; }
@@ -7031,12 +7378,14 @@ const Stage3D = (() => {
     if (hk !== hallKey) { buildHall(hk); hallKey = hk; lineupKey = ''; }
     scoreSong = song || findSong('finlandia');
     const key = [song ? song.id : '-', cd ? cd.id + JSON.stringify(cd.look) : '-', ...STATE.members.map(m => m.id + m.inst + (isPrincipal(m) ? '*' : ''))].join('|');
-    if (key !== lineupKey && mode !== 'show') { lineupKey = key; buildOrchestra(song, cd); setCamera(cam.name || 'overview', true); }
+    if (key !== lineupKey && mode !== 'show') { lineupKey = key; buildOrchestra(song, cd); setCamera(cam.name || 'front', true); }
   }
   function setVisible(v) { if (!ok) return; if (v) { resize(); start(); } else { stop(); if (show) skipShow(); stopPractice(); } }
   function setAudienceFill(f) { if (audience) { audience.fill = clamp(f, 0, 1); updateAudience(0, true); } }
   return {
-    init, sync, setVisible, setCamera, playShow, skipShow, playPractice, setAudienceFill, resize,
+    init, sync, setVisible, setCamera, playShow, skipShow, playPractice, endPractice, setPracticeFocus, pausePractice, setAudienceFill, resize,
+    isPracticing: () => mode === 'practice' && !!practice,
+    venue: () => hallKey,
     get ok() { return ok; }, get reason() { return reason; }, isShowing: () => !!show, camName: () => cam.name,
     sections: () => SECTIONS.map(s => { const as = actors.filter(a => a.sec === s.id); return { sec: s.id, n: as.length, w: as.length ? +(as.reduce((x, a) => x + a.w, 0) / as.length).toFixed(2) : 0, active: score ? Music.isActive(score, s.id, curBeat + 0.9) : false, beat: +curBeat.toFixed(2) }; }),
     conductorPose: () => conductor ? { y: +conductor.R.hand.y.toFixed(3), x: +conductor.R.hand.x.toFixed(3), visible: conductor.group.visible, rotY: +conductor.group.rotation.y.toFixed(2) } : null,
@@ -7679,8 +8028,9 @@ const ACTIONS = {
   dismiss() { UI.confirmDismiss = true; renderSheet(); },
   dismissNo() { UI.confirmDismiss = false; renderSheet(); },
   dismissYes() {
-    const id = UI.sheetMember, m = memberById(id);
-    if (dismissMember(id)) {
+    const id = UI.sheetMember, m = memberById(id), why = dismissBlockReason(m);
+    if (why) toast(why);
+    else if (dismissMember(id)) {
       toast(`${m.name} が退団しました`);
       if (UI.draft) UI.draft.members = UI.draft.members.filter(x => x !== id);
       if (UI.train.member === id) UI.train.member = null;
@@ -7707,10 +8057,8 @@ document.addEventListener('DOMContentLoaded', boot);
  *   ・画面全体はスクロールしない。項目が多いときはカテゴリー分け・ページ分割する
  *   ・3Dが使えない端末では3D領域を簡易表示に置き換え、同じ操作で遊べる
  * ========================================================= */
-const CAMERAS = [
-  ['overview', '全体'], ['front', '正面'], ['conductor', '指揮者'],
-  ['hs', '高弦'], ['ls', '低弦'], ['ww', '木管'], ['br', '金管'], ['pc', '打楽器'],
-];
+// 3Dの視点は正面に固定（プレイヤーが視点を選ぶ機能はなし）。練習中の演出とホールの下見だけ自動で視点が動く
+const HALL_TOUR = [['front', '正面から'], ['hallRear', '客席の後方から'], ['hallSide', '客席の側方・上から'], ['fromStage', '舞台から客席を見る'], ['overview', '全体を見渡す']];
 let STAGE_HOST = null, STAGE_TRIED = false;
 function use3D() {
   if (UI.no3d) return false;
@@ -7728,11 +8076,19 @@ const stageReason = () => (typeof Stage3D !== 'undefined' && Stage3D.reason) || 
 function soundOn() { try { return localStorage.getItem('orchestraSim.sound') !== 'off'; } catch (e) { return true; } }
 
 // 3D表示に今の状態を反映（会場・曲・指揮者・観客）
+//   通常練習の段階（全体合奏・セクション練習・個人練習）は練習室。会場の予約画面ではそのホールを下見。
+//   本番準備（ホール練習）・本番・結果は予約したホール。
+const HALL_SCREENS = ['hallList', 'hallDetail', 'hallPreview'];
+function venueFor(c, scr) {
+  if (HALL_SCREENS.includes(scr.s)) return (scr.s !== 'hallList' && scr.id) || UI.previewHall || c.hallId || 'general';
+  if (c.phase === 'practice' || UI.practicing) return PRACTICE_ROOM.id;
+  return c.hallId || UI.previewHall || 'general';
+}
 function sync3D(c) {
   if (!use3D()) return;
   try {
     const scr = cmdTop();
-    const hallId = (scr.s === 'hallDetail' && scr.id) || (scr.s === 'hallList' && UI.previewHall) || c.hallId || UI.previewHall || 'general';
+    const hallId = venueFor(c, scr);
     const songId = (scr.s === 'songDetail' && scr.id) || c.songId || null;
     const cdId = (scr.s === 'condDetail' && scr.id) || null;
     const cd = cdId ? STATE.conductors.find(x => x.id === cdId) : activeConductor();
@@ -7742,7 +8098,7 @@ function sync3D(c) {
       let fill = 0;
       if (c.phase === 'prep') fill = attendanceRate(c);
       if (c.phase === 'result' && c.result) fill = clamp(c.result.settlement.audience / findHall(c.hallId).capacity, 0, 1);
-      if (scr.s === 'hallList' || scr.s === 'hallDetail') fill = 0.35;
+      if (HALL_SCREENS.includes(scr.s)) fill = 0.35;
       Stage3D.setAudienceFill(fill);
     }
   } catch (e) { console.error(e); }
@@ -7812,9 +8168,10 @@ function renderConcertGame(c) {
   const ph = panelHeight(kind);
   document.documentElement.style.setProperty('--panel', ph + 'px');
   const out = def.render(c, scr);
-  const cams = CAMERAS.map(([id, n]) => `<button class="${use3D() && Stage3D.camName() === id ? 'on' : ''}" data-act="cam" data-v="${id}">${n}</button>`).join('');
+  const venue = use3D() ? venueFor(c, scr) : '';
+  const place = venue === PRACTICE_ROOM.id ? PRACTICE_ROOM.name : ((findHall(venue) || {}).name || '');
   const stageArea = use3D()
-    ? `<div class="ov3d"><div class="camrow">${cams}<button class="snd" data-act="sound" aria-label="音声">${soundOn() ? '♪ 音あり' : '♪ 消音'}</button></div>
+    ? `<div class="ov3d"><div class="camrow"><span class="venue" id="venue3d">${esc(place)}</span><button class="snd" data-act="sound" aria-label="音声">${soundOn() ? '♪ 音あり' : '♪ 消音'}</button></div>
         ${showing ? `<div class="caption" id="cap3d">${esc(UI.caption || '開演前')}</div>` : ''}</div>`
     : `<div class="stage2d"><div class="s2-hall">${esc((findHall(c.hallId) || {}).name || 'コンサートホール')}</div><div class="s2-song">${esc((findSong(c.songId) || {}).title || '曲目未定')}</div>
         <div class="s2-note">3D表示を利用できないため簡易表示です<br><small>${esc(stageReason())}</small></div></div>`;
@@ -7907,8 +8264,8 @@ const SCREENS = {
     const refund = c.hallId && !reserved ? findHall(c.hallId).fee : 0;
     const body = tab === 'basic'
       ? `<div class="dt">${esc(h.name)} <span class="tag">${h.grade}</span></div>
-         <div class="kgrid"><span>使用料<b>${h.fee ? yen(h.fee) : '無料'}</b></span><span>席数<b>${h.capacity.toLocaleString()}席</b></span><span>チケット<b>${yen(h.ticket)}</b></span>
-         <span>舞台<b>${h.stage}名まで</b></span><span>ホール練習<b>${h.rehearsalFee ? yen(h.rehearsalFee) : '無料'}</b></span><span>評判<b>×${h.prestige}</b></span></div>
+         <div class="kgrid"><span>使用料（予約時）<b>${h.fee ? yen(h.fee) : '無料'}</b></span><span>席数<b>${h.capacity.toLocaleString()}席</b></span><span>チケット<b>${yen(h.ticket)}</b></span>
+         <span>舞台<b>${h.stage}名まで</b></span><span>ホール練習（実施時）<b>${h.rehearsalFee ? yen(h.rehearsalFee) : '無料'}</b></span><span>評判<b>×${h.prestige}</b></span></div>
          ${stat('音響性能', h.acoustics, null, 'blue')}`
       : `<p class="dd">${esc(h.feature)}</p>
          <div class="kvc"><span>集客</span><span>予想 約${Math.round(att * 100)}%（${Math.round(h.capacity * att)}名）・チケット収入 約${yen(Math.round(h.capacity * att) * h.ticket)}</span></div>
@@ -7917,8 +8274,18 @@ const SCREENS = {
     return {
       back: true, crumb: `会場の予約 › <b>${esc(h.name)}</b>`,
       body: tabs([['basic', '基本'], ['more', '特徴・集客']], tab) + `<div class="dbox">${body}</div>${!reserved && reason ? `<div class="creason">${esc(reason)}</div>` : ''}`,
-      foot: `<button class="cbtn" data-act="cback">一覧に戻る</button>` + (reserved ? '<button class="cbtn pri" disabled>予約済み</button>'
+      foot: (use3D() ? `<button class="cbtn" data-act="cgo" data-v="hallPreview" data-id="${h.id}">3Dで下見</button>` : `<button class="cbtn" data-act="cback">一覧に戻る</button>`) + (reserved ? '<button class="cbtn pri" disabled>予約済み</button>'
         : `<button class="cbtn pri" data-act="reserveHall" data-id="${h.id}" ${reason ? 'disabled' : ''}>${refund ? '変更して予約' : '予約する'}${h.fee ? `（${yen(h.fee)}）` : ''}</button>`),
+    };
+  } },
+  // ホールの3Dプレビュー（予約前の下見）：資金・予約状態は変えず、カメラが会場内を自動で巡る
+  hallPreview: { kind: 'short', render: (c, scr) => {
+    const h = findHall(scr.id), reserved = c.hallId === h.id, reason = hallBlockReason(c, h), stop = HALL_TOUR[UI.tourIdx % HALL_TOUR.length] || HALL_TOUR[0];
+    return {
+      crumb: `${esc(h.name)} › <b>3Dで下見</b>`, badge: `<span class="cbadge" id="tour3d">${stop[1]}</span>`,
+      body: `<div class="cnote">${h.capacity.toLocaleString()}席・舞台${h.stage}名まで・音響${h.acoustics}・使用料 ${h.fee ? yen(h.fee) : '無料'}（下見は無料）</div>`,
+      foot: `<button class="cbtn" data-act="cback">‹ 予約画面に戻る</button>` + (reserved ? '<button class="cbtn pri" disabled>予約済み</button>'
+        : `<button class="cbtn pri" data-act="reserveHall" data-id="${h.id}" ${reason ? 'disabled' : ''}>この会場を予約</button>`),
     };
   } },
   condList: { render: c => {
@@ -8029,8 +8396,8 @@ const SCREENS = {
     return {
       back: true, crumb: '本番準備 › <b>ホール練習</b>',
       body: c.rehearsal.done ? '<div class="cmsg">ホール練習は実施済みです</div><div class="cnote">成功率と演奏の安定性が上がっています。</div>'
-        : `<div class="cmsg">${esc(hall.name)}で通し練習を行いますか？</div><div class="cnote">成功率が約${Math.round(CONFIG.concert.hallBonus * 100)}%上がり、演奏のばらつきが減ります${hall.pressure ? `。一流会場の重圧（−${Math.round(hall.pressure * 100)}%）も解消されます` : ''}。</div><div class="kvc"><span>費用</span><span>${hall.rehearsalFee ? yen(hall.rehearsalFee) : '無料'}（任意・1回）</span></div>${why ? `<div class="creason">${esc(why)}</div>` : ''}`,
-      foot: c.rehearsal.done ? '' : `<button class="cbtn pri" data-act="hall" ${why ? 'disabled' : ''}>ホール練習を行う</button>`,
+        : `<div class="cmsg">${esc(hall.name)}で通し練習を行いますか？</div><div class="cnote">成功率が約${Math.round(CONFIG.concert.hallBonus * 100)}%上がり、演奏のばらつきが減ります${hall.pressure ? `。一流会場の重圧（−${Math.round(hall.pressure * 100)}%）も解消されます` : ''}。</div><div class="kvc"><span>料金</span><span>${hall.rehearsalFee ? yen(hall.rehearsalFee) : '無料'}（実施するときに支払い・任意・1回）</span></div><div class="kvc"><span>資金</span><span>${yen(STATE.funds)}${hall.rehearsalFee && STATE.funds >= hall.rehearsalFee ? ` → 実施後 ${yen(STATE.funds - hall.rehearsalFee)}` : ''}</span></div>${why ? `<div class="creason">${esc(why)}</div>` : ''}`,
+      foot: c.rehearsal.done ? '' : `<button class="cbtn pri" data-act="hall" ${why ? 'disabled' : ''}>${why && STATE.funds < hall.rehearsalFee ? '資金が足りません' : `ホール練習を行う${hall.rehearsalFee ? `（${yen(hall.rehearsalFee)}）` : ''}`}</button>`,
     };
   } },
   policy: { render: c => {
@@ -8088,7 +8455,7 @@ function startShow(c) {
   UI.showing = true; UI.caption = '開演前';
   Music.setMuted(!soundOn());
   render();
-  Stage3D.setCamera('overview');
+  Stage3D.setCamera('front');
   Stage3D.playShow({
     score: sc, quality: showQuality(c), acoustics: hall.acoustics,
     fill: clamp(r.settlement.audience / hall.capacity, 0, 1),
@@ -8177,7 +8544,6 @@ function conductorSummary() {
 
 /* ---------- 操作 ---------- */
 Object.assign(ACTIONS, {
-  cam(d) { Stage3D.setCamera(d.v); document.querySelectorAll('.camrow [data-act=cam]').forEach(b => b.classList.toggle('on', b.dataset.v === d.v)); },
   sound() { const on = !soundOn(); try { localStorage.setItem('orchestraSim.sound', on ? 'on' : 'off'); } catch (e) {} Music.setMuted(!on); render(); },
   skipShow() { Stage3D.skipShow(); },
   openCond() { UI.memScroll = window.scrollY; UI.memView = 'conductors'; UI.sheetMember = null; render(); scrollTop(); },
@@ -8190,6 +8556,30 @@ Object.assign(ACTIONS, {
   policy(d) { activeConcert().policy = d.v; save(); if (cmdTop().s === 'policy') cmdBack(); render(); toast(`指揮方針：${CONFIG.policies[d.v].name}`); },
   setPrincipal(d) { const m = memberById(d.id); if (setPrincipal(d.id)) toast(`${m.name} を ${INST[m.inst].abbr} の首席に任命しました`); renderSheet(); render(); },
 });
+
+/* ---------- ホールの3Dプレビューのカメラ巡回（下見中だけ動く。終わると正面に戻す） ---------- */
+let TOUR_TIMER = null;
+UI.tourIdx = 0;
+function tourStep() {
+  if (!use3D() || UI.tab !== 'concert' || cmdTop().s !== 'hallPreview') { stopTour(); return; }
+  UI.tourIdx = (UI.tourIdx + 1) % HALL_TOUR.length;
+  Stage3D.setCamera(HALL_TOUR[UI.tourIdx][0], false, 2.2);
+  const el = document.getElementById('tour3d'); if (el) el.textContent = HALL_TOUR[UI.tourIdx][1];
+}
+function stopTour() {
+  if (!TOUR_TIMER) return;
+  clearInterval(TOUR_TIMER); TOUR_TIMER = null; UI.tourIdx = 0;
+  if (use3D() && !UI.practicing && !UI.showing) Stage3D.setCamera('front');
+}
+(() => {
+  const base = render;
+  render = function (...a) {
+    base.apply(this, a);
+    const inPreview = UI.tab === 'concert' && STATE && typeof cmdTop === 'function' && cmdTop().s === 'hallPreview' && use3D();
+    if (inPreview && !TOUR_TIMER) { UI.tourIdx = 0; Stage3D.setCamera(HALL_TOUR[0][0], true); TOUR_TIMER = setInterval(tourStep, 3200); }
+    else if (!inPreview && TOUR_TIMER) stopTour();
+  };
+})();
 
 /* =========================================================
  * UI_TABS — ホーム・団員・育成・記録の4タブ（スクロールしない階層型の固定画面）
@@ -8282,7 +8672,6 @@ const GROUPS = [
   { id: 'br', name: '金管楽器', secs: ['br'] },
   { id: 'pc', name: '打楽器', secs: ['pc'] },
 ];
-const INST_NAME = { Vn1: 'ヴァイオリン I', Vn2: 'ヴァイオリン II', Va: 'ヴィオラ', Vc: 'チェロ', Cb: 'コントラバス', Fl: 'フルート', Ob: 'オーボエ', Cl: 'クラリネット', Fg: 'ファゴット', Hr: 'ホルン', Tp: 'トランペット', Tb: 'トロンボーン', Tuba: 'テューバ', Perc: '打楽器（ティンパニ含む）' };
 const groupInsts = g => GROUPS.find(x => x.id === g).secs.flatMap(s => SEC[s].insts);
 const groupMembers = g => STATE.members.filter(m => groupInsts(g).includes(m.inst));
 const sortMembers = ms => ms.slice().sort((a, b) => (isPrincipal(b) - isPrincipal(a)) || (memberAvg(b) - memberAvg(a)));
@@ -8428,7 +8817,17 @@ const TSCREENS = {
     return {
       parent: GROUPS.find(g => groupInsts(g.id).includes(scr.inst)).name, title: INST_NAME[scr.inst], badge: `<span class="tbadge">${ms.length}/${INST[scr.inst].cap}名</span>`,
       body: `<div class="tnote">右の小さなグラフは 技術・音感・リズム・音色・強弱・表現・協調</div>` + (pg.items.map(m => `<button class="trow" data-act="tgo" ${tvGo('mMember', `data-id="${m.id}"`)}>${badge(memberRank(m))}<span class="tr-m"><span class="tr-t">${esc(m.name)}${isPrincipal(m) ? ' <span class="tag gold">首席</span>' : ''}${m.original ? ' <span class="oc">★</span>' : ''}</span><span class="tr-s">平均 ${Math.round(memberAvg(m))}・潜在 ${Math.round(memberPotAvg(m))}</span></span>${spark(m)}<span class="chev">›</span></button>`).join('') || '<div class="tempty">在籍している団員はいません</div>'),
-      foot: tvPager(pg) || `<button class="tbtn" data-act="tjump" data-tab="members" data-path="recruit,recMembers">団員を募集する</button>`,
+      foot: (tvPager(pg) || `<button class="tbtn" data-act="tjump" data-tab="members" data-path="recruit,recMembers">団員を募集する</button>`) + (ms.length > 1 ? `<button class="tbtn" data-act="tPrinPick" data-inst="${scr.inst}">首席を選ぶ</button>` : ''),
+    };
+  },
+  // 首席の任命：同じ楽器の団員から、能力に関係なく誰でも選べる
+  mPrincipal(c, scr) {
+    const ms = sortMembers(STATE.members.filter(m => m.inst === scr.inst)), cur = principalOf(scr.inst), pg = tvPage(ms, scr.page, tvPer(56, innerWidth < 400 ? 44 : 26));
+    return {
+      parent: INST_NAME[scr.inst], title: '首席を選ぶ', badge: `<span class="tbadge">現在：${cur ? esc(cur.name) : 'なし'}</span>`,
+      body: `<div class="tnote">任命したい団員を選んでください。能力に関係なく誰でも首席にできます（前の首席は通常団員に戻ります）。</div>` +
+        pg.items.map(m => `<button class="trow ${isPrincipal(m) ? 'sel' : ''}" data-act="tPrincipal" data-id="${m.id}" data-inst="${scr.inst}" ${isPrincipal(m) ? 'disabled' : ''}>${badge(memberRank(m))}<span class="tr-m"><span class="tr-t">${esc(m.name)}${isPrincipal(m) ? ' <span class="tag gold">首席</span>' : ''}</span><span class="tr-s">平均 ${Math.round(memberAvg(m))}・協調 ${m.abilities.coop}・表現 ${m.abilities.expr}</span></span><span class="tr-r">${isPrincipal(m) ? '任命中' : '任命'}</span></button>`).join(''),
+      foot: tvPager(pg) || '',
     };
   },
   mMember(c, scr) {
@@ -8453,9 +8852,15 @@ const TSCREENS = {
   },
   mDismiss(c, scr) {
     const m = memberById(scr.id);
+    const why = m && dismissBlockReason(m);
+    if (why) return {
+      parent: esc(m.name), title: '退団の確認',
+      body: `<div class="tconfirm"><b>${esc(m.name)}</b> は ${INST_NAME[m.inst]} の<span class="tag gold">首席</span>です。</div><div class="treason">${esc(why)}</div>`,
+      foot: `<button class="tbtn" data-act="tback">戻る</button><button class="tbtn pri" data-act="tPrinPick" data-inst="${m.inst}">首席を選び直す</button>`,
+    };
     return {
       parent: m ? esc(m.name) : '', title: '退団の確認',
-      body: m ? `<div class="tconfirm"><b>${esc(m.name)}</b>（${INST[m.inst].abbr}）を退団させますか？<br>元に戻せません。${isPrincipal(m) ? '<br>首席奏者のため、同じ楽器で最も能力の高い団員が後任になります。' : ''}</div>` : '<div class="tempty">対象がいません</div>',
+      body: m ? `<div class="tconfirm"><b>${esc(m.name)}</b>（${INST[m.inst].abbr}）を退団させますか？<br>元に戻せません。${isPrincipal(m) ? '<br>この楽器の団員は1名だけのため、首席奏者のまま退団します。' : ''}</div>` : '<div class="tempty">対象がいません</div>',
       foot: m ? `<button class="tbtn" data-act="tback">やめる</button><button class="tbtn pri" data-act="tDismiss" data-id="${m.id}">退団させる</button>` : '',
     };
   },
@@ -8668,6 +9073,7 @@ const TSCREENS = {
       ['rFinance', '財務記録', `資金 ${yen(STATE.funds)}`],
       ['rTraining', '育成の記録', `${STATE.concertOrder.reduce((s, id) => s + STATE.concertPrograms[id].trainingLog.length, 0)}件`],
       ['rConds', '指揮者の記録', `契約中 ${STATE.conductors.length}名`],
+      ['rQuiz', '音楽クイズの記録', `回答 ${Object.values(ensureQuizState().songs).reduce((n, s) => n + s.answered, 0)}問・連続正解 ${STATE.quiz.streak}`],
       ['rSettings', '設定・保存データ', `楽団名・データの初期化`],
     ];
     return { title: '記録', body: cats.map(([v, n, s]) => tvRow('tgo', tvGo(v), n, s)).join('') };
@@ -8799,9 +9205,22 @@ Object.assign(ACTIONS, {
   },
   tnote(d) { const n = notices(activeConcert())[Number(d.i)]; if (!n) return; if (n.path) tjump(n.tab, n.path); else UI.tab = n.tab; render(); },
   // 団員
-  tPrincipal(d) { const m = memberById(d.id); if (setPrincipal(d.id)) toast(`${m.name} を ${INST[m.inst].abbr} の首席に任命しました`); render(); },
+  tPrincipal(d) {
+    const m = memberById(d.id), prev = m && principalOf(m.inst);
+    if (setPrincipal(d.id, d.inst || (m && m.inst))) {
+      toast(`${m.name} を ${INST[m.inst].abbr} の首席に任命しました${prev && prev.id !== m.id ? `（${prev.name} は通常団員に戻りました）` : ''}`);
+      if (ttop().s === 'mPrincipal') tpop();
+    }
+    render();
+  },
+  tPrinPick(d) {
+    // 退団確認から来た場合は確認画面を閉じてから首席の選択へ
+    if (ttop().s === 'mDismiss') { tpop(); if (ttop().s === 'mMember') tpop(); }
+    tpush({ s: 'mPrincipal', inst: d.inst }); render();
+  },
   tDismiss(d) {
-    const m = memberById(d.id);
+    const m = memberById(d.id), why = dismissBlockReason(m);
+    if (why) { toast(why); render(); return; }
     if (dismissMember(d.id)) {
       toast(`${m.name} が退団しました`);
       if (UI.draft) UI.draft.members = UI.draft.members.filter(x => x !== d.id);
@@ -8840,5 +9259,370 @@ Object.assign(ACTIONS, {
   const orig = ACTIONS[k];
   if (orig) ACTIONS[k] = function (...a) { UI.tnav = {}; UI.trPre = null; return orig.apply(this, a); };
 });
+
+/* =========================================================
+ * 練習の進行（演奏会タブの3Dステージで練習の様子を見せる）
+ *   1. 既存の「練習開始」ボタン → 既存の runPractice() で成果を確定（これまでと同じ計算）
+ *   2. 10〜15秒、既存の3Dステージで指揮者・団員が練習する（練習対象に応じて中心のセクションが変わる）
+ *   3. 途中で一定確率でランダムイベント（選択肢があるものは手を止めて選ぶ）
+ *   4. 終了後、既存の「練習の成果」画面（練習報告）を表示。イベントの結果も報告に載せる
+ * テスト用：UI.practiceTest = { scale: 0.05（時間の倍率）, event: 'force'|'off', eventId }
+ * ========================================================= */
+const MENU_NAME = { tutti: '全体合奏', section: 'セクション練習', individual: '個人練習' };
+const SEC_GROUPS = [
+  { id: 'str', name: '弦楽器', secs: ['hs', 'ls'], cam: 'front' },
+  { id: 'ww', name: '木管楽器', secs: ['ww'], cam: 'ww' },
+  { id: 'br', name: '金管楽器', secs: ['br'], cam: 'br' },
+  { id: 'pc', name: '打楽器', secs: ['pc'], cam: 'pc' },
+];
+let PR_TIMER = null;
+const prOpts = () => UI.practiceTest || {};
+
+// 練習時間（秒）：全体合奏 約12〜13秒、セクション練習 約13〜14秒、個人練習 約11〜12秒
+function practiceSeconds(menu) {
+  const base = { tutti: 12, section: 13, individual: 11 }[menu] || 12;
+  return base + pevRand() * 1.2;
+}
+// 練習中の見せ方（どのセクションを中心に演奏させ、どのカメラで見せるか）の時間割
+function practiceSchedule(log) {
+  const plan = log.plan;
+  if (plan.menu === 'section') {
+    const gs = SEC_GROUPS.filter(g => g.secs.some(s => membersOfSection(s).length));
+    return gs.map((g, i) => ({ from: i / gs.length, secs: g.secs, cam: g.cam, label: `${g.name}のセクション練習` }));
+  }
+  if (plan.menu === 'individual') {
+    const ms = (plan.members || []).map(memberById).filter(Boolean);
+    const sec = ms.length ? INST[ms[0].inst].section : 'hs';
+    return [{ from: 0, secs: null, cam: sec, label: `個人練習：${ms.map(m => m.name).join('、') || '—'}` }];
+  }
+  return [
+    { from: 0, secs: null, cam: 'overview', label: 'オーケストラ全体で合わせています' },
+    { from: 0.34, secs: null, cam: 'conductor', label: 'オーケストラ全体で合わせています' },
+    { from: 0.67, secs: null, cam: 'front', label: 'オーケストラ全体で合わせています' },
+  ];
+}
+// 練習中のひとこと（指揮者・首席・曲名と連動。文章は data/events/practice.json の commentary）
+function practiceLines(c, log) {
+  const cd = activeConductor(), cm = principalOf('Vn1'), song = findSong(c.songId);
+  const vars = { conductor: cd ? cd.name : '指揮者', song: song.title, aim: cd && PEV_TRAIT[cd.trait] ? PEV_TRAIT[cd.trait].aim : PRACTICE_EVENT_DATA.defaultAim, concertmaster: cm ? cm.name : null };
+  const L = (PRACTICE_EVENT_DATA.commentary || {})[log.menu];
+  if (!L || !L.length) return ['練習中'];
+  return L.map(x => typeof x === 'string' ? pevText(x, vars) : (pevFill(x.text, vars) ?? pevText(x.fallback || '', vars)));
+}
+
+const practiceAnimOpts = log => ({ loop: true, fallbackSecs: (log.plan.members || []).map(memberById).filter(Boolean).map(m => INST[m.inst].section) });
+function startPracticeSession(c, log) {
+  const o = prOpts();
+  const ev = o.event === 'off' ? null : pickPracticeEvent(c, log, { force: o.event === 'force', id: o.eventId });
+  const dur = practiceSeconds(log.menu) * 1000;
+  UI.practicing = {
+    cid: c.id, log, dur, elapsed: 0, last: performance.now(), ev, evState: null, evShownAt: 0, result: null,
+    sched: practiceSchedule(log), seg: -1, override: null, lines: practiceLines(c, log), line: 0,
+  };
+  UI.cmd = { cid: c.id, phase: c.phase, stack: [rootScreen(c), { s: 'practicing' }] };
+  render();
+  if (use3D()) { Stage3D.playPractice(log.plan, practiceQuality(c), practiceAnimOpts(log)); applySegment(true); }
+  UI.practicing.animStarted = true;
+  clearInterval(PR_TIMER); PR_TIMER = setInterval(practiceTick, 100);
+}
+function currentSegment(P) {
+  const f = P.elapsed / P.dur; let k = 0;
+  P.sched.forEach((s, i) => { if (f >= s.from) k = i; });
+  return k;
+}
+function applySegment(force) {
+  const P = UI.practicing; if (!P) return;
+  const k = currentSegment(P);
+  if (!force && k === P.seg && !P.overrideDirty) return false;
+  P.seg = k; P.overrideDirty = false;
+  const seg = P.sched[k], ov = P.override && P.elapsed < P.override.until ? P.override : null;
+  if (use3D()) {
+    Stage3D.setPracticeFocus(ov ? [ov.sec] : seg.secs);
+    Stage3D.setCamera(ov ? ov.sec : seg.cam);
+  }
+  return true;
+}
+function practiceTick() {
+  const P = UI.practicing; if (!P) { clearInterval(PR_TIMER); PR_TIMER = null; return; }
+  const now = performance.now(), dt = now - P.last; P.last = now;
+  const speed = 1 / (prOpts().scale || 1);
+  let changed = false;
+  const open = P.evState === 'open';
+  if (!open) P.elapsed += dt * speed;
+  // ランダムイベント
+  if (P.ev && !P.evState && P.elapsed >= P.ev.at * P.dur) {
+    if (P.ev.choices) { P.evState = 'open'; if (use3D()) Stage3D.pausePractice(true); }
+    else { P.result = applyPracticeEvent(activeConcertById(P.cid), P.log, P.ev); P.evState = 'shown'; P.evShownAt = P.elapsed; if (P.ev.sec) setOverride(P, P.ev.sec, 3000); }
+    changed = true;
+  }
+  if (P.evState === 'shown' && P.elapsed - P.evShownAt > 3500) { P.evState = 'done'; changed = true; }
+  if (P.override && P.elapsed >= P.override.until) { P.override = null; P.overrideDirty = true; }
+  applySegment(false);
+  // ひとことを約3秒ごとに入れ替える
+  P.line = Math.floor(P.elapsed / 3200) % P.lines.length;
+  if (P.elapsed >= P.dur && P.evState !== 'open') { finishPracticeSession(); return; }
+  if (UI.tab !== 'concert') return;
+  if (changed) { render(); return; }   // イベントの表示・終了など、画面の構成が変わるときだけ描き直す
+  const fe = document.getElementById('prFocus'), le = document.getElementById('prLine');
+  if (fe) fe.textContent = practiceFocusLabel(P);
+  if (le) le.textContent = P.lines[P.line];
+  const fill = document.getElementById('prFill'), rem = document.getElementById('prRemain');
+  if (fill) fill.style.width = Math.min(100, P.elapsed / P.dur * 100).toFixed(1) + '%';
+  if (rem) rem.textContent = `残り ${Math.max(0, Math.ceil((P.dur - P.elapsed) / 1000))}秒`;
+}
+const activeConcertById = id => STATE.concertPrograms[id] || activeConcert();
+function setOverride(P, sec, ms) { P.override = { sec, until: P.elapsed + ms }; P.overrideDirty = true; }
+function finishPracticeSession() {
+  const P = UI.practicing; if (!P) return;
+  clearInterval(PR_TIMER); PR_TIMER = null;
+  if (use3D()) { Stage3D.endPractice(); Stage3D.setCamera('front'); }   // 練習が終わったら正面の視点に戻す
+  UI.practicing = null;
+  const c = activeConcertById(P.cid);
+  UI.cmd = { cid: c.id, phase: c.phase, stack: [rootScreen(c), { s: 'log' }] };
+  if (UI.tab === 'concert') render();
+  if (c.phase === 'prep') toast('10回の練習が終了しました');
+}
+
+function practiceFocusLabel(P) {
+  if (!P) return "";
+  const seg = P.sched[Math.max(0, currentSegment(P))] || P.sched[0];
+  const ov = P.override && P.elapsed < P.override.until ? P.override : null;
+  return ov ? `${SEC[ov.sec].name}を中心に練習中` : seg.label;
+}
+/* ---------- 画面 ---------- */
+SCREENS.practicing = {
+  get kind() { const P = UI.practicing; return P && P.evState === 'open' ? 'tall' : 'short'; },
+  render: c => {
+    const P = UI.practicing;
+    if (!P) return { crumb: '<b>練習</b>', body: '<div class="cnote">練習は終了しました</div>', foot: '<button class="cbtn pri" data-act="cHome">戻る</button>' };
+    const log = P.log;
+    const focus = practiceFocusLabel(P);
+    const head = { crumb: `第${log.no}回 ${MENU_NAME[log.menu]}<b>練習中</b>`, badge: `<span class="cbadge" id="prRemain">残り ${Math.max(0, Math.ceil((P.dur - P.elapsed) / 1000))}秒</span>` };
+    const bar = `<div class="prbar"><i id="prFill" style="width:${Math.min(100, P.elapsed / P.dur * 100).toFixed(1)}%"></i></div>`;
+    const ev = P.ev;
+    if (ev && P.evState === 'open') {
+      return { ...head, crumb: `第${log.no}回 ${MENU_NAME[log.menu]}<b>${esc(ev.title)}</b>`,
+        body: `<div class="prev"><div class="prev-h"><span class="tag gold">${esc(ev.title)}</span><span class="prev-w">${esc(ev.who)}<small>（${esc(ev.whoRole)}）</small></span></div><div class="prev-t">「${esc(ev.text)}」</div></div>
+          <div class="prch">${ev.choices.map(ch => `<button class="crow" data-act="prChoice" data-v="${ch.id}"><span class="cr-main"><span class="cr-t">${esc(ch.label)}</span><span class="cr-s">${esc(ch.hint)}</span></span></button>`).join('')}</div>` };
+    }
+    const banner = ev && (P.evState === 'shown' || (P.evState === 'done' && P.result && P.elapsed - P.evShownAt < 3500))
+      ? `<div class="prev mini"><div class="prev-h"><span class="tag gold">${esc(ev.title)}</span><span class="prev-w">${esc(ev.who)}</span></div><div class="prev-t">「${esc(ev.text)}」</div></div>`
+      : P.result ? `<div class="prev mini done"><div class="prev-t">${esc(ev.title)}：${esc(P.result.choice.note)}</div></div>` : '';
+    return { ...head,
+      body: `${bar}<div class="cmsg ell" id="prFocus">${esc(focus)}</div>${banner || `<div class="cnote ell" id="prLine">${esc(P.lines[P.line])}</div>`}` };
+  },
+};
+// 既存の「練習の成果」画面（練習報告）はそのまま使い、イベントがあった回だけ結果を1行添える
+(() => {
+  const base = SCREENS.log.render;
+  SCREENS.log.render = (c, scr) => {
+    const out = base(c, scr);
+    const log = c.practices[c.practices.length - 1] || UI.lastLog;
+    if (log && log.events && log.events.length) {
+      out.body = out.body.replace('class="dgrid mini"', 'class="dgrid mini ev"').replace('class="growl" style="margin-top:6px"', 'class="growl" style="margin-top:2px"') +
+        log.events.map(e => `<div class="prlog">⚑ ${esc(e.title)}${e.choice ? `「${esc(e.choice)}」` : ''}：${esc(e.note)}${e.delta ? `（仕上がり ${e.delta > 0 ? '+' : ''}${round1(e.delta)}）` : ''}</div>`).join('');
+    }
+    return out;
+  };
+})();
+
+/* ---------- 操作 ---------- */
+Object.assign(ACTIONS, {
+  // 既存の練習開始（計算は従来どおり）＋ 練習の様子の再生
+  runPractice(d) {
+    if (UI.practicing) return;   // 練習中は次の練習を受け付けない（重複実行の防止）
+    UI.draft.menu = d.m;
+    const c = activeConcert();
+    const r = runPractice(c, JSON.parse(JSON.stringify(buildPlan())));
+    if (r.error) { toast(r.error); return; }
+    UI.lastLog = r.log;
+    if (d.m === 'section') SECTIONS.forEach(s => UI.draft.sections[s.id] = autoSectionFocus(c, s.id));   // 次回用に再提案
+    startPracticeSession(c, r.log);
+  },
+  prChoice(d) {
+    const P = UI.practicing; if (!P || P.evState !== 'open') return;
+    P.result = applyPracticeEvent(activeConcertById(P.cid), P.log, P.ev, d.v);
+    P.evState = 'done'; P.evShownAt = P.elapsed;
+    if (use3D()) Stage3D.pausePractice(false);
+    const e = P.result.choice.effect || {};
+    if (e.focus && P.log.sections[e.focus.sec]) setOverride(P, e.focus.sec, 4000);
+    if (e.stop) P.dur = Math.min(P.dur, P.elapsed + 1500);   // 早めに切り上げる
+    P.last = performance.now();
+    render();
+  },
+});
+// 別のタブから戻ったとき、練習中なら3Dの練習アニメーションを再開する
+(() => {
+  const base = render;
+  render = function (...a) {
+    base.apply(this, a);
+    const P = UI.practicing;
+    if (P && P.animStarted && UI.tab === 'concert' && use3D() && !Stage3D.isPracticing()) {
+      Stage3D.playPractice(P.log.plan, practiceQuality(activeConcertById(P.cid)), practiceAnimOpts(P.log));
+      if (P.evState === 'open') Stage3D.pausePractice(true);
+      P.seg = -1; applySegment(true);
+    }
+  };
+})();
+// 新しくゲームを始めた／初期化したときは練習の進行も破棄する
+['newgame', 'resetYes'].forEach(k => {
+  const orig = ACTIONS[k];
+  if (orig) ACTIONS[k] = function (...a) { if (UI.practicing) { clearInterval(PR_TIMER); PR_TIMER = null; if (use3D()) Stage3D.endPractice(); UI.practicing = null; } return orig.apply(this, a); };
+});
+
+/* =========================================================
+ * 練習クイズ（画面）
+ *   練習アニメーション → ランダムイベント → 練習終了 → クイズ → 正解・解説 → 既存の練習報告
+ *   ・既存の練習の流れ（practice_ui.js）は変えず、練習の終了処理のあとにクイズ画面を重ねる。
+ *     回答後「練習の報告へ」で1つ戻ると、既存の「練習の成果」画面がそのまま表示される。
+ *   ・回答するまで待つ（時間制限なし）。回答前に再起動しても、演奏会タブを開くと同じ問題が出る。
+ * ========================================================= */
+// クイズ中は操作パネルを高くして、問題と4つの選択肢が画面内に収まるようにする（ほかの画面は従来どおり）
+(() => {
+  const base = panelHeight;
+  panelHeight = kind => kind === 'quiz' ? Math.round(clamp((window.innerHeight || 780) * 0.6, 400, 520)) : base(kind);
+})();
+const quizSongTitle = id => (findSong(id) || {}).title || '';
+const quizUnd = concertId => { const c = STATE.concertPrograms[concertId]; return c ? c.perf.mastery.underst : null; };
+SCREENS.quiz = {
+  kind: 'quiz',
+  render: c => {
+    const res = UI.quizResult, p = quizPending();
+    if (res) {
+      const item = QUIZ_INDEX[res.qid];
+      return {
+        crumb: `第${res.practiceNo}回の練習のあと<b>音楽クイズ</b>`, badge: `<span class="cbadge">${QUIZ_CATS[item.k]}</span>`,
+        body: `<div class="qz-v ${res.correct ? 'ok' : 'ng'}"><b>${res.correct ? '○ 正解！' : '× 不正解'}</b>${res.correct && res.streak >= 2 ? `<span>${res.streak}問連続正解</span>` : ''}</div>
+          <div class="qz-q sm">${esc(item.q)}</div>
+          <div class="qz-a ok"><span>正解</span>${esc(res.answer)}</div>
+          ${res.correct ? '' : `<div class="qz-a ng"><span>あなたの答え</span>${esc(res.picked)}</div>`}
+          <div class="qz-e">${esc(item.e)}</div>
+          ${res.before != null ? `<div class="qz-g">楽曲理解度 <b>+${round1(res.gain)}</b>（${round1(res.before)} → ${round1(res.after)}）${res.bonus ? '・連続正解ボーナス込み' : ''}</div>` : ''}`,
+        foot: `<button class="cbtn pri big" data-act="quizDone">練習の報告へ</button>`,
+      };
+    }
+    if (!p) return { crumb: '<b>音楽クイズ</b>', body: '<div class="cnote">出題中のクイズはありません</div>', foot: '<button class="cbtn pri big" data-act="quizDone">戻る</button>' };
+    const item = QUIZ_INDEX[p.qid], und = quizUnd(p.concertId), st = ensureQuizState().streak;
+    return {
+      crumb: `第${p.practiceNo}回の練習のあと<b>音楽クイズ</b>`, badge: `<span class="cbadge">${QUIZ_CATS[item.k]}</span>`,
+      body: `<div class="qz-song"><span class="ell">『${esc(quizSongTitle(p.songId))}』</span><span>${und != null ? `楽曲理解度 ${Math.round(und)}` : ''}${st ? `・${st}問連続正解中` : ''}</span></div>
+        <div class="qz-q">${esc(item.q)}</div>
+        <div class="qz-ch">${p.order.map((o, i) => `<button class="qz-c" data-act="quizAnswer" data-v="${i}"><i>${'ABCD'[i]}</i><span>${esc(item.c[o])}</span></button>`).join('')}</div>`,
+    };
+  },
+};
+
+Object.assign(ACTIONS, {
+  quizAnswer(d) {
+    if (UI.quizResult || !quizPending()) return;   // 二重回答の防止
+    UI.quizResult = answerQuiz(Number(d.v));
+    render();
+  },
+  quizDone() {
+    UI.quizResult = null;
+    if (cmdTop().s === 'quiz') cmdBack();
+    render();
+  },
+});
+// 練習の終了処理（既存）のあとに、出題回ならクイズ画面を重ねる
+(() => {
+  const base = finishPracticeSession;
+  finishPracticeSession = function (...a) {
+    base.apply(this, a);
+    if (quizPending() && cmdTop().s !== 'quiz') { cmdGo({ s: 'quiz' }); if (UI.tab === 'concert') render(); }
+  };
+})();
+// 回答前に再起動した場合など：演奏会タブを開いたとき、出題待ちの問題があればクイズ画面を出す
+(() => {
+  const base = render;
+  render = function (...a) {
+    if (UI.tab === 'concert' && STATE && STATE.quiz && STATE.quiz.pending && quizPending() && !UI.practicing && !UI.showing && !UI.quizResult && typeof cmdTop === 'function' && cmdTop().s !== 'quiz') cmdGo({ s: 'quiz' });
+    return base.apply(this, a);
+  };
+})();
+// 新しくゲームを始めた／初期化したときは表示中の結果を消す
+['newgame', 'resetYes'].forEach(k => {
+  const orig = ACTIONS[k];
+  if (orig) ACTIONS[k] = function (...a) { UI.quizResult = null; return orig.apply(this, a); };
+});
+
+/* ---------- 記録タブ：音楽クイズの記録 ---------- */
+Object.assign(TSCREENS, {
+  rQuiz(c, scr) {
+    const q = ensureQuizState();
+    const list = Object.entries(q.songs).filter(([id, s]) => findSong(id) && s.answered).sort((a, b) => b[1].answered - a[1].answered);
+    const pg = tvPage(list, scr.page, tvPer(56, 44));
+    return {
+      parent: '記録', title: '音楽クイズの記録', badge: `<span class="tbadge">連続正解 ${q.streak}・最高 ${q.best}</span>`,
+      body: `<div class="tnote">通常練習2回ごとに音楽クイズ。正解するとその演奏会の楽曲理解度が上がります（不正解でも少し上がります）。</div>` +
+        (pg.items.map(([id, s]) => tvRow('tgo', tvGo('rQuizSong', `data-id="${id}"`), esc(findSong(id).title), `${esc(findSong(id).composer)}・出題済み ${s.asked.length}問`, `<span class="tr-r">${s.correct}/${s.answered}問正解</span>`)).join('') || '<div class="tempty">まだクイズに回答していません</div>'),
+      foot: tvPager(pg) || '',
+    };
+  },
+  rQuizSong(c, scr) {
+    const s = quizSong(scr.id), song = findSong(scr.id), tiers = quizTiers(scr.id), q = ensureQuizState();
+    const recent = q.history.filter(h => h.songId === scr.id).slice(-3).reverse();
+    return {
+      parent: '音楽クイズの記録', title: esc(song.title),
+      body: `${kv('回答', `${s.answered}問（正解 ${s.correct}問）`)}${kv('出題済み', `${s.asked.length}問／この曲・作曲家・一般 あわせて${tiers.flat().length}問`)}` +
+        (recent.length ? `<div class="tlabel">最近の回答</div>` + recent.map(h => `<div class="tline"><span><b class="${h.correct ? 'pos' : 'neg'}">${h.correct ? '○' : '×'}</b> ${esc(QUIZ_INDEX[h.qid] ? QUIZ_INDEX[h.qid].q : '')}</span><b class="pos">理解度 +${h.gain}</b></div>`).join('') : ''),
+    };
+  },
+});
+
+/* =========================================================
+ * ページ全体のスクロール・拡大の禁止（全タブ共通）
+ *   ブラウザ標準のスクロール／ピンチ拡大／ダブルタップ拡大／端でのバウンス／
+ *   Ctrl+ホイール・Ctrl+＋− による拡大を止める。
+ *   ゲーム内の操作（ボタン、ウインドウのドラッグなど pointer イベントで作られた操作、
+ *   内部でスクロールするよう作られた領域）は妨げない。
+ * ========================================================= */
+(() => {
+  const opt = { passive: false };
+  // 指の動きを内部でスクロールさせてよい要素か（ゲームが意図してスクロール可能にしている領域）
+  function scrollableAncestor(el, dx, dy) {
+    for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+      if (!(el instanceof Element)) continue;
+      const cs = getComputedStyle(el);
+      const oy = /(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1;
+      const ox = /(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1;
+      if (oy && Math.abs(dy) >= Math.abs(dx)) {
+        // 端に達している方向へは動かさない（ページへの連鎖・バウンスを防ぐ）
+        if ((dy > 0 && el.scrollTop <= 0) || (dy < 0 && el.scrollTop + el.clientHeight >= el.scrollHeight - 1)) return null;
+        return el;
+      }
+      if (ox && Math.abs(dx) > Math.abs(dy)) {
+        if ((dx > 0 && el.scrollLeft <= 0) || (dx < 0 && el.scrollLeft + el.clientWidth >= el.scrollWidth - 1)) return null;
+        return el;
+      }
+    }
+    return null;
+  }
+  let sx = 0, sy = 0;
+  document.addEventListener('touchstart', e => {
+    if (e.touches.length > 1) { e.preventDefault(); return; }   // 2本指＝ピンチ拡大の開始
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, opt);
+  document.addEventListener('touchmove', e => {
+    if (e.touches.length > 1 || (typeof e.scale === 'number' && e.scale !== 1)) { e.preventDefault(); return; }
+    const t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (!scrollableAncestor(e.target, dx, dy)) e.preventDefault();   // ページのスクロール・バウンスを止める
+  }, opt);
+  // iOS Safari のピンチ拡大（独自のジェスチャーイベント）
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), opt));
+  // ダブルタップ拡大（CSS の touch-action:manipulation が主。dblclick は念のため既定動作だけ止める）
+  document.addEventListener('dblclick', e => e.preventDefault(), opt);
+  // PC：Ctrl（⌘）＋ホイール、Ctrl（⌘）＋ ＋/−/0 による拡大縮小
+  window.addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, opt);
+  window.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0', ';', '_'].includes(e.key)) e.preventDefault();
+  });
+  // それでもページがずれた場合（入力欄のフォーカスなど）は元の位置に戻す
+  window.addEventListener('scroll', () => {
+    const a = document.activeElement;
+    if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;   // 入力中のキーボード表示は妨げない
+    if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+  }, { passive: true });
+})();
 
 </script></body></html>

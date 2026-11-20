@@ -31,9 +31,12 @@ async def main():
     other=[x for x in vn if x!=old][0]
     await F.set_principal(p,other)
     newp=await p.evaluate('STATE.principals.Vn1')
-    await F.dismiss(p,other)
+    await F.dismiss(p,other)   # 首席のままでは除籍できない
+    blocked=await p.evaluate(f'!!memberById("{other}")')
+    # 契約終了など除籍操作以外の退団（force）では、従来どおり最も能力の高い団員が後任になる
+    await p.evaluate(f'dismissMember("{other}",{{force:true}}); render()')
     after=await p.evaluate('STATE.principals.Vn1'); best=await p.evaluate('STATE.members.filter(m=>m.inst==="Vn1").sort((a,b)=>memberAvg(b)-memberAvg(a))[0].id')
-    chk('10 首席の管理（自動任命・任命・退団時の後任）', pr and tags==14 and newp==other and after==best and after!=other, f'表示{tags}件・任命→{newp==other}・退団後→最上位{after==best}')
+    chk('10 首席の管理（自動任命・任命・除籍制限・退団時の後任）', pr and tags==14 and newp==other and blocked and after==best and after!=other, f'表示{tags}件・任命→{newp==other}・首席は除籍不可→{blocked}・退団後→最上位{after==best}')
     # 指揮者
     await F.tnav(p,'members',[{'s':'mConds'}]); await ov(p,'conductors'); await p.screenshot(path='shots/w_cond.png')
     f0=await p.evaluate('STATE.funds+=2000000; save(); render(); STATE.funds')
@@ -44,7 +47,7 @@ async def main():
     ab=await p.evaluate('JSON.stringify(activeConductor().abilities)')
     msg=await F.train_run(p,'c_master',cid); ab2=await p.evaluate('JSON.stringify(activeConductor().abilities)')
     await ov(p,'train'); await p.screenshot(path='shots/w_train.png')
-    chk('指揮者：採用・変更・育成', cond[0]==2 and cond[1]==cid and f0-cond[2]==cost and ab!=ab2 and 'マスタークラス' in msg, msg)
+    chk('指揮者：採用・変更・育成', cond[0]==2 and cond[1]==cid and f0-cond[2]==cost and ab!=ab2 and 'マスタークラス' in msg, (msg,cond,f0,cost,ab==ab2))
     # 1/9 進行（募集は独立）
     await F.open_concert(p); await p.wait_for_timeout(500)
     in3d=await p.evaluate('[document.body.classList.contains("mode3d"), Stage3D.ok, JSON.stringify(Stage3D.debug())]')
@@ -77,20 +80,18 @@ async def main():
     await p.click('[data-act=cgo][data-v=section]'); await p.click('[data-act=runPractice]'); await p.wait_for_timeout(1500)
     sec=await p.evaluate('Stage3D.debug()'); await p.screenshot(path='shots/w_prac.png')
     chk('4a 練習で楽器を構えて演奏', sec['mode']=='practice' and max(sec['actorsW'])>0.5, sec['actorsW'])
-    await p.click('.cfoot .cbtn.big')
+    await p.evaluate('UI.practiceTest={scale:0.04}'); await F.finish_practice(p); await p.click('.cfoot .cbtn.big')
     await F.practice_all(p,['tutti']*9)
     await p.click('[data-act=perform]')
     # 演奏中の同期チェック
-    samples=[]; cpose=[]
+    samples=[]; cpose=[]; showcam=None
     for k in range(60):
         await p.wait_for_timeout(500)
         st=await p.evaluate('Stage3D.debug().stage')
         if st=='play':
             ss=await p.evaluate('Stage3D.sections()'); samples.append(ss); cpose.append(await p.evaluate('Stage3D.conductorPose()'))
             if len(samples)==6: await p.screenshot(path='shots/w_play.png')
-            if len(samples)==10: await p.click('[data-act=cam][data-v=conductor]')
-            if len(samples)==14: await p.screenshot(path='shots/w_play_cond.png'); await p.click('[data-act=cam][data-v=br]')
-            if len(samples)==18: await p.screenshot(path='shots/w_play_br.png'); await p.click('[data-act=cam][data-v=overview]')
+            if len(samples)==10: showcam=await p.evaluate('Stage3D.camName()')
         if st=='applause': await p.screenshot(path='shots/w_applause.png'); break
     # 同期：構え(w)が各パートの演奏区間(active)と一致する割合
     agree=tot=0; restSeen=False
@@ -108,11 +109,13 @@ async def main():
         if not await p.evaluate('UI.showing'): break
         await p.wait_for_timeout(500)
     res=await p.evaluate('[activeConcert().phase, activeConcert().result.rank, UI.showing]'); await p.screenshot(path='shots/w_result.png')
-    # 7 カメラ
+    # 7 カメラ：通常は正面固定（視点ボタンなし）。3D内部の各視点（練習の演出・ホールの下見で使用）は従来どおり切り替わる
+    nobtn=await p.evaluate('document.querySelectorAll("[data-act=cam]").length===0')
     cams=[]
-    for cname in ['overview','front','conductor','hs','ls','ww','br','pc']:
-        await p.click(f'[data-act=cam][data-v={cname}]'); await p.wait_for_timeout(1000); cams.append(await p.evaluate('Stage3D.camName()'))
-    chk('7 カメラ切り替え', cams==['overview','front','conductor','hs','ls','ww','br','pc'], cams)
+    for cname in ['overview','front','conductor','hs','ls','ww','br','pc','hallRear','hallSide','fromStage']:
+        await p.evaluate(f'Stage3D.setCamera("{cname}")'); await p.wait_for_timeout(300); cams.append(await p.evaluate('Stage3D.camName()'))
+    await p.evaluate('Stage3D.setCamera("front")')
+    chk('7 視点は正面固定（視点ボタンなし・本番も正面）／内部の視点切り替えは正常', nobtn and showcam=='front' and cams==['overview','front','conductor','hs','ls','ww','br','pc','hallRear','hallSide','fromStage'], (nobtn, showcam, cams))
     # 12 セーブ・ロード
     st=await p.evaluate('JSON.stringify({c:STATE.conductors.map(x=>x.id),pr:STATE.principals,looks:STATE.members.map(m=>JSON.stringify(m.look)),f:STATE.funds,ph:activeConcert().phase})')
     await p.reload(); st2=await p.evaluate('JSON.stringify({c:STATE.conductors.map(x=>x.id),pr:STATE.principals,looks:STATE.members.map(m=>JSON.stringify(m.look)),f:STATE.funds,ph:activeConcert().phase})')

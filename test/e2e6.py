@@ -1,5 +1,6 @@
 """演奏会タブのコマンド画面UI：全画面の巡回・はみ出し検査（複数の画面サイズ）"""
-import asyncio, sys
+import asyncio, sys, os
+sys.path.insert(0, os.path.dirname(__file__)); import flow as F
 from playwright.async_api import async_playwright
 URL='file:///home/claude/orch/dist/index.html'
 GL=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required']
@@ -71,17 +72,25 @@ async def run(size,w,h,shots):
     await p.click('[data-act=toPractice]'); r=await S('practice'); st4=await p.evaluate('[activeConcert().phase, cmdTop().s]')
     # 練習：全体合奏／セクション／個人
     await p.click('[data-act=cgo][data-v=tutti]'); await S('tutti'); await p.click('[data-act=fp][data-path=tutti][data-d="-1"]:not([disabled]) >> nth=0'); await S('tutti9')
-    await p.click('[data-act=fauto][data-path=tutti]'); await p.click('[data-act=runPractice]'); await S('log')
+    await p.evaluate('UI.practiceTest={scale:0.3,event:"force",eventId:"prin_passage"}')
+    await p.click('[data-act=fauto][data-path=tutti]'); await p.click('[data-act=runPractice]'); await p.wait_for_timeout(300); await S('practicing')
+    for _ in range(200):
+        if await p.evaluate('UI.practicing && UI.practicing.evState==="open"'): break
+        await p.wait_for_timeout(50)
+    await S('practiceEvent'); await p.click('[data-act=prChoice] >> nth=0'); await F.finish_practice(p); await S('log')
+    await p.evaluate('UI.practiceTest={scale:0.04}')
     after1=await p.evaluate('activeConcert().practiceDone')
     await p.click('[data-act=cHome]')
     await p.click('[data-act=cgo][data-v=section]'); await S('section'); await p.click('.cbody [data-sec=br]'); await S('secEdit')
-    await p.click('.cfoot [data-act=cback]'); await p.click('[data-act=runPractice]'); await p.click('[data-act=cHome]')
+    await p.click('.cfoot [data-act=cback]'); await p.click('[data-act=runPractice]')
+    await F.finish_practice(p, quiz=None)
+    await S('quiz'); await p.click('[data-act=quizAnswer] >> nth=0'); await S('quizResult'); await p.click('[data-act=quizDone]'); await p.click('[data-act=cHome]')
     await p.click('[data-act=cgo][data-v=indivPick]'); await S('indivPick'); await p.click('[data-act=ctab][data-v=ww]'); await p.click('.cbody .crow >> nth=0')
-    await p.click('[data-act=cgo][data-v=indivFocus]'); await S('indivFocus'); await p.click('[data-act=runPractice]'); await p.click('[data-act=cHome]')
+    await p.click('[data-act=cgo][data-v=indivFocus]'); await S('indivFocus'); await p.click('[data-act=runPractice]'); await F.finish_practice(p); await p.click('[data-act=cHome]')
     await p.click('[data-act=cgo][data-v=perf]'); await S('perf'); await p.click('[data-act=ctab][data-v=all]'); await S('perf2'); await p.click('[data-act=cback]')
     await p.click('[data-act=cgo][data-v=history]'); await S('history'); await p.click('[data-act=cback]')
     for i in range(7):
-        await p.click('[data-act=cgo][data-v=tutti]'); await p.click('[data-act=runPractice]')
+        await p.click('[data-act=cgo][data-v=tutti]'); await p.click('[data-act=runPractice]'); await F.finish_practice(p)
         await p.click('.cfoot .cbtn.big')
     st5=await p.evaluate('[activeConcert().phase, activeConcert().practiceDone, cmdTop().s]'); await S('prep')
     await p.click('[data-act=cgo][data-v=rehearse]'); await S('rehearse'); await p.click('[data-act=hall]')

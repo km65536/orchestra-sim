@@ -1,0 +1,38 @@
+{
+  "_説明": "ビルドで結合するファイルと順番。新しいファイルを追加したらここに書き足す（上から順に読み込まれる）。",
+  "vendor": ["3d/vendor/three.min.js"],
+  "styles": [
+    "styles/base.css",
+    "styles/concert.css",
+    "styles/tabs.css",
+    "styles/viewport.css",
+    "styles/practice.css",
+    "styles/quiz.css"
+  ],
+  "logic": [
+    "core/config.js",
+    "core/data.js",
+    "core/util.js",
+    "core/catalog.js",
+    "core/state.js",
+    "core/save.js",
+    "systems/members.js",
+    "systems/setup.js",
+    "systems/conductors.js",
+    "systems/training.js",
+    "systems/practice.js",
+    "systems/concert.js",
+    "systems/practice_events.js",
+    "systems/quiz.js"
+  ],
+  "view": [
+    "3d/music.js",
+    "3d/stage3d.js",
+    "ui/main.js",
+    "ui/concert.js",
+    "ui/tabs.js",
+    "ui/practice.js",
+    "ui/quiz.js",
+    "ui/viewport_lock.js"
+  ]
+}

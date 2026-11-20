@@ -1,0 +1,8 @@
+/* =========================================================
+ * ページ全体のスクロール・拡大の禁止（全タブ共通）
+ *   画面のレイアウトは変えず、ブラウザのスクロール・拡大・バウンスだけを止める。
+ *   touch-action は既存の個別指定（ウインドウのドラッグ部分・3D画面）を優先する。
+ * ========================================================= */
+html{overflow:hidden;height:100%;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow:hidden;overscroll-behavior:none}
+*{touch-action:manipulation}

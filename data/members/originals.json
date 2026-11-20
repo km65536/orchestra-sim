@@ -1,0 +1,199 @@
+{
+  "_説明": "固有キャラクター。abilities/potential は団員が [技術, 音感, リズム, 音色, 強弱, 表現, 協調]、指揮者が [統率, 解釈, 技術, カリスマ] の順。initial=true の団員は新規ゲーム時から在籍、founder=true の指揮者は創設時の指揮者。",
+  "members": [
+    {
+      "oid": "oc_kirishima",
+      "look": {
+        "hair": "long",
+        "hairColor": 0,
+        "skin": 0,
+        "face": 2,
+        "glasses": false,
+        "build": 0.96,
+        "height": 1.02,
+        "style": "dress"
+      },
+      "name": "霧島 玲",
+      "inst": "Vn1",
+      "initial": true,
+      "profile": "コンサートマスター。精密な技巧で楽団を引っ張るが、他人にも厳しい。",
+      "abilities": [82, 80, 74, 76, 68, 70, 52],
+      "potential": [92, 90, 84, 88, 80, 84, 70]
+    },
+    {
+      "oid": "oc_nanase",
+      "look": {
+        "hair": "bob",
+        "hairColor": 3,
+        "skin": 1,
+        "face": 0,
+        "glasses": false,
+        "build": 0.94,
+        "height": 0.97,
+        "style": "dress"
+      },
+      "name": "七瀬 灯",
+      "inst": "Ob",
+      "initial": true,
+      "profile": "甘く澄んだ音色のオーボエ奏者。本番では驚くほど歌う。",
+      "abilities": [58, 66, 55, 78, 60, 74, 61],
+      "potential": [80, 84, 76, 95, 82, 93, 78]
+    },
+    {
+      "oid": "oc_kurogane",
+      "look": {"hair": "crop", "hairColor": 4, "skin": 2, "face": 4, "glasses": false, "build": 1.12, "height": 1.04, "style": "tux"},
+      "name": "黒鉄 剛",
+      "inst": "Hr",
+      "initial": false,
+      "cost": 150000,
+      "profile": "元プロオケの首席ホルン。豪快な鳴りで金管を支える職人。",
+      "abilities": [80, 72, 70, 74, 88, 66, 64],
+      "potential": [84, 78, 76, 80, 95, 74, 72]
+    },
+    {
+      "oid": "oc_amane",
+      "look": {
+        "hair": "ponytail",
+        "hairColor": 2,
+        "skin": 0,
+        "face": 1,
+        "glasses": false,
+        "build": 0.92,
+        "height": 0.95,
+        "style": "dress"
+      },
+      "name": "天音 しずく",
+      "inst": "Fl",
+      "initial": false,
+      "cost": 90000,
+      "profile": "音大を出たばかりの新星。今は粗削りだが伸びしろは計り知れない。",
+      "abilities": [52, 60, 50, 64, 48, 62, 55],
+      "potential": [96, 95, 90, 97, 88, 96, 85]
+    },
+    {
+      "oid": "oc_tokiwa",
+      "look": {"hair": "wavy", "hairColor": 1, "skin": 1, "face": 3, "glasses": true, "build": 1.04, "height": 1.03, "style": "tux"},
+      "name": "常盤 朔",
+      "inst": "Vc",
+      "initial": false,
+      "cost": 130000,
+      "profile": "深く温かい響きのチェリスト。低弦の柱となる穏やかな人格者。",
+      "abilities": [74, 72, 70, 82, 72, 78, 84],
+      "potential": [84, 82, 80, 92, 82, 88, 95]
+    },
+    {
+      "oid": "oc_shinonome",
+      "look": {"hair": "short", "hairColor": 0, "skin": 2, "face": 5, "glasses": false, "build": 1.02, "height": 1, "style": "suit"},
+      "name": "東雲 拍",
+      "inst": "Perc",
+      "initial": false,
+      "cost": 110000,
+      "profile": "寸分違わぬテンポ感を持つ打楽器奏者。ティンパニを叩かせたら楽団の心臓。",
+      "abilities": [70, 64, 92, 66, 80, 60, 70],
+      "potential": [80, 76, 98, 78, 90, 74, 82]
+    },
+    {
+      "oid": "oc_hayami",
+      "look": {"hair": "side", "hairColor": 6, "skin": 0, "face": 1, "glasses": false, "build": 0.98, "height": 1.01, "style": "tux"},
+      "name": "速水 透",
+      "inst": "Tp",
+      "initial": false,
+      "cost": 100000,
+      "profile": "輝かしい高音が武器のトランペット奏者。音量の制御はまだ苦手。",
+      "abilities": [78, 66, 72, 76, 50, 70, 58],
+      "potential": [90, 80, 84, 88, 78, 84, 74]
+    },
+    {
+      "oid": "oc_yukimura",
+      "look": {"hair": "bun", "hairColor": 0, "skin": 0, "face": 0, "glasses": true, "build": 0.93, "height": 0.98, "style": "dress"},
+      "name": "雪村 澪",
+      "inst": "Va",
+      "initial": false,
+      "cost": 95000,
+      "profile": "内声を愛するヴィオラ奏者。誰とでも合わせられる調和の人。",
+      "abilities": [64, 70, 66, 70, 62, 64, 86],
+      "potential": [80, 84, 80, 86, 78, 80, 96]
+    },
+    {
+      "oid": "oc_kagura",
+      "look": {"hair": "wavy", "hairColor": 7, "skin": 1, "face": 2, "glasses": false, "build": 0.97, "height": 1, "style": "suit"},
+      "name": "神楽 鈴音",
+      "inst": "Cl",
+      "initial": false,
+      "cost": 105000,
+      "profile": "ジャズ出身の異色クラリネット奏者。表現の幅は随一。",
+      "abilities": [72, 62, 76, 70, 70, 84, 56],
+      "potential": [84, 76, 88, 84, 84, 96, 72]
+    }
+  ],
+  "conductors": [
+    {
+      "oid": "cd_takamiya",
+      "name": "鷹宮 誠一",
+      "founder": true,
+      "trait": "sound",
+      "look": {"hair": "side", "hairColor": 4, "skin": 1, "face": 3, "glasses": true, "build": 1.02, "height": 1.04, "style": "tux"},
+      "profile": "楽団創設以来の常任指揮者。穏やかだが音には一切妥協しない。",
+      "abilities": [50, 49, 51, 44],
+      "potential": [76, 80, 82, 68]
+    },
+    {
+      "oid": "cd_novak",
+      "name": "エレナ・ノヴァク",
+      "trait": "passion",
+      "cost": 420000,
+      "look": {
+        "hair": "long",
+        "hairColor": 6,
+        "skin": 0,
+        "face": 2,
+        "glasses": false,
+        "build": 0.95,
+        "height": 1.03,
+        "style": "suit"
+      },
+      "profile": "東欧出身の俊英。燃えるような指揮で団員の潜在力を引き出す。",
+      "abilities": [68, 74, 66, 72],
+      "potential": [84, 90, 82, 88]
+    },
+    {
+      "oid": "cd_ichinose",
+      "name": "一ノ瀬 奏多",
+      "trait": "teacher",
+      "cost": 160000,
+      "look": {
+        "hair": "crop",
+        "hairColor": 0,
+        "skin": 0,
+        "face": 1,
+        "glasses": false,
+        "build": 0.94,
+        "height": 0.99,
+        "style": "suit"
+      },
+      "profile": "指揮コンクールで注目を集めた若手。今は経験不足だが、底知れない才能を秘める。",
+      "abilities": [48, 56, 54, 50],
+      "potential": [92, 95, 94, 90]
+    },
+    {
+      "oid": "cd_okochi",
+      "name": "大河内 巌",
+      "trait": "drama",
+      "cost": 650000,
+      "look": {"hair": "wavy", "hairColor": 5, "skin": 2, "face": 4, "glasses": false, "build": 1.1, "height": 1.02, "style": "tux"},
+      "profile": "世界の歌劇場を渡り歩いた巨匠。圧倒的な存在感だが、出演料も破格。",
+      "abilities": [84, 82, 80, 86],
+      "potential": [88, 86, 84, 90]
+    },
+    {
+      "oid": "cd_ramaud",
+      "name": "ソフィー・ラモー",
+      "trait": "sound",
+      "cost": 300000,
+      "look": {"hair": "bun", "hairColor": 3, "skin": 0, "face": 0, "glasses": true, "build": 0.93, "height": 1, "style": "dress"},
+      "profile": "パリ仕込みの響きの魔術師。透明感のあるバランスを作り上げる。",
+      "abilities": [64, 70, 68, 62],
+      "potential": [82, 88, 86, 80]
+    }
+  ]
+}

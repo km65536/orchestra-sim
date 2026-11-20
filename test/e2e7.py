@@ -80,8 +80,13 @@ async def run(size,w,h):
     rows=await p.query_selector_all('.tbody .trow'); await rows[1].click(); await L()
     mid=await p.evaluate('ttop().id'); await go('[data-act=tsub][data-v=info]')
     await go('[data-act=tPrincipal]'); out['principal']=await p.evaluate(f'STATE.principals.Vn1==="{mid}"')
+    await go('[data-act=tgo][data-v=mDismiss]')
+    blocked=[await p.query_selector('[data-act=tDismiss]') is None, '首席奏者はそのまま除籍できません' in await p.inner_text('.tbody')]
+    await go('[data-act=tPrinPick]'); other=await p.evaluate(f'STATE.members.find(m=>m.inst==="Vn1"&&m.id!=="{mid}").id')
+    await go(f'[data-act=tPrincipal][data-id="{other}"]')
+    await p.evaluate(f'tjump("members",[{{s:"mGroup",g:"str"}},{{s:"mInst",inst:"Vn1"}},{{s:"mMember",id:"{mid}",tab:"info"}}]); render()')
     await go('[data-act=tgo][data-v=mDismiss]'); await go('[data-act=tDismiss]')
-    out['dismiss']=await p.evaluate(f'[!memberById("{mid}"), !!principalOf("Vn1"), ttop().s]')
+    out['dismiss']=await p.evaluate(f'[!memberById("{mid}"), STATE.principals.Vn1==="{other}", ttop().s]')+blocked
     # タブの階層保持
     await p.click('.nav [data-tab=home]'); await p.click('.nav [data-tab=members]'); out['keep']=await p.evaluate('ttop().s')
     await p.click('[data-act=tback]'); await p.click('[data-act=tback]')
@@ -160,7 +165,7 @@ async def main():
   chk('ホーム：トップの戻るは非表示・6つの詳細・お知らせから移動', d['home_back_hidden'] and d['notices']>0 and d['note_jump'] in ('concert','members','train','records','home'), (d['notices'],d['note_jump']))
   chk('団員：所属メンバー（弦・木管・金管・打楽器・指揮者）と人材募集が別', d['mroot_btns']==['弦楽器','木管楽器','金管楽器','打楽器','指揮者','人材募集'], d['mroot_btns'])
   chk('団員：全楽器の一覧・詳細にアクセス', d['insts']==['Vn1','Vn2','Va','Vc','Cb','Fl','Ob','Cl','Fg','Hr','Tp','Tb','Tuba','Perc'], d['insts'])
-  chk('団員：首席の任命・退団（後任の自動任命）', d['principal'] and d['dismiss'][0] and d['dismiss'][1] and d['dismiss'][2]=='mInst', d['dismiss'])
+  chk('団員：首席の任命・首席は除籍不可→別の団員を任命後に除籍', d['principal'] and all(d['dismiss'][:2]) and d['dismiss'][2]=='mInst' and all(d['dismiss'][3:]), d['dismiss'])
   chk('団員募集：採用（費用・人数）・再募集', d['hire'][0] and d['hire'][1] and d['hire'][2]=='recMembers' and d['reroll'], d['hire'])
   chk('指揮者：募集・契約・担当変更（準備中の演奏会にも反映）', d['condhire'] and d['condset']==[True,True], d['condset'])
   chk('指揮者の育成（詳細→育成→対象を自動選択→実行）', d['condtrain_jump']==['train','tList'] and d['auto_target'][0]=='tConfirm' and d['condtrain'][0]=='tResult' and d['condtrain'][1], d['auto_target'])

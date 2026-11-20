@@ -54,8 +54,23 @@ async def practice(p, menu='tutti'):
         await p.click('[data-act=cgo][data-v=indivPick]')
         if not await p.evaluate('UI.draft.members.length'): await p.click('.cbody [data-act=indPick] >> nth=0')
         await p.click('[data-act=cgo][data-v=indivFocus]')
+    # 練習は10〜15秒かけて3Dで再生される。テストでは時間を縮め、イベントが出たら最初の選択肢を選ぶ
+    await p.evaluate('UI.practiceTest = UI.practiceTest || {scale:0.04}')
+    await p.evaluate('window.__reseed && __reseed()')   # 回帰テスト用（乱数の並びを練習ごとにそろえる）
     await p.click('[data-act=runPractice]')
+    await finish_practice(p)
     await p.click('.cfoot .cbtn.big')
+async def finish_practice(p, choice=None, quiz=0):
+    for _ in range(400):
+        st = await p.evaluate('UI.practicing ? UI.practicing.evState : "end"')
+        if st == 'end':
+            if quiz is not None: await answer_quiz(p, quiz)
+            return
+        if st == 'open':
+            sel = f'[data-act=prChoice][data-v={choice}]' if choice else '[data-act=prChoice] >> nth=0'
+            await p.click(sel)
+        await p.wait_for_timeout(50)
+    raise Exception('practice did not finish')
 async def practice_all(p, menus=None):
     menus = menus or ['tutti','section']*5
     for m in menus:
@@ -106,10 +121,23 @@ async def member_detail(p, mid, tab='info'):
 async def set_principal(p, mid):
     await member_detail(p, mid); await p.click('[data-act=tPrincipal]')
 async def dismiss(p, mid):
-    await member_detail(p, mid); await p.click('[data-act=tgo][data-v=mDismiss]'); await p.click('[data-act=tDismiss]')
+    await member_detail(p, mid); await p.click('[data-act=tgo][data-v=mDismiss]')
+    btn = await p.query_selector('[data-act=tDismiss]')   # 首席奏者は除籍できない（ボタンが出ない）
+    if not btn: return False
+    await btn.click(); return True
 async def hire_cond(p, cid):
     await tnav(p, 'members', [{'s': 'recruit'}, {'s': 'recConds'}, {'s': 'recCond', 'id': cid, 'tab': 'info'}])
     await p.click('[data-act=tCondHire]')
 async def set_cond(p, cid):
     await tnav(p, 'members', [{'s': 'mConds'}, {'s': 'mCond', 'id': cid, 'tab': 'info'}])
     await p.click('[data-act=tCondSet]')
+
+async def answer_quiz(p, choice=0):
+    """練習2回ごとのクイズが出ていれば回答して練習報告へ戻る（choice: 画面上の番号 / 'right' / 'wrong'）"""
+    if not await p.evaluate('typeof cmdTop==="function" && cmdTop().s==="quiz"'): return None
+    if choice in ('right', 'wrong'):
+        choice = await p.evaluate(f'(()=>{{const o=quizPending().order;return {"o.indexOf(0)" if choice=="right" else "o.findIndex(x=>x!==0)"}}})()')
+    await p.click(f'[data-act=quizAnswer][data-v="{choice}"]')
+    res = await p.evaluate('UI.quizResult')
+    await p.click('[data-act=quizDone]')
+    return res
