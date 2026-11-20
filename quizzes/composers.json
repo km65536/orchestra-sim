@@ -1,0 +1,456 @@
+{
+  "_説明": "作曲家ごとの問題。songs にその作曲家の曲IDを並べると、その曲の練習中に出題されます。",
+  "composers": [
+    {
+      "id": "beethoven",
+      "name": "ベートーヴェン",
+      "songs": ["egmont", "beet5", "beet7", "beet3"],
+      "questions": [
+        {
+          "id": "c_beethoven_1",
+          "category": "life",
+          "question": "ベートーヴェンが生まれた町は？",
+          "answer": "ボン",
+          "choices": ["ボン", "ウィーン", "ザルツブルク", "ライプツィヒ"],
+          "explanation": "ドイツのボンに生まれ、20代でウィーンに移って活躍しました。"
+        },
+        {
+          "id": "c_beethoven_2",
+          "category": "life",
+          "question": "ベートーヴェンを晩年に苦しめた病気は？",
+          "answer": "耳が聞こえなくなった",
+          "choices": ["耳が聞こえなくなった", "目が見えなくなった", "手が動かなくなった", "声が出なくなった"],
+          "explanation": "30歳前後から難聴が進みましたが、作曲を続け、晩年には第九などの傑作を残しました。"
+        },
+        {
+          "id": "c_beethoven_3",
+          "category": "life",
+          "question": "ベートーヴェンが完成させた交響曲は全部で何曲？",
+          "answer": "9曲",
+          "choices": ["9曲", "41曲", "4曲", "104曲"],
+          "explanation": "交響曲は第9番「合唱付き」までの9曲です。"
+        }
+      ]
+    },
+    {
+      "id": "mozart",
+      "name": "モーツァルト",
+      "songs": ["figaro", "mozart41"],
+      "questions": [
+        {
+          "id": "c_mozart_1",
+          "category": "life",
+          "question": "モーツァルトが生まれた町は？",
+          "answer": "ザルツブルク",
+          "choices": ["ザルツブルク", "ウィーン", "プラハ", "ミュンヘン"],
+          "explanation": "オーストリアのザルツブルクに生まれ、幼い頃から神童としてヨーロッパ各地を旅しました。"
+        },
+        {
+          "id": "c_mozart_2",
+          "category": "trivia",
+          "question": "モーツァルトの作品に付けられている「K.」の番号は何？",
+          "answer": "ケッヘルが作った作品目録の番号",
+          "choices": ["ケッヘルが作った作品目録の番号", "作曲した年", "楽器の数", "演奏時間"],
+          "explanation": "ケッヘルがおおむね作曲順に整理した作品目録の番号です（例：ジュピター K.551）。"
+        }
+      ]
+    },
+    {
+      "id": "rossini",
+      "name": "ロッシーニ",
+      "songs": ["tell"],
+      "questions": [
+        {
+          "id": "c_rossini_1",
+          "category": "life",
+          "question": "ロッシーニの代表的な喜劇オペラは？",
+          "answer": "セビリャの理髪師",
+          "choices": ["セビリャの理髪師", "カルメン", "アイーダ", "椿姫"],
+          "explanation": "「セビリャの理髪師」はロッシーニの代表作。フィガロが活躍する、「フィガロの結婚」の前日譚にあたる物語です。"
+        }
+      ]
+    },
+    {"id": "glinka", "name": "グリンカ", "songs": ["ruslan"], "questions": []},
+    {
+      "id": "brahms",
+      "name": "ブラームス",
+      "songs": ["academic", "hungarian5", "brahms1"],
+      "questions": [
+        {
+          "id": "c_brahms_1",
+          "category": "life",
+          "question": "ブラームスが生まれた町は？",
+          "answer": "ハンブルク",
+          "choices": ["ハンブルク", "ウィーン", "ベルリン", "ボン"],
+          "explanation": "北ドイツの港町ハンブルクに生まれ、後半生はウィーンで過ごしました。"
+        },
+        {
+          "id": "c_brahms_2",
+          "category": "life",
+          "question": "ブラームスが完成させた交響曲は全部で何曲？",
+          "answer": "4曲",
+          "choices": ["4曲", "9曲", "2曲", "7曲"],
+          "explanation": "交響曲は4曲。第1番の完成には20年以上をかけました。"
+        },
+        {
+          "id": "c_brahms_3",
+          "category": "life",
+          "question": "ブラームスの才能を見いだし、音楽雑誌で紹介した作曲家は？",
+          "answer": "シューマン",
+          "choices": ["シューマン", "ワーグナー", "リスト", "ショパン"],
+          "explanation": "シューマンが論文「新しい道」でブラームスを紹介し、一躍注目を集めました。"
+        }
+      ]
+    },
+    {
+      "id": "wagner",
+      "name": "ワーグナー",
+      "songs": ["meister"],
+      "questions": [
+        {
+          "id": "c_wagner_1",
+          "category": "life",
+          "question": "ワーグナーが自作の楽劇を上演するために建てた劇場がある町は？",
+          "answer": "バイロイト",
+          "choices": ["バイロイト", "ザルツブルク", "ミラノ", "パリ"],
+          "explanation": "バイロイト祝祭劇場では、今も毎年夏にワーグナー作品だけの音楽祭が開かれています。"
+        }
+      ]
+    },
+    {
+      "id": "weber",
+      "name": "ウェーバー",
+      "songs": ["freischutz"],
+      "questions": [
+        {
+          "id": "c_weber_1",
+          "category": "trivia",
+          "question": "ウェーバーと親戚関係にあった、モーツァルトの妻は？",
+          "answer": "コンスタンツェ",
+          "choices": ["コンスタンツェ", "ナンネル", "クララ", "マリア・テレジア"],
+          "explanation": "モーツァルトの妻コンスタンツェ・ウェーバーは、作曲家ウェーバーのいとこにあたります。"
+        }
+      ]
+    },
+    {
+      "id": "mendelssohn",
+      "name": "メンデルスゾーン",
+      "songs": ["hebrides", "mendel4"],
+      "questions": [
+        {
+          "id": "c_mendelssohn_1",
+          "category": "hist",
+          "question": "メンデルスゾーンが1829年に約100年ぶりに復活上演した、バッハの大作は？",
+          "answer": "マタイ受難曲",
+          "choices": ["マタイ受難曲", "ロ短調ミサ", "ブランデンブルク協奏曲", "ゴルトベルク変奏曲"],
+          "explanation": "この上演をきっかけに、忘れられかけていたバッハの音楽が再評価されました。"
+        }
+      ]
+    },
+    {
+      "id": "smetana",
+      "name": "スメタナ",
+      "songs": ["vltava"],
+      "questions": [
+        {
+          "id": "c_smetana_1",
+          "category": "life",
+          "question": "スメタナが『わが祖国』を作曲していた頃に襲われた病気は？",
+          "answer": "聴覚を失った",
+          "choices": ["聴覚を失った", "視力を失った", "右手がまひした", "声が出なくなった"],
+          "explanation": "ベートーヴェンと同じく聴覚を失いながらも、『わが祖国』を完成させました。"
+        },
+        {
+          "id": "c_smetana_2",
+          "category": "hist",
+          "question": "スメタナやドヴォルザークのように、自国の民謡や歴史を音楽に取り入れた作曲家たちの流れを何と呼ぶ？",
+          "answer": "国民楽派",
+          "choices": ["国民楽派", "印象派", "ウィーン古典派", "新古典主義"],
+          "explanation": "19世紀後半、各国の民族的な特色を音楽で表そうとした作曲家たちを国民楽派と呼びます。"
+        }
+      ]
+    },
+    {
+      "id": "dvorak",
+      "name": "ドヴォルザーク",
+      "songs": ["carnival", "dvorak9"],
+      "questions": [
+        {
+          "id": "c_dvorak_1",
+          "category": "life",
+          "question": "ドヴォルザークの才能を認め、出版社に紹介して支えた作曲家は？",
+          "answer": "ブラームス",
+          "choices": ["ブラームス", "ワーグナー", "チャイコフスキー", "ベルリオーズ"],
+          "explanation": "ブラームスの推薦で「スラヴ舞曲」が出版され、ドヴォルザークは国際的に知られるようになりました。"
+        }
+      ]
+    },
+    {
+      "id": "sibelius",
+      "name": "シベリウス",
+      "songs": ["finlandia", "sibelius2"],
+      "questions": [
+        {
+          "id": "c_sibelius_1",
+          "category": "life",
+          "question": "シベリウスの祖国は？",
+          "answer": "フィンランド",
+          "choices": ["フィンランド", "ノルウェー", "スウェーデン", "デンマーク"],
+          "explanation": "フィンランドを代表する作曲家で、肖像はかつてのフィンランドの紙幣にも使われました。"
+        }
+      ]
+    },
+    {
+      "id": "grieg",
+      "name": "グリーグ",
+      "songs": ["peergynt"],
+      "questions": [
+        {
+          "id": "c_grieg_1",
+          "category": "life",
+          "question": "グリーグの祖国は？",
+          "answer": "ノルウェー",
+          "choices": ["ノルウェー", "フィンランド", "デンマーク", "アイスランド"],
+          "explanation": "ノルウェーの民俗音楽を作品に取り入れ、ピアノ協奏曲イ短調でも知られます。"
+        }
+      ]
+    },
+    {
+      "id": "bizet",
+      "name": "ビゼー",
+      "songs": ["arlesienne"],
+      "questions": [
+        {
+          "id": "c_bizet_1",
+          "category": "life",
+          "question": "ビゼーの代表作で、闘牛士の歌でも知られるオペラは？",
+          "answer": "カルメン",
+          "choices": ["カルメン", "トスカ", "椿姫", "ファウスト"],
+          "explanation": "「カルメン」はビゼーの最後のオペラ。初演の数か月後にビゼーは36歳で亡くなりました。"
+        }
+      ]
+    },
+    {
+      "id": "mussorgsky",
+      "name": "ムソルグスキー",
+      "songs": ["baldmtn"],
+      "questions": [
+        {
+          "id": "c_mussorgsky_1",
+          "category": "hist",
+          "question": "ムソルグスキーやボロディンらが属した、ロシアの作曲家グループの呼び名は？",
+          "answer": "ロシア五人組",
+          "choices": ["ロシア五人組", "フランス六人組", "新ウィーン楽派", "マンハイム楽派"],
+          "explanation": "バラキレフ、キュイ、ムソルグスキー、ボロディン、リムスキー＝コルサコフの5人です。"
+        },
+        {
+          "id": "c_mussorgsky_2",
+          "category": "trivia",
+          "question": "ムソルグスキーのピアノ曲「展覧会の絵」を、有名な管弦楽版に編曲したのは？",
+          "answer": "ラヴェル",
+          "choices": ["ラヴェル", "ドビュッシー", "ストラヴィンスキー", "ワーグナー"],
+          "explanation": "ラヴェルの色彩豊かな管弦楽編曲（1922年）によって、世界的な名曲になりました。"
+        }
+      ]
+    },
+    {"id": "borodin", "name": "ボロディン", "songs": ["steppes"], "questions": []},
+    {
+      "id": "tchaikovsky",
+      "name": "チャイコフスキー",
+      "songs": ["romeo", "serenade", "tchai5", "tchai6"],
+      "questions": [
+        {
+          "id": "c_tchaikovsky_1",
+          "category": "life",
+          "question": "次のうち、チャイコフスキーが作曲したバレエ音楽は？",
+          "answer": "くるみ割り人形",
+          "choices": ["くるみ割り人形", "ボレロ", "火の鳥", "ジゼル"],
+          "explanation": "「白鳥の湖」「眠れる森の美女」「くるみ割り人形」はチャイコフスキーの三大バレエと呼ばれます。"
+        }
+      ]
+    },
+    {
+      "id": "elgar",
+      "name": "エルガー",
+      "songs": ["enigma", "pomp1"],
+      "questions": [
+        {
+          "id": "c_elgar_1",
+          "category": "life",
+          "question": "エルガーの祖国は？",
+          "answer": "イギリス",
+          "choices": ["イギリス", "アイルランド", "アメリカ", "カナダ"],
+          "explanation": "イギリスを代表する作曲家で、「愛の挨拶」や「チェロ協奏曲」も有名です。"
+        }
+      ]
+    },
+    {
+      "id": "ravel",
+      "name": "ラヴェル",
+      "songs": ["bolero"],
+      "questions": [
+        {
+          "id": "c_ravel_1",
+          "category": "life",
+          "question": "ラヴェルが特に名手として知られた分野は？",
+          "answer": "管弦楽法（オーケストレーション）",
+          "choices": ["管弦楽法（オーケストレーション）", "指揮", "オルガン演奏", "声楽"],
+          "explanation": "「オーケストラの魔術師」と呼ばれ、楽器の音色を巧みに組み合わせる名手でした。"
+        }
+      ]
+    },
+    {
+      "id": "debussy",
+      "name": "ドビュッシー",
+      "songs": ["faune"],
+      "questions": [
+        {
+          "id": "c_debussy_1",
+          "category": "hist",
+          "question": "ドビュッシーの音楽は、一般にどの様式の代表とされる？",
+          "answer": "印象主義",
+          "choices": ["印象主義", "バロック", "古典派", "十二音音楽"],
+          "explanation": "光や空気の移ろいを描くような響きから、絵画になぞらえて印象主義と呼ばれます。"
+        }
+      ]
+    },
+    {
+      "id": "saintsaens",
+      "name": "サン＝サーンス",
+      "songs": ["macabre"],
+      "questions": [
+        {
+          "id": "c_saintsaens_1",
+          "category": "life",
+          "question": "サン＝サーンスの作品で、「白鳥」などを含む組曲は？",
+          "answer": "動物の謝肉祭",
+          "choices": ["動物の謝肉祭", "四季", "展覧会の絵", "惑星"],
+          "explanation": "「動物の謝肉祭」は14曲からなる楽しい組曲で、「白鳥」はチェロの名曲です。"
+        }
+      ]
+    },
+    {
+      "id": "jstrauss",
+      "name": "J.シュトラウス2世",
+      "songs": ["fledermaus"],
+      "questions": [
+        {
+          "id": "c_jstrauss_1",
+          "category": "life",
+          "question": "ヨハン・シュトラウス2世の異名は？",
+          "answer": "ワルツ王",
+          "choices": ["ワルツ王", "歌曲王", "交響曲の父", "ピアノの詩人"],
+          "explanation": "「美しく青きドナウ」など数多くのウィンナ・ワルツを書き、ワルツ王と呼ばれました。"
+        }
+      ]
+    },
+    {"id": "mascagni", "name": "マスカーニ", "songs": ["cavalleria"], "questions": []},
+    {
+      "id": "bach",
+      "name": "J.S.バッハ",
+      "songs": ["air"],
+      "questions": [
+        {
+          "id": "c_bach_1",
+          "category": "life",
+          "question": "J.S.バッハが後半生、音楽監督（カントル）を務めた教会がある町は？",
+          "answer": "ライプツィヒ",
+          "choices": ["ライプツィヒ", "ウィーン", "ハンブルク", "ボン"],
+          "explanation": "ライプツィヒの聖トーマス教会のカントルとして、多くの教会カンタータを書きました。"
+        },
+        {
+          "id": "c_bach_2",
+          "category": "hist",
+          "question": "バッハが活躍した時代の音楽様式は？",
+          "answer": "バロック",
+          "choices": ["バロック", "古典派", "ロマン派", "印象主義"],
+          "explanation": "1600年頃から1750年頃（バッハの没年）までの音楽を、一般にバロック音楽と呼びます。"
+        }
+      ]
+    },
+    {
+      "id": "schubert",
+      "name": "シューベルト",
+      "songs": ["rosamunde", "schubert8"],
+      "questions": [
+        {
+          "id": "c_schubert_1",
+          "category": "life",
+          "question": "シューベルトは、特にどの分野で数多くの作品を残し「歌曲王」と呼ばれた？",
+          "answer": "歌曲（リート）",
+          "choices": ["歌曲（リート）", "オペラ", "バレエ", "オルガン曲"],
+          "explanation": "「魔王」「野ばら」など600曲を超える歌曲を残しました。31歳の若さで亡くなっています。"
+        }
+      ]
+    },
+    {"id": "humperdinck", "name": "フンパーディンク", "songs": ["hansel"], "questions": []},
+    {
+      "id": "barber",
+      "name": "バーバー",
+      "songs": ["adagio"],
+      "questions": [
+        {
+          "id": "c_barber_1",
+          "category": "life",
+          "question": "サミュエル・バーバーの祖国は？",
+          "answer": "アメリカ",
+          "choices": ["アメリカ", "イギリス", "カナダ", "オーストラリア"],
+          "explanation": "20世紀アメリカを代表する作曲家のひとりです。"
+        }
+      ]
+    },
+    {
+      "id": "berlioz",
+      "name": "ベルリオーズ",
+      "songs": ["fantastique"],
+      "questions": [
+        {
+          "id": "c_berlioz_1",
+          "category": "life",
+          "question": "ベルリオーズが著した、楽器の使い方を解説した有名な本は？",
+          "answer": "管弦楽法（大管弦楽法）",
+          "choices": ["管弦楽法（大管弦楽法）", "和声学", "音楽の喜び", "楽典入門"],
+          "explanation": "楽器ごとの特徴や組み合わせ方を論じた本で、後の作曲家たちに大きな影響を与えました。"
+        }
+      ]
+    },
+    {
+      "id": "mahler",
+      "name": "マーラー",
+      "songs": ["mahler1"],
+      "questions": [
+        {
+          "id": "c_mahler_1",
+          "category": "life",
+          "question": "マーラーは作曲家であると同時に、何として名声を得ていた？",
+          "answer": "指揮者",
+          "choices": ["指揮者", "ピアニスト", "音楽評論家", "オルガン奏者"],
+          "explanation": "ウィーン宮廷歌劇場の音楽監督などを務めた、当代一流の指揮者でした。"
+        }
+      ]
+    },
+    {
+      "id": "rachmaninoff",
+      "name": "ラフマニノフ",
+      "songs": ["rach2"],
+      "questions": [
+        {
+          "id": "c_rachmaninoff_1",
+          "category": "life",
+          "question": "ラフマニノフは作曲家であると同時に、何として世界的に活躍した？",
+          "answer": "ピアニスト",
+          "choices": ["ピアニスト", "ヴァイオリニスト", "オペラ歌手", "指揮者のみ"],
+          "explanation": "大きな手を持つ名ピアニストで、自作のピアノ協奏曲を自ら演奏しました。"
+        },
+        {
+          "id": "c_rachmaninoff_2",
+          "category": "bg",
+          "question": "交響曲第2番の大成功の前に、ラフマニノフを深く落ち込ませた出来事は？",
+          "answer": "交響曲第1番の初演の失敗",
+          "choices": ["交響曲第1番の初演の失敗", "恩師との決別", "祖国からの追放", "演奏旅行中の事故"],
+          "explanation": "1897年の第1番の初演が不評で、しばらく作曲ができなくなりました。"
+        }
+      ]
+    }
+  ]
+}

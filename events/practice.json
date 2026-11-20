@@ -1,0 +1,239 @@
+{
+  "_説明": "練習中のランダムイベント。文章の {section} などは自動で置き換わります（使える記号は data/README.md を参照）。",
+  "settings": {"chance": 0.55, "timingFrom": 0.32, "timingTo": 0.62},
+  "conductorTraitPhrases": {
+    "craft": {"focus": "の縦の線を、もう一度正確にそろえたいと思います", "aim": "正確さ"},
+    "passion": {"focus": "に、もっと歌ってほしい。そこを重点的にやりましょう", "aim": "歌心"},
+    "drama": {"focus": "の強弱の幅を、思い切って広げてみましょう", "aim": "強弱"},
+    "sound": {"focus": "の響きが全体に溶け込むよう、音程を重点的に確認したいと思います", "aim": "響き"},
+    "teacher": {"focus": "を、段階を追って丁寧に確認していきましょう", "aim": "基礎"}
+  },
+  "defaultTraitPhrase": "teacher",
+  "defaultAim": "全体",
+  "choicePresets": {
+    "keep": {
+      "id": "keep",
+      "label": "今の練習内容を続ける",
+      "hint": "予定どおりの成果",
+      "effect": {},
+      "note": "予定どおり練習を続けた"
+    },
+    "stop": {
+      "id": "stop",
+      "label": "今日はここまでにする",
+      "hint": "成果は少し減るが、統一感が上がる",
+      "effect": {
+        "all": 0.85,
+        "overall": {"unity": 0.8},
+        "stop": true
+      },
+      "note": "団員はリフレッシュできた"
+    }
+  },
+  "events": [
+    {
+      "id": "cond_proposal",
+      "title": "指揮者からの提案",
+      "speaker": "conductor",
+      "target": "weakestSection",
+      "requires": ["conductor", "practicedSection"],
+      "weight": {"base": 2.2},
+      "text": "今日は{section}{traitFocus}。",
+      "choices": [
+        {
+          "id": "follow",
+          "label": "提案に従う",
+          "hint": "{section}の成果が上がる（ほかは少し減る）",
+          "effect": {"focus": 1.25, "others": 0.96},
+          "note": "{section}を重点的に練習した"
+        },
+        {"preset": "keep", "label": "予定どおり進める"}
+      ]
+    },
+    {
+      "id": "prin_balance",
+      "title": "首席奏者からの指摘",
+      "speaker": "principal",
+      "target": "principalSection",
+      "requires": ["principalSection", "notIndividual"],
+      "weight": {"base": 1.6},
+      "partner": {"hs": "br", "ls": "br", "ww": "br", "br": "hs", "pc": "br"},
+      "text": "{partnerSection}との音量バランスが少し気になります。",
+      "choices": [
+        {
+          "id": "balance",
+          "label": "バランスを確認する",
+          "hint": "バランスが上がる（ほかの成果は少し減る）",
+          "effect": {
+            "overall": {"balance": 0.8},
+            "all": 0.97
+          },
+          "note": "全体の音量バランスを確認した"
+        },
+        {"preset": "keep", "label": "このまま続ける"}
+      ]
+    },
+    {
+      "id": "prin_passage",
+      "title": "首席奏者からの提案",
+      "speaker": "principal",
+      "target": "principalSection",
+      "requires": ["principalSection"],
+      "weight": {"base": 1.6},
+      "text": "{section}の細かいパッセージが揃っていません。もう少し時間をかけて練習しませんか？",
+      "choices": [
+        {
+          "id": "focus",
+          "label": "重点的に練習する",
+          "hint": "{section}の成果が大きく上がる（ほかは減る）",
+          "effect": {"focus": 1.3, "others": 0.95},
+          "note": "{section}のパッセージを重点的に練習した"
+        },
+        {"preset": "keep"},
+        {"preset": "stop"}
+      ]
+    },
+    {
+      "id": "member_slow",
+      "title": "団員からの相談",
+      "speaker": "member",
+      "target": "strugglingMember",
+      "requires": ["members"],
+      "weight": {"base": 1.3},
+      "text": "『{song}』のこの部分を、もう少しゆっくり練習できませんか？",
+      "choices": [
+        {
+          "id": "slow",
+          "label": "ゆっくりさらう",
+          "hint": "楽曲完成度が上がる（ほかの成果は少し減る）",
+          "effect": {
+            "mastery": {"comp": 0.6},
+            "all": 0.97
+          },
+          "note": "テンポを落として確認した"
+        },
+        {"preset": "keep", "label": "テンポを保つ"}
+      ]
+    },
+    {
+      "id": "hard_spot",
+      "title": "難所の発見",
+      "speaker": "conductor",
+      "target": "none",
+      "requires": [],
+      "weight": {"base": 0.6, "perDifficulty": 0.0166667},
+      "places": ["冒頭", "中盤", "終盤", "展開部"],
+      "text": "『{song}』の{place}に、演奏が難しい箇所が見つかりました。",
+      "choices": [
+        {
+          "id": "focus",
+          "label": "重点的に練習する",
+          "hint": "楽曲完成度が上がる（ほかの成果は少し減る）",
+          "effect": {
+            "mastery": {"comp": 0.9},
+            "all": 0.95
+          },
+          "note": "{place}の難所を重点的に練習した"
+        },
+        {"preset": "keep"},
+        {"preset": "stop", "note": "難所は次回に持ち越し、団員は休めた"}
+      ]
+    },
+    {
+      "id": "good_sec",
+      "title": "好調なセクション",
+      "speaker": "conductor",
+      "target": "harmoniousSection",
+      "requires": ["practicedSection"],
+      "weight": {"base": 1.4},
+      "text": "今日は{section}の息がよく合っています！{principalNote}",
+      "principalNote": "（首席 {principal} がよくまとめています）",
+      "auto": {
+        "effect": {"focus": 1.15},
+        "note": "{section}が好調だった"
+      }
+    },
+    {
+      "id": "tired",
+      "title": "集中力の低下",
+      "speaker": "conductor",
+      "target": "none",
+      "requires": [],
+      "weight": {"base": 0.4, "perPracticeDone": 0.15},
+      "text": "団員の集中力が落ちてきました。",
+      "choices": [
+        {
+          "id": "rest",
+          "label": "休憩を入れる",
+          "hint": "成果は少し減るが、統一感が少し上がる",
+          "effect": {
+            "all": 0.92,
+            "overall": {"unity": 0.4}
+          },
+          "note": "休憩をはさんで練習を再開した"
+        },
+        {
+          "id": "push",
+          "label": "このまま続ける",
+          "hint": "集中力が落ちたまま（成果が少し減る）",
+          "effect": {"all": 0.88},
+          "note": "集中力が落ちたまま練習を続けた"
+        },
+        {"preset": "stop"}
+      ]
+    },
+    {
+      "id": "interp",
+      "title": "指揮者の解釈",
+      "speaker": "conductor",
+      "target": "none",
+      "requires": ["conductor"],
+      "weight": {"base": 1},
+      "conductorCondition": {"minInterp": 55, "orTraits": ["passion", "sound"]},
+      "text": "『{song}』の聴かせどころについて、{conductor}が曲の背景を語った。",
+      "auto": {
+        "effect": {
+          "mastery": {"underst": 0.6}
+        },
+        "note": "曲への理解が深まった"
+      }
+    },
+    {
+      "id": "stay_late",
+      "title": "居残り練習の申し出",
+      "speaker": "member",
+      "target": "randomMember",
+      "requires": ["individual", "members"],
+      "weight": {"base": 2},
+      "text": "もう少しだけ残って練習してもいいですか？",
+      "choices": [
+        {
+          "id": "allow",
+          "label": "居残りを許可する",
+          "hint": "{section}の成果が上がる",
+          "effect": {"focus": 1.2},
+          "note": "{member}が居残り練習をした"
+        },
+        {
+          "id": "home",
+          "label": "今日は帰らせる",
+          "hint": "統一感が少し上がる",
+          "effect": {
+            "overall": {"unity": 0.3}
+          },
+          "note": "団員を早めに帰した"
+        }
+      ]
+    }
+  ],
+  "commentary": {
+    "tutti": [
+      "{conductor}「では『{song}』を頭から通します」",
+      "{conductor}「{aim}を意識して、もう一度」",
+      {"text": "コンサートマスターの{concertmaster}が弓の向きを合図している", "fallback": "全員が指揮を見て呼吸を合わせている"},
+      "{conductor}「いいですね、そのまま」"
+    ],
+    "section": ["各セクションに分かれて練習中", "{conductor}がセクションを順に見て回っている", "首席奏者の合図でセクションがそろっていく", "{conductor}「そこはもう少し丁寧に」"],
+    "individual": ["対象の団員が個別に指導を受けている", "{conductor}「自分のペースで大丈夫です」", "ほかの団員は譜読みをしながら待っている", "{conductor}「さっきより良くなりました」"]
+  }
+}

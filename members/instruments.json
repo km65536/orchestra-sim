@@ -1,0 +1,26 @@
+{
+  "_説明": "セクションと楽器。cap＝在籍上限、std＝新規ゲーム時の人数。id はセーブデータや曲の編成で使うため変更しないでください。",
+  "sections": [
+    {"id": "hs", "name": "高弦", "instruments": ["Vn1", "Vn2"]},
+    {"id": "ls", "name": "低弦", "instruments": ["Va", "Vc", "Cb"]},
+    {"id": "ww", "name": "木管", "instruments": ["Fl", "Ob", "Cl", "Fg"]},
+    {"id": "br", "name": "金管", "instruments": ["Hr", "Tp", "Tb", "Tuba"]},
+    {"id": "pc", "name": "打楽器", "instruments": ["Perc"]}
+  ],
+  "instruments": [
+    {"id": "Vn1", "name": "ヴァイオリン I", "abbr": "Vn I", "section": "hs", "kind": "string", "cap": 12, "std": 6},
+    {"id": "Vn2", "name": "ヴァイオリン II", "abbr": "Vn II", "section": "hs", "kind": "string", "cap": 10, "std": 5},
+    {"id": "Va", "name": "ヴィオラ", "abbr": "Va", "section": "ls", "kind": "string", "cap": 8, "std": 4},
+    {"id": "Vc", "name": "チェロ", "abbr": "Vc", "section": "ls", "kind": "string", "cap": 8, "std": 4},
+    {"id": "Cb", "name": "コントラバス", "abbr": "Cb", "section": "ls", "kind": "string", "cap": 6, "std": 2},
+    {"id": "Fl", "name": "フルート", "abbr": "Fl", "section": "ww", "kind": "wind", "cap": 4, "std": 2},
+    {"id": "Ob", "name": "オーボエ", "abbr": "Ob", "section": "ww", "kind": "wind", "cap": 4, "std": 2},
+    {"id": "Cl", "name": "クラリネット", "abbr": "Cl", "section": "ww", "kind": "wind", "cap": 4, "std": 2},
+    {"id": "Fg", "name": "ファゴット", "abbr": "Fg", "section": "ww", "kind": "wind", "cap": 4, "std": 2},
+    {"id": "Hr", "name": "ホルン", "abbr": "Hr", "section": "br", "kind": "wind", "cap": 8, "std": 4},
+    {"id": "Tp", "name": "トランペット", "abbr": "Tp", "section": "br", "kind": "wind", "cap": 5, "std": 3},
+    {"id": "Tb", "name": "トロンボーン", "abbr": "Tb", "section": "br", "kind": "wind", "cap": 4, "std": 2},
+    {"id": "Tuba", "name": "テューバ", "abbr": "Tuba", "section": "br", "kind": "wind", "cap": 2, "std": 1},
+    {"id": "Perc", "name": "打楽器（ティンパニ含む）", "abbr": "Perc", "section": "pc", "kind": "perc", "cap": 6, "std": 3}
+  ]
+}
