@@ -245,7 +245,7 @@ def check_quizzes(D, song_ids):
 EV_TARGETS = {'none', 'weakestSection', 'principalSection', 'strugglingMember', 'harmoniousSection', 'randomMember'}
 EV_SPEAKERS = {'conductor', 'principal', 'member'}
 EV_REQ = {'conductor', 'practicedSection', 'principalSection', 'members', 'individual', 'notIndividual'}
-EV_VARS = {'section', 'partnerSection', 'song', 'conductor', 'member', 'principal', 'principalNote', 'traitFocus', 'aim', 'place', 'concertmaster'}
+EV_VARS = {'section', 'partnerSection', 'song', 'conductor', 'member', 'principal', 'principalNote', 'traitFocus', 'aim', 'place', 'concertmaster', 'hall'}
 
 
 def check_effect(f, p, e, sec_ids):
@@ -330,8 +330,8 @@ def check_events(D, sec_ids):
                 if 'focus' in m.get('effect', {}) and tg in (None, 'none'): err(f, f'{q}.effect.focus', '対象セクションのないイベント（target: none）では focus は使えません')
             if len(set(ids)) != len(ids): err(f, f'{p}.choices', '選択肢の id が重複しています')
     cm = need(f, d, '', 'commentary', dict) or {}
-    for k in ('tutti', 'section', 'individual'):
-        for j, x in enumerate(need(f, cm, 'commentary', k, list) or []):
+    for k in ('tutti', 'section', 'individual', 'hall'):
+        for j, x in enumerate(need(f, cm, 'commentary', k, list, optional=(k == 'hall')) or []):
             if isinstance(x, str): check_vars(f, f'commentary.{k}[{j}]', x)
             elif isinstance(x, dict): need(f, x, f'commentary.{k}[{j}]', 'text', str); need(f, x, f'commentary.{k}[{j}]', 'fallback', str); check_vars(f, f'commentary.{k}[{j}].text', x.get('text'))
             else: err(f, f'commentary.{k}[{j}]', '文字列か {"text":..., "fallback":...} にしてください')

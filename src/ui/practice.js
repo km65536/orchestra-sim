@@ -6,7 +6,8 @@
  *   4. 終了後、既存の「練習の成果」画面（練習報告）を表示。イベントの結果も報告に載せる
  * テスト用：UI.practiceTest = { scale: 0.05（時間の倍率）, event: 'force'|'off', eventId }
  * ========================================================= */
-const MENU_NAME = { tutti: '全体合奏', section: 'セクション練習', individual: '個人練習' };
+const MENU_NAME = { tutti: '全体合奏', section: 'セクション練習', individual: '個人練習', hall: 'ホール練習' };
+const practiceTitle = log => log.no === 'H' ? MENU_NAME.hall : `第${log.no}回 ${MENU_NAME[log.menu]}`;
 const SEC_GROUPS = [
   { id: 'str', name: '弦楽器', secs: ['hs', 'ls'], cam: 'front' },
   { id: 'ww', name: '木管楽器', secs: ['ww'], cam: 'ww' },
@@ -16,9 +17,9 @@ const SEC_GROUPS = [
 let PR_TIMER = null;
 const prOpts = () => UI.practiceTest || {};
 
-// 練習時間（秒）：全体合奏 約12〜13秒、セクション練習 約13〜14秒、個人練習 約11〜12秒
+// 練習時間（秒）：全体合奏・ホール練習 約12〜13秒、セクション練習 約13〜14秒、個人練習 約11〜12秒
 function practiceSeconds(menu) {
-  const base = { tutti: 12, section: 13, individual: 11 }[menu] || 12;
+  const base = { tutti: 12, section: 13, individual: 11, hall: 12 }[menu] || 12;
   return base + pevRand() * 1.2;
 }
 // 練習中の見せ方（どのセクションを中心に演奏させ、どのカメラで見せるか）の時間割
@@ -33,6 +34,14 @@ function practiceSchedule(log) {
     const sec = ms.length ? INST[ms[0].inst].section : 'hs';
     return [{ from: 0, secs: null, cam: sec, label: `個人練習：${ms.map(m => m.name).join('、') || '—'}` }];
   }
+  if (plan.menu === 'hall') {
+    const name = (findHall(activeConcert().hallId) || {}).name || 'ホール';
+    return [
+      { from: 0, secs: null, cam: 'overview', label: `${name}で通し練習をしています` },
+      { from: 0.34, secs: null, cam: 'conductor', label: `${name}で通し練習をしています` },
+      { from: 0.67, secs: null, cam: 'front', label: `${name}で通し練習をしています` },
+    ];
+  }
   return [
     { from: 0, secs: null, cam: 'overview', label: 'オーケストラ全体で合わせています' },
     { from: 0.34, secs: null, cam: 'conductor', label: 'オーケストラ全体で合わせています' },
@@ -42,16 +51,17 @@ function practiceSchedule(log) {
 // 練習中のひとこと（指揮者・首席・曲名と連動。文章は data/events/practice.json の commentary）
 function practiceLines(c, log) {
   const cd = activeConductor(), cm = principalOf('Vn1'), song = findSong(c.songId);
-  const vars = { conductor: cd ? cd.name : '指揮者', song: song.title, aim: cd && PEV_TRAIT[cd.trait] ? PEV_TRAIT[cd.trait].aim : PRACTICE_EVENT_DATA.defaultAim, concertmaster: cm ? cm.name : null };
+  const vars = { conductor: cd ? cd.name : '指揮者', song: song.title, aim: cd && PEV_TRAIT[cd.trait] ? PEV_TRAIT[cd.trait].aim : PRACTICE_EVENT_DATA.defaultAim, concertmaster: cm ? cm.name : null, hall: (findHall(c.hallId) || {}).name || 'ホール' };
   const L = (PRACTICE_EVENT_DATA.commentary || {})[log.menu];
   if (!L || !L.length) return ['練習中'];
   return L.map(x => typeof x === 'string' ? pevText(x, vars) : (pevFill(x.text, vars) ?? pevText(x.fallback || '', vars)));
 }
 
-const practiceAnimOpts = log => ({ loop: true, fallbackSecs: (log.plan.members || []).map(memberById).filter(Boolean).map(m => INST[m.inst].section) });
+const practiceAnimOpts = log => ({ loop: true, fallbackSecs: ((log.plan && log.plan.members) || []).map(memberById).filter(Boolean).map(m => INST[m.inst].section) });
 function startPracticeSession(c, log) {
   const o = prOpts();
-  const ev = o.event === 'off' ? null : pickPracticeEvent(c, log, { force: o.event === 'force', id: o.eventId });
+  const ev = o.event === 'off' || log.menu === 'hall' ? null :   // ホール練習ではランダムイベントは起きない
+    pickPracticeEvent(c, log, { force: o.event === 'force', id: o.eventId });
   const dur = practiceSeconds(log.menu) * 1000;
   UI.practicing = {
     cid: c.id, log, dur, elapsed: 0, last: performance.now(), ev, evState: null, evShownAt: 0, result: null,
@@ -119,7 +129,8 @@ function finishPracticeSession() {
   const c = activeConcertById(P.cid);
   UI.cmd = { cid: c.id, phase: c.phase, stack: [rootScreen(c), { s: 'log' }] };
   if (UI.tab === 'concert') render();
-  if (c.phase === 'prep') toast('10回の練習が終了しました');
+  if (c.phase === 'prep' && P.log.menu !== 'hall') toast('10回の練習が終了しました');
+  if (P.log.menu === 'hall') toast('ホール練習を行いました');
 }
 
 function practiceFocusLabel(P) {
@@ -136,11 +147,11 @@ SCREENS.practicing = {
     if (!P) return { crumb: '<b>練習</b>', body: '<div class="cnote">練習は終了しました</div>', foot: '<button class="cbtn pri" data-act="cHome">戻る</button>' };
     const log = P.log;
     const focus = practiceFocusLabel(P);
-    const head = { crumb: `第${log.no}回 ${MENU_NAME[log.menu]}<b>練習中</b>`, badge: `<span class="cbadge" id="prRemain">残り ${Math.max(0, Math.ceil((P.dur - P.elapsed) / 1000))}秒</span>` };
+    const head = { crumb: `${practiceTitle(log)}<b>練習中</b>`, badge: `<span class="cbadge" id="prRemain">残り ${Math.max(0, Math.ceil((P.dur - P.elapsed) / 1000))}秒</span>` };
     const bar = `<div class="prbar"><i id="prFill" style="width:${Math.min(100, P.elapsed / P.dur * 100).toFixed(1)}%"></i></div>`;
     const ev = P.ev;
     if (ev && P.evState === 'open') {
-      return { ...head, crumb: `第${log.no}回 ${MENU_NAME[log.menu]}<b>${esc(ev.title)}</b>`,
+      return { ...head, crumb: `${practiceTitle(log)}<b>${esc(ev.title)}</b>`,
         body: `<div class="prev"><div class="prev-h"><span class="tag gold">${esc(ev.title)}</span><span class="prev-w">${esc(ev.who)}<small>（${esc(ev.whoRole)}）</small></span></div><div class="prev-t">「${esc(ev.text)}」</div></div>
           <div class="prch">${ev.choices.map(ch => `<button class="crow" data-act="prChoice" data-v="${ch.id}"><span class="cr-main"><span class="cr-t">${esc(ch.label)}</span><span class="cr-s">${esc(ch.hint)}</span></span></button>`).join('')}</div>` };
     }
@@ -196,6 +207,15 @@ Object.assign(ACTIONS, {
     UI.lastLog = r.log;
     if (d.m === 'section') SECTIONS.forEach(s => UI.draft.sections[s.id] = autoSectionFocus(c, s.id));   // 次回用に再提案
     startPracticeSession(c, r.log);
+  },
+  // ホール練習：成果は従来どおり runHallPractice() で確定し、予約したホールで練習の様子を再生する
+  hall() {
+    if (UI.practicing) return;
+    const c = activeConcert();
+    const log = runHallPractice(c);
+    if (!log) { render(); return; }
+    UI.lastLog = log;
+    startPracticeSession(c, log);
   },
   prChoice(d) {
     const P = UI.practicing; if (!P || P.evState !== 'open') return;
