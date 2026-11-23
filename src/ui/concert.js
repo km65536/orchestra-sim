@@ -34,6 +34,7 @@ function venueFor(c, scr) {
   if (scr.s === 'hallPreview' && scr.id) return scr.id;
   if (UI.showing || c.phase === 'result') return c.hallId || 'general';
   if (scr.s === 'rehearse' && c.hallId) return c.hallId;
+  if (UI.practicing && UI.practicing.log.menu === 'hall' && c.hallId) return c.hallId;   // ホール練習の演出中は予約したホール
   return PRACTICE_ROOM.id;
 }
 function sync3D(c) {
@@ -48,7 +49,7 @@ function sync3D(c) {
     // 準備・練習中は客席が空。本番準備では予想集客、結果では実際の来場者
     if (!Stage3D.isShowing()) {
       let fill = 0;
-      if (c.phase === 'prep') fill = attendanceRate(c);
+      if (c.phase === 'prep' && !(UI.practicing && UI.practicing.log.menu === 'hall')) fill = attendanceRate(c);   // ホール練習中は客席が空
       if (c.phase === 'result' && c.result) fill = clamp(c.result.settlement.audience / findHall(c.hallId).capacity, 0, 1);
       if (HALL_SCREENS.includes(scr.s)) fill = 0.35;
       Stage3D.setAudienceFill(fill);

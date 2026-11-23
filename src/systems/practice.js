@@ -190,7 +190,7 @@ function runHallPractice(c) {
   if (rehearsalBlockReason(c)) return null;
   const hall = concertHall(c);
   spend(c, `ホール練習（${hall.name}）`, hall.rehearsalFee);
-  const log = { no: 'H', menu: 'hall', sections: {}, overall: {}, mastery: {}, songParams: [] };
+  const log = { no: 'H', menu: 'hall', plan: { menu: 'hall' }, sections: {}, overall: {}, mastery: {}, songParams: [] };
   for (const s of SECTIONS) if (membersOfSection(s.id).length) {
     addSec(c, log, s.id, 'tone', rnd(0.5, 1.5)); addSec(c, log, s.id, 'dyn', rnd(0.5, 1.5));
   }

@@ -203,6 +203,7 @@ data/
 | `{place}` | `places` からランダムに 1 つ |
 | `{traitFocus}` / `{aim}` | 指揮者の個性ごとの言い回し（`conductorTraitPhrases`） |
 | `{concertmaster}` | コンサートマスター名（`commentary` のみ） |
+| `{hall}` | ホール練習の会場名（`commentary.hall` のみ） |
 
 **対象の選び方（`target`）**
 
@@ -226,4 +227,4 @@ data/
 | `individual` | 個人練習のとき |
 | `notIndividual` | 個人練習以外のとき |
 
-`commentary` は練習中に約 3 秒ごとに表示されるひとことです（`tutti` / `section` / `individual`）。`{"text": ..., "fallback": ...}` の形で書くと、記号に当てはまる人がいないときに `fallback` が使われます。
+`commentary` は練習中に約 3 秒ごとに表示されるひとことです（`tutti` / `section` / `individual` / `hall`。`hall` はホール練習用で省略可）。`{"text": ..., "fallback": ...}` の形で書くと、記号に当てはまる人がいないときに `fallback` が使われます。
